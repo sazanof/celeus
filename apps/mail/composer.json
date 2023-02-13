@@ -1,0 +1,11 @@
+{
+  "name": "sazanof/celeus-mail",
+  "description": "Free Mail, Calendar, Conferences for your company!",
+  "type": "project",
+  "license": "GNU Affero General Public License v3.0",
+  "autoload": {
+    "psr-4": {
+      "Celeus\\Apps\\Mail\\": "lib/"
+    }
+  }
+}

@@ -31,4 +31,6 @@ nbproject/
 
 dist/
 
-apps/
+/apps*/*
+/apps/*/node_modules
+!/apps/mail
