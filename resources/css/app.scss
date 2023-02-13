@@ -1,0 +1,30 @@
+@import 'variables.scss';
+@import "animate.css";
+
+@import "@vueform/multiselect/themes/default.css";
+
+body, input, button, select, textarea {
+	font-family: Ubuntu, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	font-size: 16px;
+	font-weight: normal;
+	color: var(--color-text);
+}
+
+.multiselect-option.is-selected.is-pointed, .multiselect-option.is-selected {
+	background: var(--color-green);
+}
+
+.multiselect-dropdown {
+	overflow: auto;
+}
+
+div {
+	box-sizing: border-box;
+}
+
+.form-group {
+	display:block;
+	margin-top:10px
+}
+
+

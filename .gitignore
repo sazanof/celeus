@@ -1,0 +1,34 @@
+#ENV
+.env
+# Composer
+composer.phar
+/lib/Vendor
+/vendor/
+/vendor-bin/*/vendor
+
+
+# Mac OS
+.DS_Store
+
+
+# Node.js modules
+node_modules/
+
+# NetBeans project
+nbproject/
+
+# vim
+.*.sw?
+
+/.php_cs.cache
+/.php-cs-fixer.cache
+
+# VSCode / VSCodium
+.vscode/
+
+# PhpStorm
+.idea
+
+dist/
+
+apps/

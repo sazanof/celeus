@@ -1,0 +1,39 @@
+{% extends 'app.twig' %}
+{% block app %}
+    <div id="exception">
+        <pre>CODE: {{ code }}</pre>
+        <pre>MESSAGE: {{ message }}</pre>
+        <pre>FILE: {{ file }}</pre>
+        <pre>LINE: {{ line }}</pre>
+        <pre>TRACE:</pre>
+        <pre>{{ trace }}</pre>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <style lang="css">
+		html, body {
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: fixed;
+			top:0;
+			left:0;
+			bottom:0;
+			right:0;
+		}
+
+		#exception {
+			padding: 20px;
+			box-sizing: border-box;
+			width: 60%;
+			background: #ededed;
+			border-radius: 20px
+		}
+
+		pre {
+			overflow-x: auto;
+		}
+    </style>
+{% endblock %}

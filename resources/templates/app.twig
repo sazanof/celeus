@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+</head>
+<body>
+{% block app %}
+<div id="app"></div>
+{% endblock %}
+{% block scripts %}
+    {% if env('APP_MODE', 'production') == 'production' %}
+        <script type="text/javascript" src="{{ scheme }}://{{ host }}/dist/main.js"></script>
+    {% else %}
+        <script type="text/javascript" src="{{ scheme }}://{{ host }}:8080/main.js"></script>
+    {% endif %}
+{% endblock %}
+</body>
+</html>
