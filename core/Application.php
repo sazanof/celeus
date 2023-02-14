@@ -3,6 +3,7 @@
 namespace Celeus\Core;
 
 use Celeus\Application\ApplicationUtilities;
+use Celeus\Core\Events\FillDatabaseAfterInstallEvent;
 use Celeus\Core\Exceptions\EntityManagerNotDefinedException;
 use Celeus\Database\CustomEntityManager;
 use Celeus\Database\Database;
@@ -33,8 +34,8 @@ class Application
     protected File $filesystem;
     protected ?CustomEntityManager $entityManager = null;
     protected ApplicationUtilities $utilities;
-    protected EventDispatcher $dispatcher;
     public static string $configKey = 'core';
+    private EventDispatcher $dispatcher;
 
     public function __construct(IRouter $router)
     {
@@ -60,7 +61,6 @@ class Application
         $this->utilities->setDispatcher($this->dispatcher);
         $this->router->setDispatcher($this->dispatcher);
         $this->utilities->setRouter($this->router);
-
         $this->utilities->findApps(); // Register applications
     }
 

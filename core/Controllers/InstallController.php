@@ -2,12 +2,13 @@
 
 namespace Celeus\Core\Controllers;
 
+use Celeus\Application\ApplicationUtilities;
 use Celeus\Core\Config\Config;
+use Celeus\Core\Events\FillDatabaseAfterInstallEvent;
 use Celeus\Core\Exceptions\UserAlreadyExistsException;
-use Celeus\Core\Models\Permissions;
 use Celeus\Core\Models\User;
 use Celeus\Database\Database;
-use Celeus\Database\Install\UpdateConfigAfterInstall;
+use Celeus\Database\Entity;
 use Celeus\File\File;
 use Celeus\Serializer\JsonSerializer;
 use Doctrine\DBAL\Exception;
@@ -25,6 +26,7 @@ use Twig\Error\SyntaxError;
 
 class InstallController extends Controller
 {
+    private ?User $admin = null;
     protected int $step;
     protected bool $useTemplateRenderer = true;
     protected Database $database;
@@ -36,6 +38,7 @@ class InstallController extends Controller
         'pdo',
         'sodium'
     ];
+
 
     public function __construct()
     {
@@ -52,9 +55,6 @@ class InstallController extends Controller
      */
     public function install($step, Request $request)
     {
-        //test - if app hS CONFIGURATION -> update db
-        /*$c = new UpdateConfigAfterInstall();
-        $c->addBaseConfigValues();*/
         // TODO add $request->isXmlHttpRequest() to AXIOS;
         switch ($step) {
             case 1:
@@ -129,7 +129,6 @@ class InstallController extends Controller
         // Create schema
         $this->createSchema();
         // Fill config
-        $this->fillDatabaseAfterInstall();
 
         $admin = $request->get('admin');
         $existing = $this->em
@@ -141,15 +140,15 @@ class InstallController extends Controller
         if ($existing instanceof User) {
             throw new UserAlreadyExistsException();
         }
-        /**
-         * @var User $u
-         */
-        $u = User::create($admin);
+
+        $this->admin = User::create($admin);
+
+        $this->fillDatabaseAfterInstall();
 
         $result = [
             'env' => $file instanceof File,
             'schema' => Database::getInstance()->getEntityManager()->getConnection()->isConnected(),
-            'admin' => $u instanceof User
+            'admin' => $this->admin instanceof User
         ];
         //$this->filesystem->remove('../config/NOT_INSTALLED');
         return JsonSerializer::serializeStatic($result);
@@ -222,10 +221,10 @@ class InstallController extends Controller
     /**
      * @throws Throwable
      */
-    private function fillDatabaseAfterInstall(): array
+    private function fillDatabaseAfterInstall(): void
     {
-        return [
-            (new UpdateConfigAfterInstall())->addBaseConfigValues()
-        ];
+        $utilities = ApplicationUtilities::getInstance();
+        $event = new FillDatabaseAfterInstallEvent($this->admin, $utilities->getApplicationsList());
+        $utilities->getDispatcher()->dispatch($event, FillDatabaseAfterInstallEvent::NAME);
     }
 }

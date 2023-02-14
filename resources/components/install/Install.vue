@@ -423,8 +423,8 @@ export default {
 			})
 			this.loading = false
 			this.installResult = res.data
-			this.toStep(this.step + 1)
-			this.installed = true
+			//this.toStep(this.step + 1)
+			//this.installed = true
 		}
 	}
 }

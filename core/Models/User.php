@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\ObjectRepository;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -50,12 +51,6 @@ class User extends Entity
     #[ORM\ManyToMany(targetEntity: Group::class)]
     #[ORM\OrderBy(["name" => "ASC"])]
     private Collection|ArrayCollection $groups;
-
-    #[ORM\JoinTable(name: 'users_permissions')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    #[ORM\InverseJoinColumn(name: 'permission_id', referencedColumnName: 'id')]
-    #[ORM\ManyToMany(targetEntity: Permissions::class)]
-    private Collection $permissions;
 
     protected array $fillable = [
         'username',
@@ -175,22 +170,6 @@ class User extends Entity
     }
 
     /**
-     * @return Collection
-     */
-    public function getPermissions(): Collection
-    {
-        return $this->permissions;
-    }
-
-    /**
-     * @param Collection $permissions
-     */
-    public function setPermissions(Collection $permissions): void
-    {
-        $this->permissions = new ArrayCollection((array)$permissions);
-    }
-
-    /**
      * @throws \Celeus\Core\Exceptions\EntityAlreadyExistsException
      */
     #[ORM\PrePersist]
@@ -198,7 +177,7 @@ class User extends Entity
         $this->checkExistingRecords(['email' => $this->email, 'username' => $this->username], $args);
     }
 
-    public static function repository(): UserRepository
+    public static function repository(): UserRepository|ObjectRepository
     {
         return parent::repository();
     }

@@ -7,16 +7,19 @@ use Celeus\Core\Repositories\CeleusRepository;
 use Celeus\Serializer\JsonSerializer;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Persistence\Mapping\MappingException;
 use Doctrine\Persistence\ObjectRepository;
 
 #[ORM\MappedSuperclass]
 class Entity implements IEntity
 {
+    const BATCH_SIZE = 25;
     protected string $table = '';
     protected ?CustomEntityManager $em = null;
     protected static ?Entity $instance = null;
@@ -56,15 +59,15 @@ class Entity implements IEntity
 
     public static function get(): ?Entity
     {
-        if(is_null(self::$instance)){
+        if(is_null(self::$instance) || self::$instance->className !== get_class(new static())){
             return new static();
         }
         return self::$instance;
     }
 
-    public static function repository(): ObjectRepository|CeleusRepository|\Doctrine\ORM\EntityRepository
+    public static function repository(): ObjectRepository|CeleusRepository|EntityRepository
     {
-        $class = self::get();
+        $class = new static();
         return $class->repository;
     }
 
@@ -177,7 +180,7 @@ class Entity implements IEntity
     /**
      * @inheritDoc
      */
-    public static function create(): Entity
+    public static function create(): static
     {
         $args = func_get_args();
         $class = self::initClass($args);
@@ -216,5 +219,29 @@ class Entity implements IEntity
     {
         $class = self::get();
         return $class->em->find($class->className, $id)->update($arguments);
+    }
+
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     * @throws MappingException
+     */
+    public static function insertBulk(array $data, $batchSize = self::BATCH_SIZE){
+        $i = 1;
+        $em = Database::getInstance()->getEntityManager();
+        foreach ($data as $item){
+            $class = self::initClass([$item]);
+            $class->em->persist($class);
+            if (($i % $batchSize) === 0) {
+                $em->flush();
+                $em->clear(); // Detaches all objects from Doctrine!
+            }
+        }
+        $em->flush(); // Persist objects that did not make up an entire batch
+        $em->clear();
+    }
+
+    public function getFillable(){
+        return $this->fillable;
     }
 }

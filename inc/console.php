@@ -29,6 +29,7 @@ $env->load();
 $config = new Config('database');
 $connection = DriverManager::getConnection($config->getConfig());
 $configuration = new Configuration();
+//TODO add applications migrations too
 $configuration->addMigrationsDirectory('Clb\Migrations', 'database/migrations');
 $configuration->setAllOrNothing(true);
 $configuration->setCheckDatabasePlatform(false);

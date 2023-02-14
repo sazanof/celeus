@@ -15,6 +15,7 @@ use Doctrine\DBAL\Types\Types;
 #[ORM\Entity(repositoryClass: PermissionsRepository::class)]
 #[ORM\Index(columns: ['type', 'action'], name: 'ata')]
 #[ORM\Table(name: '`permissions`')]
+#[ORM\HasLifecycleCallbacks]
 class Permissions extends Entity
 {
     use Timestamps;
@@ -29,6 +30,11 @@ class Permissions extends Entity
 
     #[ORM\Column(type: Types::STRING)]
     private string $action;
+
+    protected array $fillable = [
+        'type',
+        'action'
+    ];
 
     /**
      * @return int

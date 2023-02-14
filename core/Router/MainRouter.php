@@ -16,7 +16,7 @@ use Symfony\Component\Routing\RouteCollection;
 
 class MainRouter implements IRouter
 {
-    public const E_ROUTES_ADDED = 'on.routes.php.added';
+    public const E_ROUTES_ADDED = 'on.routes.added';
     protected string $path;
     /**
      * @var RouteCollection

@@ -12,24 +12,33 @@ class PermissionsRepository extends CeleusRepository
      */
     public function insertDefaultPermissions($type = 'core')
     {
-        Permissions::create([
-            'type' => $type,
-            'action' => Acl::CAN_CREATE
+        Permissions::insertBulk([
+            [
+                'type' => $type,
+                'action' => Acl::CAN_CREATE
+            ],
+            [
+                'type' => $type,
+                'action' => Acl::CAN_READ
+            ],
+            [
+                'type' => $type,
+                'action' => Acl::CAN_UPDATE
+            ],
+            [
+                'type' => $type,
+                'action' => Acl::CAN_DELETE
+            ]
         ]);
+    }
 
-        Permissions::create([
-            'type' => $type,
-            'action' => Acl::CAN_READ
-        ]);
-
-        Permissions::create([
-            'type' => $type,
-            'action' => Acl::CAN_UPDATE
-        ]);
-
-        Permissions::create([
-            'type' => $type,
-            'action' => Acl::CAN_DELETE
-        ]);
+    /**
+     * @param $name
+     * @return PermissionsRepository
+     */
+    public function whereNameLike($type): static
+    {
+        $this->_qb->where($this->as . '.type LIKE :type')->setParameter('type',$type);
+        return $this;
     }
 }
