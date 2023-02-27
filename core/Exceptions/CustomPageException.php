@@ -1,8 +1,8 @@
 <?php
 
-namespace Celeus\Core\Exceptions;
+namespace Vorkfork\Core\Exceptions;
 
-use Celeus\Core\Templates\TemplateRenderer;
+use Vorkfork\Core\Templates\TemplateRenderer;
 use SebastianBergmann\Diff\Exception;
 use Symfony\Component\HttpFoundation\Response;
 

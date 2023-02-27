@@ -1,11 +1,11 @@
 <?php
 
-namespace Celeus\Core\Repositories;
+namespace Vorkfork\Core\Repositories;
 
-use Celeus\Core\Models\Permissions;
-use Celeus\Security\Acl;
+use Vorkfork\Core\Models\Permissions;
+use Vorkfork\Security\Acl;
 
-class PermissionsRepository extends CeleusRepository
+class PermissionsRepository extends Repository
 {
     /**
      * @throws \Doctrine\Persistence\Mapping\MappingException

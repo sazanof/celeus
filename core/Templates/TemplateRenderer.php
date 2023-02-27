@@ -1,8 +1,8 @@
 <?php
 
-namespace Celeus\Core\Templates;
+namespace Vorkfork\Core\Templates;
 
-use Celeus\Template\ITemplateRenderer;
+use Vorkfork\Template\ITemplateRenderer;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;

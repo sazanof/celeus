@@ -1,13 +1,13 @@
 <?php
 
-namespace Celeus\Core\Models;
+namespace Vorkfork\Core\Models;
 
-use Celeus\Database\Entity;
+use Vorkfork\Database\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
-use Celeus\Database\Trait\Timestamps;
+use Vorkfork\Database\Trait\Timestamps;
 
 #[ORM\Entity]
 #[ORM\Index(columns: ['id'], name: 'group_id')]
@@ -48,11 +48,20 @@ class Group extends Entity
     }
 
     /**
+     * Set permissions
      * @param Collection|array $permissions
      */
     public function setPermissions(Collection|array $permissions): void
     {
         $this->permissions = new ArrayCollection((array)$permissions);
+    }
+
+    /**
+     * Add permission to group permissions
+     * @return void
+     */
+    public function addPermission(){
+
     }
 
     /**
@@ -62,6 +71,6 @@ class Group extends Entity
     public function addPermissions(Collection|array $permissions): void
     {
         $this->permissions = new ArrayCollection(array_merge((array)$permissions, $this->getPermissions()->toArray()));
-
     }
+
 }

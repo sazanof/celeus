@@ -1,6 +1,6 @@
 <?php
 
-namespace Celeus\Security;
+namespace Vorkfork\Security;
 
 interface IPasswordHasher
 {

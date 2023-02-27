@@ -1,6 +1,6 @@
 <?php
 
-namespace Celeus\Config;
+namespace Vorkfork\Config;
 
 interface IConfig
 {

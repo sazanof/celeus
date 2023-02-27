@@ -4,33 +4,33 @@ if(!defined('INC_MODE')){
 }
 return [
     '/'=>[
-        'action'=> [Celeus\Core\Controllers\AppController::class, 'index'],
+        'action'=> [Vorkfork\Core\Controllers\AppController::class, 'index'],
         'methods'=> ['GET']
     ],
     '/login/{id}'=>[
-        'action'=> [Celeus\Core\Controllers\LoginController::class, 'processLogin'],
+        'action'=> [Vorkfork\Core\Controllers\LoginController::class, 'processLogin'],
         'methods'=> ['POST']
     ],
     '/login'=>[
-        'action'=> [Celeus\Core\Controllers\LoginController::class, 'getLogin'],
+        'action'=> [Vorkfork\Core\Controllers\LoginController::class, 'getLogin'],
         'methods'=> ['GET']
     ],
     '/locales' => [
-        'action'=> [Celeus\Core\Controllers\LocaleController::class, 'getLocaleList'],
+        'action'=> [Vorkfork\Core\Controllers\LocaleController::class, 'getLocaleList'],
         'methods'=> ['GET'],
         'defaults'=>[
             'public'=>true
         ]
     ],
     '/locales/{lang}' => [
-        'action'=> [Celeus\Core\Controllers\LocaleController::class, 'getTranslation'],
+        'action'=> [Vorkfork\Core\Controllers\LocaleController::class, 'getTranslation'],
         'methods'=> ['GET'],
         'defaults'=>[
             'public'=>true
         ]
     ],
     '/install/{step}' => [
-        'action'=> [Celeus\Core\Controllers\InstallController::class, 'install'],
+        'action'=> [Vorkfork\Core\Controllers\InstallController::class, 'install'],
         'methods'=> ['GET', 'POST'],
         'defaults'=>[
             'step'=>0,

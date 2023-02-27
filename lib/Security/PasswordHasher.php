@@ -1,5 +1,5 @@
 <?php
-namespace Celeus\Security;
+namespace Vorkfork\Security;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 

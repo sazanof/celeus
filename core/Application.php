@@ -1,15 +1,15 @@
 <?php
 
-namespace Celeus\Core;
+namespace Vorkfork\Core;
 
-use Celeus\Application\ApplicationUtilities;
-use Celeus\Core\Events\FillDatabaseAfterInstallEvent;
-use Celeus\Core\Exceptions\EntityManagerNotDefinedException;
-use Celeus\Database\CustomEntityManager;
-use Celeus\Database\Database;
-use Celeus\Database\IDatabase;
-use Celeus\File\File;
-use Celeus\Router\IRouter;
+use Vorkfork\Application\ApplicationUtilities;
+use Vorkfork\Core\Events\FillDatabaseAfterInstallEvent;
+use Vorkfork\Core\Exceptions\EntityManagerNotDefinedException;
+use Vorkfork\Database\CustomEntityManager;
+use Vorkfork\Database\Database;
+use Vorkfork\Database\IDatabase;
+use Vorkfork\File\File;
+use Vorkfork\Router\IRouter;
 use Dotenv\Dotenv;
 use \Exception;
 use Symfony\Component\EventDispatcher\EventDispatcher;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Celeus\Application;
+namespace Vorkfork\Application;
 
 class Session implements ISession
 {

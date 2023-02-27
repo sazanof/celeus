@@ -1,24 +1,22 @@
 <?php
 
-namespace Celeus\Apps\Mail;
+namespace Vorkfork\Apps\Mail;
 
-use Celeus\Application\ApplicationUtilities;
-use Celeus\Apps\Mail\Repositories\MailPermissions;
-use Celeus\Core\Events\FillDatabaseAfterInstallEvent;
-use Celeus\Core\Models\Group;
-use Celeus\Core\Models\Permissions;
-use Celeus\Database\CustomEntityManager;
-use Celeus\Database\Database;
+use Vorkfork\Application\ApplicationUtilities;
+use Vorkfork\Apps\Mail\Repositories\MailPermissions;
+use Vorkfork\Core\Events\FillDatabaseAfterInstallEvent;
+use Vorkfork\Core\Models\Group;
+use Vorkfork\Core\Models\Permissions;
+use Vorkfork\Database\CustomEntityManager;
+use Vorkfork\Database\Database;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
-use Doctrine\Persistence\ObjectRepository;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Application
 {
     protected EventDispatcher $dispatcher;
     protected EntityManager|CustomEntityManager|null $entityManager;
-    protected MailPermissions $mailRepository;
     private Database $database;
 
     /**
@@ -29,23 +27,24 @@ class Application
         $this->dispatcher = $utilities->getDispatcher();
         $this->database = $utilities->getDatabase();
         $this->entityManager = $this->database->getEntityManager();
-        $this->registerListeners();
+        $this->installApplication();
     }
 
     /**
+     * Install application after
      * @return void
      */
-    public function registerListeners(): void
+    public function installApplication(): void
     {
-        // Start listen to After install Events
         $this->dispatcher->addListener(FillDatabaseAfterInstallEvent::NAME, function (FillDatabaseAfterInstallEvent $event) {
-            //dd($event);
             MailPermissions::insertDefaultMailPermissions();
+            /** @var Group $group */
             $group = Group::find(($event->getAdminGroup()->getId()));
-            $group->addPermissions(Permissions::repository()
-                ->select()
-                ->whereNameLike('mail.%')
-                ->results()
+            $group->addPermissions(
+                Permissions::repository()
+                    ->select()
+                    ->whereNameLike('mail.%')
+                    ->results()
             );
             $group->em()->persist($group);
             $group->em()->flush($group);

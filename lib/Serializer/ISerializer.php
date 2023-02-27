@@ -1,6 +1,6 @@
 <?php
 
-namespace Celeus\Serializer;
+namespace Vorkfork\Serializer;
 
 interface ISerializer
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Celeus\Router;
+namespace Vorkfork\Router;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;

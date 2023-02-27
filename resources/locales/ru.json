@@ -1,6 +1,7 @@
 {
   "Back": "Назад",
   "Begin install": "Начать установку",
+  "VORKFORK": "VORKFORK",
   "Check": "Проверить",
   "Checking PHP extensions": "Проверка расширений PHP",
   "Creating an administrator": "Создание администратора",
@@ -26,5 +27,6 @@
   "Password": "Пароль",
   "Password confirmation": "Подтверждение пароля",
   "The system is ready for installation. To continue, click on the Install button.": "Система готова к установке. Для продолжения нажмите на кнопку \"Установить\"",
-  "Your personal space for celeusoration": "Ваше личное пространство для совместной работы"
+  "The password does not meet the security requirements": "Пароль не соответствует требованиям безопасности",
+  "Your personal space for collaboration": "Ваше личное пространство для совместной работы"
 }

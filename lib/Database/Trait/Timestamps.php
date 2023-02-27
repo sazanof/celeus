@@ -1,6 +1,6 @@
 <?php
 
-namespace Celeus\Database\Trait;
+namespace Vorkfork\Database\Trait;
 
 use DateTime;
 use Doctrine\DBAL\Types\Types;

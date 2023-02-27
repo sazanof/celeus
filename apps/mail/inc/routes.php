@@ -1,6 +1,6 @@
 <?php
 
-use Celeus\Apps\Mail\Controllers\MailController;
+use Vorkfork\Apps\Mail\Controllers\MailController;
 
 if(!defined('INC_MODE')){
     exit;

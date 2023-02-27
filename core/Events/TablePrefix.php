@@ -1,5 +1,5 @@
 <?php
-namespace Celeus\Core\Events;
+namespace Vorkfork\Core\Events;
 use \Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 

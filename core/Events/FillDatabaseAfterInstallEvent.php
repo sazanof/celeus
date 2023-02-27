@@ -1,11 +1,11 @@
 <?php
-namespace Celeus\Core\Events;
-use Celeus\Application\ApplicationUtilities;
-use Celeus\Core\Application;
-use Celeus\Core\Models\Config;
-use Celeus\Core\Models\Group;
-use Celeus\Core\Models\Permissions;
-use Celeus\Core\Models\User;
+namespace Vorkfork\Core\Events;
+use Vorkfork\Application\ApplicationUtilities;
+use Vorkfork\Core\Application;
+use Vorkfork\Core\Models\Config;
+use Vorkfork\Core\Models\Group;
+use Vorkfork\Core\Models\Permissions;
+use Vorkfork\Core\Models\User;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\Mapping\MappingException;
@@ -13,7 +13,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 use Throwable;
 
 class FillDatabaseAfterInstallEvent extends Event {
-    public const NAME = 'fill.database.after.install';
+    public const NAME = 'install.after';
     private ApplicationUtilities $utilities;
     private ?User $admin;
     private ?Group $group;

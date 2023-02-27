@@ -8,9 +8,9 @@ error_reporting(E_ALL);
 
 require_once '../vendor/autoload.php';
 
-use Celeus\Application\Session;
-use Celeus\Core\Application;
-use Celeus\Core\Router\MainRouter;
+use Vorkfork\Application\Session;
+use Vorkfork\Core\Application;
+use Vorkfork\Core\Router\MainRouter;
 
 Session::start();
 

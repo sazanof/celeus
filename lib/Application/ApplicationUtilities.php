@@ -1,42 +1,44 @@
 <?php
 
-namespace Celeus\Application;
+namespace Vorkfork\Application;
 
-use Celeus\Core\Application;
-use Celeus\Core\Exceptions\AutoloadMapNotFoundException;
-use Celeus\Core\Exceptions\EntityManagerNotDefinedException;
-use Celeus\Core\Exceptions\WrongConfigurationException;
-use Celeus\Core\Models\Config;
-use Celeus\Core\Router\MainRouter;
-use Celeus\Database\CustomEntityManager;
-use Celeus\Database\Database;
-use Celeus\File\File;
+use Vorkfork\Core\Application;
+use Vorkfork\Core\Exceptions\AutoloadMapNotFoundException;
+use Vorkfork\Core\Exceptions\EntityManagerNotDefinedException;
+use Vorkfork\Core\Exceptions\WrongConfigurationException;
+use Vorkfork\Core\Models\Config;
+use Vorkfork\Core\Router\MainRouter;
+use Vorkfork\Database\CustomEntityManager;
+use Vorkfork\Database\Database;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
 
 class ApplicationUtilities
 {
     private string $version;
     private array $versionArray;
     private EntityManager|CustomEntityManager|null $entityManager = null;
-    protected static ApplicationUtilities $instance;
+    protected static ?ApplicationUtilities $instance = null;
     protected Database $database;
     protected EventDispatcher $dispatcher;
     protected MainRouter $router;
     protected ?array $applicationsList;
 
     public function __construct(){
-        $Celeus_Version = '';
-        $Celeus_VersionArray = [];
-        require realpath('../inc/version.php');
-        $this->version = $Celeus_Version;
-        $this->versionArray = $Celeus_VersionArray;
+        $Vorkfork_Version = '';
+        $Vorkfork_VersionArray = [];
+        if (php_sapi_name() == "cli") {
+            require realpath('./inc/version.php');
+        } else {
+            require realpath('../inc/version.php');
+        }
+        $this->version = $Vorkfork_Version;
+        $this->versionArray = $Vorkfork_VersionArray;
         $this->database = Database::getInstance();
+
         self::$instance = $this;
     }
 
@@ -191,5 +193,13 @@ class ApplicationUtilities
         } else {
             throw new AutoloadMapNotFoundException('Can not autoload class map on path ' . $path);
         }
+    }
+
+    /**
+     * @return Finder
+     */
+    public static function getApplicationDirectories(): Finder
+    {
+        return Finder::create()->in('./apps/')->directories()->depth(0);
     }
 }

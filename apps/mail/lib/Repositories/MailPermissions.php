@@ -1,10 +1,10 @@
 <?php
 
-namespace Celeus\Apps\Mail\Repositories;
+namespace Vorkfork\Apps\Mail\Repositories;
 
-use Celeus\Core\Models\Permissions;
-use Celeus\Core\Repositories\PermissionsRepository;
-use Celeus\Security\Acl;
+use Vorkfork\Core\Models\Permissions;
+use Vorkfork\Core\Repositories\PermissionsRepository;
+use Vorkfork\Security\Acl;
 use Doctrine\Persistence\Mapping\MappingException;
 
 class MailPermissions extends PermissionsRepository

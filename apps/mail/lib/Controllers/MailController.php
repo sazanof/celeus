@@ -1,9 +1,9 @@
 <?php
 
-namespace Celeus\Apps\Mail\Controllers;
+namespace Vorkfork\Apps\Mail\Controllers;
 
-use Celeus\Core\Controllers\Controller;
-use Celeus\Core\Events\FillDatabaseAfterInstallEvent;
+use Vorkfork\Core\Controllers\Controller;
+use Vorkfork\Core\Events\FillDatabaseAfterInstallEvent;
 use Symfony\Component\HttpFoundation\Request;
 
 class MailController extends Controller

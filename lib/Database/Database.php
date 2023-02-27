@@ -1,10 +1,10 @@
 <?php
 
-namespace Celeus\Database;
+namespace Vorkfork\Database;
 
-use Celeus\Core\Config\Config;
-use Celeus\Core\Config\DatabaseConfig;
-use Celeus\Core\Events\TablePrefix;
+use Vorkfork\Core\Config\Config;
+use Vorkfork\Core\Config\DatabaseConfig;
+use Vorkfork\Core\Events\TablePrefix;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\DBAL\Connection;

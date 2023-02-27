@@ -1,6 +1,6 @@
 <?php
 
-namespace Celeus\Core\Exceptions;
+namespace Vorkfork\Core\Exceptions;
 
 class NotFoundHttpException extends \Exception
 {

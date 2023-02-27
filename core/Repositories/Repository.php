@@ -1,13 +1,13 @@
 <?php
 
-namespace Celeus\Core\Repositories;
+namespace Vorkfork\Core\Repositories;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 
-class CeleusRepository extends EntityRepository
+class Repository extends EntityRepository
 {
     protected QueryBuilder $_qb;
     protected string $table;

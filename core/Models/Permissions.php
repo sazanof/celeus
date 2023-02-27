@@ -1,10 +1,10 @@
 <?php
 
-namespace Celeus\Core\Models;
+namespace Vorkfork\Core\Models;
 
-use Celeus\Core\Repositories\PermissionsRepository;
-use Celeus\Database\Entity;
-use Celeus\Database\Trait\Timestamps;
+use Vorkfork\Core\Repositories\PermissionsRepository;
+use Vorkfork\Database\Entity;
+use Vorkfork\Database\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 

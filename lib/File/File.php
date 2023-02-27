@@ -1,6 +1,6 @@
 <?php
 
-namespace Celeus\File;
+namespace Vorkfork\File;
 
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;

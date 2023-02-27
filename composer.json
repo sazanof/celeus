@@ -1,5 +1,5 @@
 {
-  "name": "sazanof/celeus",
+  "name": "sazanof/vorkfork",
   "description": "Free Mail, Calendar, Conferences for your company!",
   "type": "project",
   "license": "GNU Affero General Public License v3.0",
@@ -25,7 +25,7 @@
     "symfony/finder": "^6.0",
     "ext-intl": "*",
     "doctrine/migrations": "^3.5",
-    "doctrine/orm": "^2.14",
+    "doctrine/orm": "^2.14.1",
     "symfony/cache": "^6.0",
     "symfony/serializer": "^6.0",
     "symfony/property-access": "^6.0",
@@ -34,8 +34,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Celeus\\": "lib/",
-      "Celeus\\Core\\": "core/"
+      "Vorkfork\\": "lib/",
+      "Vorkfork\\Core\\": "core/"
     },
     "files": [
       "inc/helpers.php"

@@ -1,6 +1,6 @@
 <?php
 
-namespace Celeus\Database;
+namespace Vorkfork\Database;
 
 use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Doctrine\ORM\Exception\ORMException;

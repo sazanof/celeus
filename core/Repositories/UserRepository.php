@@ -1,10 +1,10 @@
 <?php
 
-namespace Celeus\Core\Repositories;
+namespace Vorkfork\Core\Repositories;
 /**
  * @method static UserRepository repository()
  */
-class UserRepository extends CeleusRepository
+class UserRepository extends Repository
 {
 
 }

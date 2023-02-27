@@ -1,10 +1,10 @@
 <?php
 
-namespace Celeus\Core\Repositories;
+namespace Vorkfork\Core\Repositories;
 /**
  * @method static ConfigRepository repository()
  */
-class ConfigRepository extends CeleusRepository
+class ConfigRepository extends Repository
 {
     /**
      * @return mixed|object|null

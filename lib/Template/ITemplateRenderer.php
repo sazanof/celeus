@@ -1,6 +1,6 @@
 <?php
 
-namespace Celeus\Template;
+namespace Vorkfork\Template;
 
 interface ITemplateRenderer
 {

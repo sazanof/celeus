@@ -1,7 +1,7 @@
 <?php
 
-use Celeus\Application\ApplicationUtilities;
-use Celeus\Apps\Mail\Application;
+use Vorkfork\Application\ApplicationUtilities;
+use Vorkfork\Apps\Mail\Application;
 
 if(!defined('INC_MODE')){
     exit;

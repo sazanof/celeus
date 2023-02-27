@@ -1,6 +1,6 @@
 <?php
 
-namespace Celeus\Core\Controllers;
+namespace Vorkfork\Core\Controllers;
 
 class AppController extends Controller
 {

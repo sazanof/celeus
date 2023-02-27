@@ -1,6 +1,6 @@
 <?php
 
-namespace Celeus\Auth;
+namespace Vorkfork\Auth;
 
 interface IAuthenticate
 {

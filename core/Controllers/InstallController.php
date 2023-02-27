@@ -1,16 +1,17 @@
 <?php
 
-namespace Celeus\Core\Controllers;
+namespace Vorkfork\Core\Controllers;
 
-use Celeus\Application\ApplicationUtilities;
-use Celeus\Core\Config\Config;
-use Celeus\Core\Events\FillDatabaseAfterInstallEvent;
-use Celeus\Core\Exceptions\UserAlreadyExistsException;
-use Celeus\Core\Models\User;
-use Celeus\Database\Database;
-use Celeus\Database\Entity;
-use Celeus\File\File;
-use Celeus\Serializer\JsonSerializer;
+use Vorkfork\Application\ApplicationUtilities;
+use Vorkfork\Core\Config\Config;
+use Vorkfork\Core\Events\FillDatabaseAfterInstallEvent;
+use Vorkfork\Core\Exceptions\UserAlreadyExistsException;
+use Vorkfork\Core\Models\User;
+use Vorkfork\Database\Database;
+use Vorkfork\Database\Entity;
+use Vorkfork\File\File;
+use Vorkfork\Security\PasswordValidator;
+use Vorkfork\Serializer\JsonSerializer;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -19,6 +20,7 @@ use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Exception\InvalidPasswordException;
 use Throwable;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -140,6 +142,9 @@ class InstallController extends Controller
         if ($existing instanceof User) {
             throw new UserAlreadyExistsException();
         }
+        if(!PasswordValidator::isDifficult($admin['password'])) {
+            throw new InvalidPasswordException('The password does not meet the security requirements');
+        }
 
         $this->admin = User::create($admin);
 
@@ -150,7 +155,7 @@ class InstallController extends Controller
             'schema' => Database::getInstance()->getEntityManager()->getConnection()->isConnected(),
             'admin' => $this->admin instanceof User
         ];
-        //$this->filesystem->remove('../config/NOT_INSTALLED');
+        $this->filesystem->remove('../config/NOT_INSTALLED');
         return JsonSerializer::serializeStatic($result);
     }
 
@@ -174,7 +179,7 @@ class InstallController extends Controller
         $env = [
             'APP_HOST' => $request->getHost(),
             'APP_SCHEME' => $request->getScheme(),
-            'APP_NAME' => '"My Celeus Project"',
+            'APP_NAME' => '"My Vorkfork Project"',
             'APP_MODE' => 'production',
             'APP_WEBPACK_PROXY_HOST'=>$request->getScheme() . '://' . $request->getHost() . ':80',
 
@@ -212,7 +217,7 @@ class InstallController extends Controller
         $meta = [];
         foreach ($files as $file) {
             $class = $file->getFilenameWithoutExtension();
-            $meta[] = $this->em->getClassMetadata("\\Celeus\\Core\\Models\\{$class}");
+            $meta[] = $this->em->getClassMetadata("\\Vorkfork\\Core\\Models\\{$class}");
         }
         $st->dropSchema($meta);
         $st->updateSchema($meta);

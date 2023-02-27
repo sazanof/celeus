@@ -1,11 +1,10 @@
 <?php
 
-namespace Celeus\Core\Config;
+namespace Vorkfork\Core\Config;
 
-use Celeus\Config\IConfig;
-use Celeus\Core\Exceptions\ConfigurationNotFoundException;
-use Celeus\File\File;
-use Symfony\Component\Filesystem\Path;
+use Vorkfork\Config\IConfig;
+use Vorkfork\Core\Exceptions\ConfigurationNotFoundException;
+use Vorkfork\File\File;
 
 class Config implements IConfig
 {

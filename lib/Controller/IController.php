@@ -1,6 +1,6 @@
 <?php
 
-namespace Celeus\Controller;
+namespace Vorkfork\Controller;
 
 interface IController
 {

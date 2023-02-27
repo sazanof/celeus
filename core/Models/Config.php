@@ -1,10 +1,10 @@
 <?php
 
-namespace Celeus\Core\Models;
+namespace Vorkfork\Core\Models;
 
-use Celeus\Core\Repositories\ConfigRepository;
-use Celeus\Database\Entity;
-use Celeus\Database\Trait\Timestamps;
+use Vorkfork\Core\Repositories\ConfigRepository;
+use Vorkfork\Database\Entity;
+use Vorkfork\Database\Trait\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
@@ -24,13 +24,13 @@ class Config extends Entity
     private int|null $id = null;
 
     #[ORM\Column(name: '`app`', type: Types::STRING, length: 64)]
-    private string $app;
+    public string $app;
 
     #[ORM\Column(name: '`value`' ,type: Types::STRING, length: 64)]
-    private string $value;
+    public string $value;
 
     #[ORM\Column(name: '`key`', type: Types::STRING, length: 255)]
-    private string $key;
+    public string $key;
 
     protected array $fillable = [
         'app',
@@ -100,7 +100,7 @@ class Config extends Entity
     }
 
     /**
-     * @throws \Celeus\Core\Exceptions\EntityAlreadyExistsException
+     * @throws \Vorkfork\Core\Exceptions\EntityAlreadyExistsException
      */
     #[ORM\PrePersist]
     public function checkConfigOnDuplicate(LifecycleEventArgs $args){

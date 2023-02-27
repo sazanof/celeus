@@ -12,6 +12,8 @@ export default {
 
 <style lang="scss" scoped>
 	.btn {
+    display: flex;
+    align-items: center;
 		cursor: pointer;
 		padding: 8px 12px;
 		background: var(--color-lighter);
@@ -19,6 +21,16 @@ export default {
 		border:1px solid var(--color-light);
 		border-radius: var(--border-radius);
 		transition: var(--transition-duration-mini);
+
+    &.centered {
+      justify-content: center;
+    }
+
+    ::v-deep(.material-design-icon) {
+      margin-right: 6px;
+      position: relative;
+      top:2px;
+    }
 		
 		&:disabled {
 			opacity: 0.6;

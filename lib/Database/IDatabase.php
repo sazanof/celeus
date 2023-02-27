@@ -1,8 +1,8 @@
 <?php
 
-namespace Celeus\Database;
+namespace Vorkfork\Database;
 
-use Celeus\Config\IConfig;
+use Vorkfork\Config\IConfig;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 

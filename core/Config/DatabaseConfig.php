@@ -1,6 +1,6 @@
 <?php
 
-namespace Celeus\Core\Config;
+namespace Vorkfork\Core\Config;
 
 class DatabaseConfig extends Config
 {

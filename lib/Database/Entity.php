@@ -1,10 +1,10 @@
 <?php
 
-namespace Celeus\Database;
+namespace Vorkfork\Database;
 
-use Celeus\Core\Exceptions\EntityAlreadyExistsException;
-use Celeus\Core\Repositories\CeleusRepository;
-use Celeus\Serializer\JsonSerializer;
+use Vorkfork\Core\Exceptions\EntityAlreadyExistsException;
+use Vorkfork\Core\Repositories\Repository;
+use Vorkfork\Serializer\JsonSerializer;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\ORM\EntityRepository;
@@ -28,7 +28,7 @@ class Entity implements IEntity
     protected ?ORM\ClassMetadata $metadata = null;
     protected QueryBuilder $qb;
     protected string $className = '';
-    protected ObjectRepository|CeleusRepository $repository;
+    protected ObjectRepository|Repository $repository;
 
     protected array $fillable = [];
 
@@ -65,7 +65,7 @@ class Entity implements IEntity
         return self::$instance;
     }
 
-    public static function repository(): ObjectRepository|CeleusRepository|EntityRepository
+    public static function repository(): ObjectRepository|Repository|EntityRepository
     {
         $class = new static();
         return $class->repository;

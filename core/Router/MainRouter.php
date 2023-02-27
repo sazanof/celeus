@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Celeus\Core\Router;
+namespace Vorkfork\Core\Router;
 
-use Celeus\Core\Controllers\Controller;
-use Celeus\Router\IRouter;
+use Vorkfork\Core\Controllers\Controller;
+use Vorkfork\Router\IRouter;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

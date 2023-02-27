@@ -1,8 +1,8 @@
 <?php
 
-namespace Celeus\Core\Controllers;
+namespace Vorkfork\Core\Controllers;
 
-use Celeus\Core\Models\Config;
+use Vorkfork\Core\Models\Config;
 use Symfony\Component\HttpFoundation\Request;
 
 class ConfigController extends Controller
@@ -16,7 +16,7 @@ class ConfigController extends Controller
     }
 
     public function addConfiguration(Request $request){
-        /*$config = new \Celeus\Core\Models\Config();
+        /*$config = new \Vorkfork\Core\Models\Config();
         $config->setApp('test1');
         $config->setKey('qwe1');
         $config->setValue('qwerty1');

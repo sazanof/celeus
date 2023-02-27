@@ -1,13 +1,13 @@
 <?php
 
-namespace Celeus\Core\Controllers;
+namespace Vorkfork\Core\Controllers;
 
-use Celeus\Application\ApplicationUtilities;
-use Celeus\Controller\IController;
-use Celeus\Core\Application;
-use Celeus\Core\Templates\TemplateRenderer;
-use Celeus\Database\Database;
-use Celeus\File\File;
+use Vorkfork\Application\ApplicationUtilities;
+use Vorkfork\Controller\IController;
+use Vorkfork\Core\Application;
+use Vorkfork\Core\Templates\TemplateRenderer;
+use Vorkfork\Database\Database;
+use Vorkfork\File\File;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;

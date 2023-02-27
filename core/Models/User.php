@@ -1,11 +1,11 @@
 <?php
 
-namespace Celeus\Core\Models;
-use Celeus\Core\Repositories\UserRepository;
-use Celeus\Database\Entity;
-use Celeus\Database\IdGenerator;
-use Celeus\Database\Trait\Timestamps;
-use Celeus\Security\PasswordHasher;
+namespace Vorkfork\Core\Models;
+use Vorkfork\Core\Repositories\UserRepository;
+use Vorkfork\Database\Entity;
+use Vorkfork\Database\IdGenerator;
+use Vorkfork\Database\Trait\Timestamps;
+use Vorkfork\Security\PasswordHasher;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -170,7 +170,7 @@ class User extends Entity
     }
 
     /**
-     * @throws \Celeus\Core\Exceptions\EntityAlreadyExistsException
+     * @throws \Vorkfork\Core\Exceptions\EntityAlreadyExistsException
      */
     #[ORM\PrePersist]
     public function checkUserOnDuplicate(LifecycleEventArgs $args){
