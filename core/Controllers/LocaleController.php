@@ -11,15 +11,17 @@ class LocaleController extends Controller
         parent::__construct();
     }
 
-    public function getTranslation($lang) {
+    public function getTranslation($lang)
+    {
         return $this->filesystem->get('/resources/locales/' . $lang . '.json');
     }
 
-    public function getLocaleList(){
+    public function getLocaleList(): array
+    {
         $locales = $this->filesystem->glob('/resources/locales/');
         $ar = [];
-        foreach ($locales as $locale){
-            $explodeBaseName = explode('.',$locale->getBasename());
+        foreach ($locales as $locale) {
+            $explodeBaseName = explode('.', $locale->getBasename());
             $ar[] = [
                 'code' => $explodeBaseName[0],
                 'name' => mb_ucfirst(\Locale::getDisplayName($explodeBaseName[0], $explodeBaseName[0]))

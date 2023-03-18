@@ -1,15 +1,20 @@
 <?php
+declare(strict_types=1);
+
 namespace Vorkfork\Security;
+
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
-class PasswordHasher implements IPasswordHasher {
+class PasswordHasher implements IPasswordHasher
+{
 
     protected static ?PasswordHasher $instance = null;
     protected ?PasswordHasherInterface $hasher = null;
     protected ?PasswordHasherFactory $factory = null;
 
-    public  function __construct(){
+    public function __construct()
+    {
         $this->factory = new PasswordHasherFactory([
             'bcrypt' => ['algorithm' => 'bcrypt'],
             'sodium' => ['algorithm' => 'sodium'],
@@ -23,7 +28,7 @@ class PasswordHasher implements IPasswordHasher {
      */
     public static function getInstance(): PasswordHasher
     {
-        return is_null(self::$instance) ? new self() :self::$instance;
+        return is_null(self::$instance) ? new self() : self::$instance;
     }
 
     public static function hash(string $password): string
@@ -31,8 +36,8 @@ class PasswordHasher implements IPasswordHasher {
         return self::getInstance()->hasher->hash($password);
     }
 
-    public static function validate(string $password): bool
+    public static function validate(string $hashedPassword, string $password): bool
     {
-        return self::validate($password);
+        return self::getInstance()->hasher->verify($hashedPassword, $password);
     }
 }

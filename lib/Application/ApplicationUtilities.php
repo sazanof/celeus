@@ -70,7 +70,7 @@ class ApplicationUtilities
 
     public function getEntityManager(): EntityManager|CustomEntityManager|null
     {
-        return $this->entityManager;
+        return is_null($this->entityManager) ? Database::getInstance()->getEntityManager() : $this->entityManager;
     }
 
     public function getDatabase(): Database

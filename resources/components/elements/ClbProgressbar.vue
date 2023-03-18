@@ -7,15 +7,15 @@
 </template>
 
 <script>
-export default {
-	name: 'ClbProgressbar',
-	props: {
-		width: {
-			type: Number,
-			default: 0,
-		}
-	},
-}
+    export default {
+        name: 'ClbProgressbar',
+        props: {
+            width: {
+                type: Number,
+                default: 0,
+            }
+        },
+    }
 </script>
 
 <style lang="scss" scoped>

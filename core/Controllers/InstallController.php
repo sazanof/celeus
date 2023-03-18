@@ -142,7 +142,7 @@ class InstallController extends Controller
         if ($existing instanceof User) {
             throw new UserAlreadyExistsException();
         }
-        if(!PasswordValidator::isDifficult($admin['password'])) {
+        if (!PasswordValidator::isDifficult($admin['password'])) {
             throw new InvalidPasswordException('The password does not meet the security requirements');
         }
 
@@ -156,7 +156,7 @@ class InstallController extends Controller
             'admin' => $this->admin instanceof User
         ];
         $this->filesystem->remove('../config/NOT_INSTALLED');
-        return JsonSerializer::serializeStatic($result);
+        return self::asResponse($result);
     }
 
     public function createEnv(Request $request): File
@@ -171,7 +171,7 @@ class InstallController extends Controller
         $contents = $file->contentArray();
         $ar = [];
         foreach ($contents as $line) {
-            $l = explode('=',$line);
+            $l = explode('=', $line);
             $ar[$l[0]] = $l[1];
         }
 
@@ -181,7 +181,7 @@ class InstallController extends Controller
             'APP_SCHEME' => $request->getScheme(),
             'APP_NAME' => '"My Vorkfork Project"',
             'APP_MODE' => 'production',
-            'APP_WEBPACK_PROXY_HOST'=>$request->getScheme() . '://' . $request->getHost() . ':80',
+            'APP_WEBPACK_PROXY_HOST' => $request->getScheme() . '://' . $request->getHost() . ':80',
 
             'DEFAULT_LOCALE' => 'ru',
             'DEFAULT_FALLBACK_LOCALE' => 'en',

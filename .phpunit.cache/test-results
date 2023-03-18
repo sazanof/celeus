@@ -1,0 +1,1 @@
+{"version":1,"defects":{"Models\\ModelTest::testFindByUsername":5,"Security\\PasswordVerifyTest::testVerifyUserPassword":5},"times":{"Models\\ModelTest::testFindByUsername":0.035,"Security\\PasswordVerifyTest::testVerifyUserPassword":0.222}}

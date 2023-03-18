@@ -1,16 +1,17 @@
 <?php
+declare(strict_types=1);
 
 namespace Vorkfork\Auth;
 
 interface IAuthenticate
 {
-    public function login($username, $password);
+    public static function login(string $username, string $password, bool $remember = false);
 
-    public function logout();
+    public static function logout();
 
-    public function check();
+    public static function check(string $username, string $password): bool;
 
-    public function getLoginUser();
+    public static function getLoginUser();
 
-    public function getLoginUserID();
+    public static function getLoginUserID();
 }

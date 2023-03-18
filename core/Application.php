@@ -2,8 +2,10 @@
 
 namespace Vorkfork\Core;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\HttpKernel;
 use Vorkfork\Application\ApplicationUtilities;
-use Vorkfork\Core\Events\FillDatabaseAfterInstallEvent;
+use Vorkfork\Auth\Auth;
 use Vorkfork\Core\Exceptions\EntityManagerNotDefinedException;
 use Vorkfork\Database\CustomEntityManager;
 use Vorkfork\Database\Database;
@@ -14,13 +16,9 @@ use Dotenv\Dotenv;
 use \Exception;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
-use Symfony\Component\Routing\Exception\MethodNotAllowedException;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Throwable;
 
 class Application
@@ -44,14 +42,14 @@ class Application
         $this->env = Dotenv::createImmutable(realpath('../'));
         try {
             $this->env->load();
-        } catch (Exception $e){
+        } catch (Exception $e) {
 
         };
         $this->utilities = new ApplicationUtilities();
         try {
             $this->connection = $this->initDatabaseConnection();
             $this->entityManager = $this->connection->getEntityManager();
-            if(!is_null($this->entityManager)){
+            if (!is_null($this->entityManager)) {
                 $this->utilities->setEntityManager($this->entityManager);
             }
         } catch (\Doctrine\DBAL\Exception $e) {
@@ -66,7 +64,7 @@ class Application
 
     public function checkUpdates(): void
     {
-        if(!is_null($this->entityManager)){
+        if (!is_null($this->entityManager)) {
             try {
                 $this->utilities->checkVersion();
             } catch (EntityManagerNotDefinedException|Throwable $e) {
@@ -94,44 +92,42 @@ class Application
         return new Database();
     }
 
-    public function watch(): RedirectResponse|bool
+    /**
+     * @throws Throwable
+     */
+    public function watch()
     {
         $request = Request::createFromGlobals();
-        try {
-            $matcher = $this->router->matchRoute($_SERVER['REQUEST_URI']);
-            if (!$this->isAppInstalled() && !$matcher['public']) {
-                return $this->router->redirectTo('/install');
-            } else {
-                if($this->isAppInstalled() && $matcher['_route'] === '/install/{step}'){
-                    return $this->router->redirectTo('/');
-                }
-            }
 
-            $controllerResolver = new ControllerResolver();
-            $argumentResolver = new ArgumentResolver();
-            $request->attributes->add($matcher);
-            $controller = $controllerResolver->getController($request);
-            $arguments = $argumentResolver->getArguments($request, $controller);
-            $r = call_user_func_array($controller, $arguments);
+        $matcher = $this->router->matchRoute($_SERVER['REQUEST_URI']);
 
-            // TODO move to bottom to customize error pages
-            //TODO - check middleware
-            if(is_array($r) || is_object($r)){
-                $response = new JsonResponse($r);
-            } else {
-                $response = new Response($r);
+        //$dispatcher->addSubscriber(new RouterListener($matcher, new RequestStack()));
+
+        if (!$this->isAppInstalled() && !$matcher['public']) {
+            return $this->router->redirectTo('/install');
+        } else {
+            if ($this->isAppInstalled() && $matcher['_route'] === '/install/{step}') {
+                return $this->router->redirectTo('/');
             }
-            $response->send();
-        } catch (ResourceNotFoundException $exception) {
-            //TODO custom 404 page
-            self::JsonResponseException($exception);
-        } catch (MethodNotAllowedException $exception) {
-            //TODO custom page
-            self::JsonResponseException($exception);
-        } catch (Exception|Throwable $exception) {
-            self::JsonResponseException($exception);
         }
-        return true;
+
+        if (isset($matcher['auth']) && $matcher['auth'] === true) {
+            if (!Auth::isAuthenticated()) {
+                return $this->router->redirectTo('/login');
+            }
+        }
+
+        $controllerResolver = new ControllerResolver();
+        $argumentResolver = new ArgumentResolver();
+        $request->attributes->add($matcher);
+        $kernel = new HttpKernel(
+            $this->dispatcher,
+            $controllerResolver,
+            new RequestStack(),
+            $argumentResolver);
+        $response = $kernel->handle($request);
+        $response->send();
+        $kernel->terminate($request, $response);
     }
 
     private static function JsonResponseException(Exception|\Error $exception, $statusCode = 500): void

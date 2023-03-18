@@ -4,18 +4,29 @@
 @import "@vueform/multiselect/themes/default.css";
 
 body, input, button, select, textarea {
-	font-family: Ubuntu, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-	font-size: 16px;
+	font-family: var(--font-face);
+	font-size:var(--font-size);
 	font-weight: normal;
 	color: var(--color-text);
+	border-radius: var(--border-radius-big);
+}
+.multiselect.is-active {
+	box-shadow: none;
 }
 
 .multiselect-option.is-selected.is-pointed, .multiselect-option.is-selected {
-	background: var(--color-green);
+	background: var(--color-primary);
 }
+.multiselect-options {
+	border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
 
+	.multiselect-option:last-child {
+		border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
+	}
+}
 .multiselect-dropdown {
 	overflow: auto;
+	border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
 }
 
 div {

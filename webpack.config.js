@@ -50,6 +50,10 @@ module.exports = {
                 test: /\.js$/,
                 loader: 'babel-loader'
             },
+            {
+                test: /\.svg/,
+                type: 'asset/resource'
+            },
         ]
     }
 }

@@ -3,10 +3,19 @@
 </template>
 
 <script>
-import axios from 'axios'
-export default {
-	name: 'App',
-}
+    import axios from 'axios'
+
+    export default {
+        name: 'App',
+        data() {
+            return {
+                authenticate: false,
+            }
+        },
+        mounted() {
+            this.authenticate = this.$store.state.authenticate
+        }
+    }
 </script>
 
 <style lang="scss" scoped>

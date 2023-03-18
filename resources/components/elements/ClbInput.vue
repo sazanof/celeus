@@ -14,32 +14,32 @@
 </template>
 
 <script>
-export default {
-	name: 'ClbInput',
-	props: {
-		value: {
-			type: String,
-			required: true,
-		},
-		label: {
-			type: String,
-			default: null
-		},
-		disabled: {
-			type: Boolean,
-			default: false
-		},
-		type: {
-			type: String,
-			default: 'text'
-		}
-	},
-	data(){
-		return {
-			val: this.value
-		}
-	},
-}
+    export default {
+        name: 'ClbInput',
+        props: {
+            value: {
+                type: String,
+                required: true,
+            },
+            label: {
+                type: String,
+                default: null
+            },
+            disabled: {
+                type: Boolean,
+                default: false
+            },
+            type: {
+                type: String,
+                default: 'text'
+            }
+        },
+        data(){
+            return {
+                val: this.value
+            }
+        },
+    }
 </script>
 
 <style lang="scss" scoped>
@@ -48,8 +48,8 @@ export default {
 		
 		.input {
 			padding: 8px 12px;
-			border:1px solid var(--border-color);
-			border-radius: var(--border-radius);
+			border:var(--border-width) solid var(--border-color);
+			border-radius: var(--border-radius-big);
 			box-sizing: border-box;
 			display: block;
 			width: 100%;

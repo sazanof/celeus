@@ -31,39 +31,44 @@ class MainRouter implements IRouter
 
     protected EventDispatcher $dispatcher;
 
+    protected UrlMatcher $matcher;
+
     public function __construct()
     {
         $this->routes = new RouteCollection();
     }
 
-    public function setDispatcher(EventDispatcher $dispatcher){
+    public function setDispatcher(EventDispatcher $dispatcher)
+    {
         $this->dispatcher = $dispatcher;
-        $this->dispatcher->addListener(self::E_ROUTES_ADDED,function ($router){
+        $this->dispatcher->addListener(self::E_ROUTES_ADDED, function ($router) {
             //dump('on.routes.php.added', $router);
         });
     }
 
-    public static function getInstance(){
+    public static function getInstance()
+    {
         return is_null(self::$instance) ? new self() : self::$instance;
     }
 
     public function registerRoutes($routes): IRouter
     {
-        foreach ($routes as $url => $route){
+        foreach ($routes as $url => $route) {
             //TODO установка роута для install и upgrade, если приложение не установлено
             $_route = $this->setRoute($url, $route['methods'], $route['action']);
 
-            if(isset($route['defaults'])){
+            if (isset($route['defaults'])) {
                 $_route->addDefaults($route['defaults']);
             }
         }
         return $this;
     }
 
-    public function addRoutesFromAppInc(string $path = null) {
+    public function addRoutesFromAppInc(string $path = null)
+    {
         $path = is_null($path) ? realpath('../inc/routes.php') : $path;
         $routes = require_once $path;
-        if(!empty($routes)){
+        if (!empty($routes)) {
             $this->registerRoutes($routes);
         }
     }
@@ -72,7 +77,7 @@ class MainRouter implements IRouter
     {
         $route = new Route($url, [
             '_controller' => $action,
-            '_method'=>$methods,
+            '_method' => $methods,
         ]);
         $route->setMethods($methods);
         $this->routes->add($url, $route);

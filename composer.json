@@ -40,5 +40,11 @@
     "files": [
       "inc/helpers.php"
     ]
+  },
+  "tests": {
+
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.0"
   }
 }

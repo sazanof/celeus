@@ -2,6 +2,7 @@
 
 namespace Vorkfork\Core\Templates;
 
+use Symfony\Component\HttpFoundation\Response;
 use Vorkfork\Template\ITemplateRenderer;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -33,7 +34,7 @@ class TemplateRenderer implements ITemplateRenderer
     {
         $loader = new FilesystemLoader($this->paths);
         $this->template = new Environment($loader);
-        $this->template->addFunction(new TwigFunction('env', function ($param, $default){
+        $this->template->addFunction(new TwigFunction('env', function ($param, $default) {
             return env($param, $default);
         }));
         $nameWithExtention = "{$name}.twig";

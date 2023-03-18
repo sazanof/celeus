@@ -1,6 +1,8 @@
 <?php
+declare(strict_types=1);
 
 namespace Vorkfork\Core\Models;
+
 use Vorkfork\Core\Repositories\UserRepository;
 use Vorkfork\Database\Entity;
 use Vorkfork\Database\IdGenerator;
@@ -103,6 +105,14 @@ class User extends Entity
     /**
      * @return string
      */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    /**
+     * @return string
+     */
     public function getEmail(): string
     {
         return $this->email;
@@ -173,7 +183,8 @@ class User extends Entity
      * @throws \Vorkfork\Core\Exceptions\EntityAlreadyExistsException
      */
     #[ORM\PrePersist]
-    public function checkUserOnDuplicate(LifecycleEventArgs $args){
+    public function checkUserOnDuplicate(LifecycleEventArgs $args)
+    {
         $this->checkExistingRecords(['email' => $this->email, 'username' => $this->username], $args);
     }
 
