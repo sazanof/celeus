@@ -89,6 +89,10 @@ class MainRouter implements IRouter
         return $this->routes;
     }
 
+    /**
+     * @param $url
+     * @return array
+     */
     public function matchRoute($url): array
     {
         $context = new RequestContext();

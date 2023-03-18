@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -52,6 +53,8 @@ class Controller implements IController
                 $event->setResponse(new Response($controllerResult));
             } elseif (is_array($controllerResult) || is_object($controllerResult)) {
                 $event->setResponse(new JsonResponse($controllerResult));
+            } elseif (is_bool($controllerResult)) {
+                $event->setResponse(new JsonResponse(['success' => $controllerResult]));
             }
         });
         $this->dispatcher->addListener(KernelEvents::CONTROLLER, function (ControllerEvent $event) {
@@ -62,8 +65,8 @@ class Controller implements IController
             $this->data['host'] = env('APP_HOST', $event->getRequest()->getHost());
             $this->data['scheme'] = env('APP_SCHEME', $event->getRequest()->getScheme());
         });
-        $this->dispatcher->addListener(KernelEvents::RESPONSE, function (ResponseEvent $event) {
-
+        $this->dispatcher->addListener(KernelEvents::EXCEPTION, function (ExceptionEvent $event) {
+            dd($event);
         });
     }
 

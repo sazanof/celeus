@@ -8,7 +8,7 @@
 
 <script>
     export default {
-        name: 'ClbProgressbar',
+        name: 'VfProgressbar',
         props: {
             width: {
                 type: Number,
@@ -20,20 +20,20 @@
 
 <style lang="scss" scoped>
 .progress {
-	background: var(--color-lighter);
-	position: relative;
-	height: 5px;
-	border-radius: 10px;
-	
-	.progress-percents {
-		transition: width var(--transition-duration);
-		position: absolute;
-		border-radius: 10px;
-		height: 5px;
-		left:0;
-		top:0;
-		background: var(--color-green);
-		z-index: 2;
-	}
+  background: var(--color-lighter);
+  position: relative;
+  height: 5px;
+  border-radius: 10px;
+
+  .progress-percents {
+    transition: width var(--transition-duration);
+    position: absolute;
+    border-radius: 10px;
+    height: 5px;
+    left: 0;
+    top: 0;
+    background: var(--color-green);
+    z-index: 2;
+  }
 }
 </style>

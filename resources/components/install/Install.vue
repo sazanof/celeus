@@ -47,12 +47,12 @@
                 </span>
                 <div class="switcher">
                     <LanguageSwitcher @on-locale-change="onLocaleChange" />
-                    <ClbButton
+                    <VfButton
                         @click="toStep(1)"
                         class="centered">
                         <Send :size="18" />
                         {{ $t('Begin install') }}
-                    </ClbButton>
+                    </VfButton>
                 </div>
             </div>
             <div
@@ -88,26 +88,26 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="actions">
-                            <ClbButton
+                            <VfButton
                                 type="secondary"
                                 @click="toStep(0)">
                                 <ChevronLeft :size="18" />
                                 {{ $t('Back') }}
-                            </ClbButton>
-                            <ClbButton
+                            </VfButton>
+                            <VfButton
                                 v-if="!disabled"
                                 @click="toStep(step +1)">
                                 <ChevronRight :size="18" />
                                 {{ $t('Next') }}
-                            </ClbButton>
-                            <ClbButton
+                            </VfButton>
+                            <VfButton
                                 v-else
                                 @click="checkExtensions">
                                 <Refresh :size="18" />
                                 {{ $t('Retry') }}
-                            </ClbButton>
+                            </VfButton>
                         </div>
                     </div>
                     <!--STEP 2-->
@@ -116,7 +116,7 @@
                         v-if="step ===2">
                         <div class="step-inner">
                             <div class="form-group">
-                                <ClbInput
+                                <VfInput
                                     type="text"
                                     :value="connection.driver"
                                     :label="$t('Database type')"
@@ -126,14 +126,14 @@
                             <div class="form-group">
                                 <div class="host-port">
                                     <div class="host">
-                                        <ClbInput
+                                        <VfInput
                                             type="text"
                                             @on-change="e => connection.host = e.target.value"
                                             :value="connection.host"
                                             :label="$t('Database host')" />
                                     </div>
                                     <div class="port">
-                                        <ClbInput
+                                        <VfInput
                                             type="text"
                                             @on-change="e => connection.port = e.target.value"
                                             :value="connection.port"
@@ -143,7 +143,7 @@
                             </div>
 
                             <div class="form-group">
-                                <ClbInput
+                                <VfInput
                                     type="text"
                                     @on-change="e => connection.dbname = e.target.value"
                                     :value="connection.dbname"
@@ -151,14 +151,14 @@
                             </div>
 
                             <div class="form-group">
-                                <ClbInput
+                                <VfInput
                                     type="text"
                                     @on-change="e => connection.user = e.target.value"
                                     :value="connection.user"
                                     :label="$t('Username')" />
                             </div>
                             <div class="form-group">
-                                <ClbInput
+                                <VfInput
                                     type="password"
                                     @on-change="e => connection.password = e.target.value"
                                     :value="connection.password"
@@ -167,26 +167,26 @@
                         </div>
 
                         <div class="actions">
-                            <ClbButton
+                            <VfButton
                                 type="secondary"
                                 @click="toStep(step - 1)">
                                 <ChevronLeft :size="18" />
                                 {{ $t('Back') }}
-                            </ClbButton>
-                            <ClbButton
+                            </VfButton>
+                            <VfButton
                                 v-if="connectionSuccess"
                                 :disabled="disabled"
                                 @click="toStep(step + 1)">
                                 <ChevronRight :size="18" />
                                 {{ $t('Next') }}
-                            </ClbButton>
-                            <ClbButton
+                            </VfButton>
+                            <VfButton
                                 v-else
                                 :disabled="disabled"
                                 @click="checkConnection">
                                 <ChevronRight :size="18" />
                                 {{ $t('Check') }}
-                            </ClbButton>
+                            </VfButton>
                         </div>
                     </div>
                     <!--STEP 3-->
@@ -195,38 +195,38 @@
                         v-if="step ===3">
                         <div class="step-inner">
                             <div class="form-group">
-                                <ClbInput
+                                <VfInput
                                     :label="$t('Username')"
                                     :value="admin.username"
                                     @on-change="e => admin.username = e.target.value" />
                             </div>
                             <div class="form-group">
-                                <ClbInput
+                                <VfInput
                                     :label="$t('Email')"
                                     :value="admin.email"
                                     @on-change="e => admin.email = e.target.value" />
                             </div>
                             <div class="form-group">
-                                <ClbInput
+                                <VfInput
                                     :label="$t('Firstname')"
                                     :value="admin.firstname"
                                     @on-change="e => admin.firstname = e.target.value" />
                             </div>
                             <div class="form-group">
-                                <ClbInput
+                                <VfInput
                                     :label="$t('Lastname')"
                                     :value="admin.lastname"
                                     @on-change="e => admin.lastname = e.target.value" />
                             </div>
                             <div class="form-group">
-                                <ClbInput
+                                <VfInput
                                     :label="$t('Password')"
                                     :value="admin.password"
                                     type="password"
                                     @on-change="e => admin.password = e.target.value" />
                             </div>
                             <div class="form-group">
-                                <ClbInput
+                                <VfInput
                                     :label="$t('Password confirmation')"
                                     :value="admin.repeatPassword"
                                     type="password"
@@ -235,18 +235,18 @@
                         </div>
 
                         <div class="actions">
-                            <ClbButton
+                            <VfButton
                                 type="secondary"
                                 @click="toStep(step - 1)">
                                 <ChevronLeft :size="18" />
                                 {{ $t('Back') }}
-                            </ClbButton>
-                            <ClbButton
+                            </VfButton>
+                            <VfButton
                                 :disabled="!adminDataCorrect"
                                 @click="toStep(step + 1)">
                                 <ChevronRight :size="18" />
                                 {{ $t('Next') }}
-                            </ClbButton>
+                            </VfButton>
                         </div>
                     </div>
                     <!--STEP 4-->
@@ -262,18 +262,18 @@
                         </div>
 
                         <div class="actions">
-                            <ClbButton
+                            <VfButton
                                 type="secondary"
                                 @click="toStep(step - 1)">
                                 <ChevronLeft :size="18" />
                                 {{ $t('Back') }}
-                            </ClbButton>
-                            <ClbButton
+                            </VfButton>
+                            <VfButton
                                 :disabled="disabled"
                                 @click="install()">
                                 <ChevronRight :size="18" />
                                 {{ $t('Install') }}
-                            </ClbButton>
+                            </VfButton>
                         </div>
                     </div>
                     <!--STEP 5-->
@@ -298,9 +298,9 @@
                         </div>
 
                         <div class="actions center">
-                            <ClbButton @click="endInstall">
+                            <VfButton @click="endInstall">
                                 {{ $t('Let\'s get started') }}
-                            </ClbButton>
+                            </VfButton>
                         </div>
                     </div>
                 </div>
@@ -312,8 +312,8 @@
 <script>
     import { useToast } from 'vue-toastification'
     import axios from 'axios'
-    import ClbButton from '../elements/ClbButton.vue'
-    import ClbInput from '../elements/ClbInput.vue'
+    import VfButton from '../elements/VfButton.vue'
+    import VfInput from '../elements/VfInput.vue'
     import LanguageSwitcher from '../i18n/LanguageSwitcher.vue'
     import Check from 'vue-material-design-icons/Check.vue'
     import Close from 'vue-material-design-icons/Close.vue'
@@ -327,8 +327,8 @@
     export default {
         name: 'Install',
         components: {
-            ClbButton,
-            ClbInput,
+            VfButton,
+            VfInput,
             LanguageSwitcher,
             Check,
             Close,
@@ -495,7 +495,7 @@
                 this.toStep(this.step + 1)
                 this.installed = true
             },
-            endInstall(){
+            endInstall() {
                 window.location.replace('/')
             }
         }
@@ -505,7 +505,7 @@
 <style lang="scss" scoped>
 
 .steps-progress {
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -521,7 +521,7 @@
     background: var(--color-white-opacity50);
 
     &.active {
-      background:var(--color-white)
+      background: var(--color-white)
     }
   }
 }
@@ -596,7 +596,7 @@
 
       .step-inner {
         max-height: 500px;
-        overflow-y:auto;
+        overflow-y: auto;
       }
 
       .heading {

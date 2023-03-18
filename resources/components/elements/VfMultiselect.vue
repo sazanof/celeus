@@ -4,8 +4,9 @@
 
 <script>
     import Multiselect from '@vueform/multiselect'
+
     export default {
-        name: 'ClbMultiselect',
+        name: 'VfMultiselect',
         components: {
             Multiselect
         }

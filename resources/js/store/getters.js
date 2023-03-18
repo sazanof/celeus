@@ -4,7 +4,7 @@ export default {
     },
 
     isAuthenticated(state) {
-        return state.authenticate
+        return state.authenticated
     },
 
     getUser(state) {

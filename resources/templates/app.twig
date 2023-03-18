@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <meta name="theme-color" content="#ffffff">
     <title>{{ title }}</title>
 </head>
 <body>
 {% block app %}
-<div id="app"></div>
+    <div id="app"></div>
 {% endblock %}
 {% block scripts %}
     {% if env('APP_MODE', 'production') == 'production' %}

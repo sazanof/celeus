@@ -12,8 +12,6 @@ use Vorkfork\Application\Session;
 use Vorkfork\Core\Application;
 use Vorkfork\Core\Router\MainRouter;
 
-Session::start();
-
 // TODO add referer to route param to make work route only if referer is set & matches
 // TODO move routes.php to routes.php or yaml
 $router = new MainRouter();

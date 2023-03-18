@@ -3,7 +3,9 @@
 namespace Vorkfork\Core;
 
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernel;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Vorkfork\Application\ApplicationUtilities;
 use Vorkfork\Auth\Auth;
 use Vorkfork\Core\Exceptions\EntityManagerNotDefinedException;
@@ -98,8 +100,12 @@ class Application
     public function watch()
     {
         $request = Request::createFromGlobals();
+        try {
+            $matcher = $this->router->matchRoute($_SERVER['REQUEST_URI']);
+        } catch (ResourceNotFoundException $exception) {
+            return (new Response($exception->getMessage(), 404, []))->send();
+        }
 
-        $matcher = $this->router->matchRoute($_SERVER['REQUEST_URI']);
 
         //$dispatcher->addSubscriber(new RouterListener($matcher, new RequestStack()));
 
@@ -116,7 +122,6 @@ class Application
                 return $this->router->redirectTo('/login');
             }
         }
-
         $controllerResolver = new ControllerResolver();
         $argumentResolver = new ArgumentResolver();
         $request->attributes->add($matcher);

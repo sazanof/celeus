@@ -1,5 +1,5 @@
 <template>
-    <ClbMultiselect
+    <VfMultiselect
         v-model="locale"
         :options="locales"
         :object="true"
@@ -11,14 +11,14 @@
 </template>
 
 <script>
-    import ClbMultiselect from '../elements/ClbMultiselect.vue'
+    import VfMultiselect from '../elements/VfMultiselect.vue'
 
     export default {
         name: 'LocaleSwitcher',
         components: {
-            ClbMultiselect
+            VfMultiselect
         },
-        data(){
+        data() {
             return {
                 locale: null
             }
@@ -34,7 +34,7 @@
             }
         },
         watch: {
-            locale(){
+            locale() {
                 this.$i18n.locale = this.locale.code
             }
         },
@@ -43,12 +43,12 @@
             this.getDefaultLocale()
         },
         methods: {
-            getDefaultLocale(){
+            getDefaultLocale() {
                 this.locale = this.locales.filter(l => {
                     return l.code === this.$i18n.locale
                 })[0]
             },
-            changeLocale(){
+            changeLocale() {
                 this.$emit('on-locale-change', this.currentLocale)
             }
         }

@@ -1,42 +1,57 @@
 <?php
+declare(strict_types=1);
+
+use Vorkfork\Core\Controllers\AppController;
+use Vorkfork\Core\Controllers\InstallController;
+use Vorkfork\Core\Controllers\LocaleController;
+use Vorkfork\Core\Controllers\LoginController;
+use Vorkfork\Core\Controllers\UserController;
+
 if (!defined('INC_MODE')) {
     exit;
 }
 return [
     '/' => [
-        'action' => [Vorkfork\Core\Controllers\AppController::class, 'index'],
+        'action' => [AppController::class, 'index'],
         'methods' => ['GET'],
         'defaults' => [
             'auth' => true
         ]
     ],
-    '/login/{id}' => [
-        'action' => [Vorkfork\Core\Controllers\LoginController::class, 'processLogin'],
-        'methods' => ['POST']
+    '/user' => [
+        'action' => [UserController::class, 'getUser'],
+        'methods' => ['GET'],
+        'defaults' => [
+            'auth' => true
+        ]
     ],
     '/login' => [
-        'action' => [Vorkfork\Core\Controllers\LoginController::class, 'getLogin'],
+        'action' => [LoginController::class, 'getLogin'],
         'methods' => ['GET'],
         'defaults' => [
             'title' => 'Default title'
         ]
     ],
+    '/login/check' => [
+        'action' => [LoginController::class, 'checkUserIsAuthenticated'],
+        'methods' => ['GET'],
+    ],
     '/locales' => [
-        'action' => [Vorkfork\Core\Controllers\LocaleController::class, 'getLocaleList'],
+        'action' => [LocaleController::class, 'getLocaleList'],
         'methods' => ['GET'],
         'defaults' => [
             'public' => true
         ]
     ],
     '/locales/{lang}' => [
-        'action' => [Vorkfork\Core\Controllers\LocaleController::class, 'getTranslation'],
+        'action' => [LocaleController::class, 'getTranslation'],
         'methods' => ['GET'],
         'defaults' => [
             'public' => true
         ]
     ],
     '/install/{step}' => [
-        'action' => [Vorkfork\Core\Controllers\InstallController::class, 'install'],
+        'action' => [InstallController::class, 'install'],
         'methods' => ['GET', 'POST'],
         'defaults' => [
             'step' => 0,

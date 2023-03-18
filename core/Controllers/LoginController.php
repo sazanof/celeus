@@ -3,10 +3,10 @@
 namespace Vorkfork\Core\Controllers;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use Vorkfork\Auth\Auth;
 
 class LoginController extends Controller
 {
@@ -26,5 +26,13 @@ class LoginController extends Controller
     public function processLogin(Request $request)
     {
         return 'post login';
+    }
+
+    /**
+     * @return bool
+     */
+    public function checkUserIsAuthenticated(): bool
+    {
+        return Auth::isAuthenticated();
     }
 }

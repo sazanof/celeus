@@ -4,38 +4,45 @@
 @import "@vueform/multiselect/themes/default.css";
 
 body, input, button, select, textarea {
-	font-family: var(--font-face);
-	font-size:var(--font-size);
-	font-weight: normal;
-	color: var(--color-text);
-	border-radius: var(--border-radius-big);
+  font-family: var(--font-face);
+  font-size: var(--font-size);
+  font-weight: normal;
+  color: var(--color-text);
+  border-radius: var(--border-radius-big);
 }
+
 .multiselect.is-active {
-	box-shadow: none;
+  box-shadow: none;
 }
 
 .multiselect-option.is-selected.is-pointed, .multiselect-option.is-selected {
-	background: var(--color-primary);
+  background: var(--color-primary);
 }
-.multiselect-options {
-	border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
 
-	.multiselect-option:last-child {
-		border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
-	}
+.multiselect-options {
+  border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
+
+  .multiselect-option:last-child {
+    border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
+  }
 }
+
 .multiselect-dropdown {
-	overflow: auto;
-	border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
+  overflow: auto;
+  border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
 }
 
 div {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .form-group {
-	display:block;
-	margin-top:10px
+  display: block;
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 
