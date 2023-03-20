@@ -1,4 +1,3 @@
-const Dotenv = require('dotenv-webpack')
 require('dotenv').config()
 const webpack = require('webpack')
 const path = require('path')

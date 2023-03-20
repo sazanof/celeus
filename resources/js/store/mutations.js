@@ -1,10 +1,14 @@
 export default {
+
+    getMenu(state) {
+        return state.menu
+    },
     setLocales(state, locales) {
         state.locales = locales
     },
 
-    setAuthenticated(state) {
-        state.authenticated = state?.user?.authenticated
+    setAuthenticated(state, authenticated) {
+        state.authenticated = authenticated
     },
 
     setUser(state, user) {

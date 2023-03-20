@@ -1,5 +1,9 @@
 import axios from 'axios'
-//axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
+import { getToken, setToken } from '../CSRFToken'
+
+axios.defaults.headers.post['X-CSRF-TOKEN'] = getToken()
+axios.defaults.headers.common['X-AJAX-CALL'] = true
+
 //TODO CSRF Protection
 export default {
     async getLocales({ commit, state }) {
@@ -21,8 +25,10 @@ export default {
     },
 
     async logIn({ commit, state }, credentials) {
-        const username = credentials.username
-        const password = credentials.password
-        console.log(username, password)
+        return await axios.post('/login/process', credentials).then(res => {
+            if (res.data !== undefined && res.data !== null) {
+                commit('setAuthenticated', res.data.username === credentials.username)
+            }
+        })
     }
 }

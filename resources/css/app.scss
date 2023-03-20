@@ -3,6 +3,12 @@
 
 @import "@vueform/multiselect/themes/default.css";
 
+html, body {
+  padding: 0;
+  margin: 0;
+  background: var(--color-primary);
+}
+
 body, input, button, select, textarea {
   font-family: var(--font-face);
   font-size: var(--font-size);

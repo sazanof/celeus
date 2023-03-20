@@ -13,6 +13,8 @@ class Repository extends EntityRepository
     protected string $table;
     protected string $as;
 
+    protected array $selectable = [];
+
     public function __construct(EntityManagerInterface $em, ClassMetadata $class)
     {
         parent::__construct($em, $class);
@@ -21,19 +23,20 @@ class Repository extends EntityRepository
         $this->as = $this->table[0];
     }
 
-    protected function addFrom(){
+    protected function addFrom()
+    {
         $this->_qb->from($this->_class->name, $this->as);
     }
 
     public function select(array $fields = null): static
     {
         $this->addFrom();
-        if(is_null($fields)){
+        if (is_null($fields)) {
             $this->_qb->select($this->as);
         } else {
             $i = 0;
-            foreach ($fields as $field){
-                if(!str_starts_with($this->as, $field) . '.'){
+            foreach ($fields as $field) {
+                if (!str_starts_with($this->as, $field) . '.') {
                     $fields[$i] = $this->as . '.' . $field;
                 }
                 $i++;
@@ -53,7 +56,8 @@ class Repository extends EntityRepository
         return $this->_qb->getQuery()->getResult();
     }
 
-    public static function __callStatic($name, $arguments){
+    public static function __callStatic($name, $arguments)
+    {
         dd($name, $arguments);
     }
 }

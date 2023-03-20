@@ -14,13 +14,20 @@ use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Contracts\EventDispatcher\Event;
 use Vorkfork\Application\ApplicationUtilities;
+use Vorkfork\Application\Session;
+use Vorkfork\Auth\Auth;
 use Vorkfork\Controller\IController;
 use Vorkfork\Core\Templates\TemplateRenderer;
 use Vorkfork\Database\Database;
+use Vorkfork\Database\Entity;
+use Vorkfork\DTO\BaseDto;
+use Vorkfork\DTO\UserDto;
 use Vorkfork\File\File;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
+use Vorkfork\Response\TokenMismatchResponse;
+use Vorkfork\Security\CSRFToken;
 
 class Controller implements IController
 {
@@ -31,6 +38,7 @@ class Controller implements IController
     protected EventDispatcher $dispatcher;
     protected ParameterBag $attributes;
     protected string $title;
+    protected ?BaseDto $user = null;
     protected array $data = [];
 
     protected bool $useTemplateRenderer = false;
@@ -47,14 +55,37 @@ class Controller implements IController
         /**
          * Listen to kernel.* events
          */
+        $this->dispatcher->addListener(KernelEvents::FINISH_REQUEST, function (FinishRequestEvent $event) {
+            $request = $event->getRequest();
+            $method = $request->getMethod();
+
+            if ($method === Request::METHOD_POST || $method === Request::METHOD_PUT) {
+                $err = true;
+                $token = $request->headers->get('x-csrf-token');
+                if (CSRFToken::verify($token)) {
+                    $err = false;
+                }
+                if ($err) {
+                    $r = new TokenMismatchResponse();
+                    $r->send();
+                    $event->stopPropagation();
+                }
+            }
+        });
         $this->dispatcher->addListener(KernelEvents::VIEW, function (ViewEvent $event) {
             $controllerResult = $event->getControllerResult();
             if (is_string($controllerResult)) {
                 $event->setResponse(new Response($controllerResult));
             } elseif (is_array($controllerResult) || is_object($controllerResult)) {
-                $event->setResponse(new JsonResponse($controllerResult));
+                if ($controllerResult instanceof Entity) {
+                    $event->setResponse(new Response($controllerResult->toJSON()));
+                } else {
+                    $event->setResponse(new JsonResponse($controllerResult));
+                }
             } elseif (is_bool($controllerResult)) {
                 $event->setResponse(new JsonResponse(['success' => $controllerResult]));
+            } elseif (is_null($controllerResult)) {
+                $event->setResponse(new Response());
             }
         });
         $this->dispatcher->addListener(KernelEvents::CONTROLLER, function (ControllerEvent $event) {
@@ -62,8 +93,16 @@ class Controller implements IController
             $this->title = $this->attributes->get('title') ?? '';
             $this->data['title'] = $this->title;
             $this->data['needAuth'] = $this->needAuth();
+            $this->data['isAuthenticated'] = Auth::isAuthenticated();
             $this->data['host'] = env('APP_HOST', $event->getRequest()->getHost());
             $this->data['scheme'] = env('APP_SCHEME', $event->getRequest()->getScheme());
+            $request = $event->getRequest();
+            if ($request->getMethod() === Request::METHOD_GET && is_null($request->headers->get('x-ajax-call'))) {
+                $token = CSRFToken::generate();
+            } else {
+                $token = CSRFToken::getToken();
+            }
+            $this->data['token'] = $token;
         });
         $this->dispatcher->addListener(KernelEvents::EXCEPTION, function (ExceptionEvent $event) {
             dd($event);

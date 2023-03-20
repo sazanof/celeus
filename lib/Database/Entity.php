@@ -4,6 +4,8 @@ namespace Vorkfork\Database;
 
 use Vorkfork\Core\Exceptions\EntityAlreadyExistsException;
 use Vorkfork\Core\Repositories\Repository;
+use Vorkfork\DTO\BaseDto;
+use Vorkfork\DTO\UserDto;
 use Vorkfork\Serializer\JsonSerializer;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
@@ -59,7 +61,7 @@ class Entity implements IEntity
 
     public static function get(): ?Entity
     {
-        if(is_null(self::$instance) || self::$instance->className !== get_class(new static())){
+        if (is_null(self::$instance) || self::$instance->className !== get_class(new static())) {
             return new static();
         }
         return self::$instance;
@@ -77,7 +79,6 @@ class Entity implements IEntity
         $class->fromArray($args[0], $class->fillable);
         return $class;
     }
-
 
 
     /**
@@ -120,8 +121,7 @@ class Entity implements IEntity
             $this->connection->executeQuery($q);
             $this->connection->executeQuery('SET FOREIGN_KEY_CHECKS=1');
             $this->connection->commit();
-        }
-        catch (\Exception) {
+        } catch (\Exception) {
             $this->em->rollback();
         }
     }
@@ -149,6 +149,16 @@ class Entity implements IEntity
     public function toJSON(): string
     {
         return JsonSerializer::serializeStatic($this);
+    }
+
+    public function toDto(string $dtoClass): BaseDto
+    {
+        return JsonSerializer::deserializeStatic($this->toJSON(), $dtoClass);
+    }
+
+    public function toDtoArray(string $class): BaseDto
+    {
+        return JsonSerializer::deserializeStatic($this->toJSON(), $class);
     }
 
     /**
@@ -184,7 +194,7 @@ class Entity implements IEntity
     {
         $args = func_get_args();
         $class = self::initClass($args);
-        if(!is_null($class->em)){
+        if (!is_null($class->em)) {
             try {
                 $class->em->persist($class);
                 $class->em->flush();
@@ -202,7 +212,7 @@ class Entity implements IEntity
 
     /**
      * @inheritDoc
-    */
+     */
     public function update(array $arguments): static
     {
         $this->className = get_class($this);
@@ -226,10 +236,11 @@ class Entity implements IEntity
      * @throws ORMException
      * @throws MappingException
      */
-    public static function insertBulk(array $data, $batchSize = self::BATCH_SIZE){
+    public static function insertBulk(array $data, $batchSize = self::BATCH_SIZE)
+    {
         $i = 1;
         $em = Database::getInstance()->getEntityManager();
-        foreach ($data as $item){
+        foreach ($data as $item) {
             $class = self::initClass([$item]);
             $class->em->persist($class);
             if (($i % $batchSize) === 0) {
@@ -241,7 +252,8 @@ class Entity implements IEntity
         $em->clear();
     }
 
-    public function getFillable(){
+    public function getFillable()
+    {
         return $this->fillable;
     }
 }

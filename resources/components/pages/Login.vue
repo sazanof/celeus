@@ -67,6 +67,8 @@
                 this.$store.dispatch('logIn', {
                     username: this.username,
                     password: this.password
+                }).then(() => {
+                    document.location.replace('/')
                 })
             },
             forgotPassword() {

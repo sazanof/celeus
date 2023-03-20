@@ -1,0 +1,13 @@
+{% extends 'app.twig' %}
+{% block app %}
+    {% if isAuthenticated %}
+        <script>
+            var _MENU_ = {{ apps | json_encode | raw }}
+        </script>
+    {% endif %}
+    <div id="app">
+        {% if(needAuth != true) %}
+            All app
+        {% endif %}
+    </div>
+{% endblock %}

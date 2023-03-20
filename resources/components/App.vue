@@ -1,28 +1,42 @@
 <template>
-    <Login v-if="!authenticated" />
+    <div
+        class="container"
+        :class="{visible: visible}"
+        v-if="visible">
+        <Login v-if="!authenticated" />
+        <Page />
+    </div>
 </template>
 
 <script>
     import { useToast } from 'vue-toastification'
     import Login from './pages/Login.vue'
+    import Page from './pages/Page.vue'
 
     const toast = useToast()
 
     export default {
         name: 'App',
         components: {
-            Login
+            Login,
+            Page
         },
         data() {
             return {
-                authenticated: false,
+                visible: false,
+            }
+        },
+        computed: {
+            authenticated() {
+                return this.$store.getters.isAuthenticated
             }
         },
         async beforeMount() {
             await this.$store.dispatch('checkUserIsAuthenticated')
-        },
-        created() {
-            this.authenticated = this.$store.getters['isAuthenticated']
+            setTimeout(() => {
+                this.visible = true
+            }, 200)
+
         }
     }
 </script>

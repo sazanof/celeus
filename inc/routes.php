@@ -32,6 +32,17 @@ return [
             'title' => 'Default title'
         ]
     ],
+    '/login/process' => [
+        'action' => [LoginController::class, 'logIn'],
+        'methods' => ['POST'],
+    ],
+    '/logout' => [
+        'action' => [LoginController::class, 'logOut'],
+        'methods' => ['GET'],
+        'defaults' => [
+            'auth' => true
+        ]
+    ],
     '/login/check' => [
         'action' => [LoginController::class, 'checkUserIsAuthenticated'],
         'methods' => ['GET'],

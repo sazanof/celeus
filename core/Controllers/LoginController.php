@@ -7,6 +7,11 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use Vorkfork\Auth\Auth;
+use Vorkfork\Core\Exceptions\UserNotFoundException;
+use Vorkfork\Core\Models\User;
+use Vorkfork\DTO\UserDto;
+use Vorkfork\Security\Str;
+use Vorkfork\Serializer\JsonSerializer;
 
 class LoginController extends Controller
 {
@@ -23,16 +28,39 @@ class LoginController extends Controller
         return $this->templateRenderer->loadTemplate('/auth/login', $this->data);
     }
 
-    public function processLogin(Request $request)
-    {
-        return 'post login';
-    }
-
     /**
      * @return bool
      */
     public function checkUserIsAuthenticated(): bool
     {
         return Auth::isAuthenticated();
+    }
+
+    /**
+     * @throws UserNotFoundException
+     */
+    public function logIn(Request $request): null|UserDto
+    {
+        $credentials = $request->toArray();
+        $username = $credentials['username'];
+        $password = $credentials['password'];
+        if (Str::containsLetters($username)) {
+            Auth::login($username, $password);
+            $user = Auth::user();
+            $userDto = $user->toDto(UserDto::class);
+            //$userDto->set('groups', [1, 2, 3]);
+            //dd($userDto);
+            return $userDto;
+        }
+        //$username = $credentials
+        return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function logOut()
+    {
+        return Auth::logout();
     }
 }

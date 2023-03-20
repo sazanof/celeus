@@ -1,7 +1,8 @@
 export default {
     locales: null,
+    menu: null,
     currentLocale: null,
-    authenticated: false,
+    authenticated: null,
     user: null,
     acl: null
 }

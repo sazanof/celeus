@@ -31,16 +31,23 @@ class Auth implements IAuthenticate
     /**
      * @throws UserNotFoundException
      */
-    public static function login(string $username, string $password, bool $remember = false): bool
+    public static function login(string $username, string $password, bool $remember = false): ?User
     {
         if (self::check($username, $password)) {
-
+            self::$user = Auth::user();
+            Session::set(self::SESSION_KEY, self::$user->getId());
+            return self::$user;
         }
+        return null;
     }
 
-    public static function logout()
+    /**
+     * @return bool
+     */
+    public static function logout(): bool
     {
-        // TODO: Implement logout() method.
+        Session::delete(self::SESSION_KEY);
+        return true;
     }
 
     /**
@@ -56,7 +63,10 @@ class Auth implements IAuthenticate
         if (is_null($user)) {
             throw new UserNotFoundException();
         }
-        return PasswordHasher::validate($user->getPassword(), $password);
+        if (PasswordHasher::validate($user->getPassword(), $password)) {
+            self::$user = $user;
+            return true;
+        }
     }
 
     /**
