@@ -1,7 +1,7 @@
 :root {
   --border-width: 2px;
   --border-radius: 4px;
-  --border-radius-big: 22px;
+  --border-radius-big: 44px;
   --padding-box: 20px;
   --border-color: #ccc;
   --color-text: #222;
@@ -27,14 +27,16 @@
   --font-size: 16px;
   --font-size-small: 14px;
   --font-face: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif, 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --header-height: 80px;
   --transition-duration: 0.5s;
   --transition-duration-mini: 0.3s;
   --ms-radius: var(--border-radius-big);
-  --ms-border-width:var(--border-width);
-  --ms-dropdown-border-width:var(--border-width);
-  --ms-dropdown-border-color:var(--border-color);
-  --ms-border-color:var(--border-color);
+  --ms-border-width: var(--border-width);
+  --ms-dropdown-border-width: var(--border-width);
+  --ms-dropdown-border-color: var(--border-color);
+  --ms-border-color: var(--border-color);
   --ms-font-size: var(--font-size);
   --ms-line-height: inherit;
-  --ms-py:5.5px;
+  --ms-py: 5.5px;
+  --sidebar-width: 100px
 }

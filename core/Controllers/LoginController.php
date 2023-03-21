@@ -29,11 +29,11 @@ class LoginController extends Controller
     }
 
     /**
-     * @return bool
+     * @return User|null
      */
-    public function checkUserIsAuthenticated(): bool
+    public function checkUserIsAuthenticated(): User|null
     {
-        return Auth::isAuthenticated();
+        return Auth::isAuthenticated() ? Auth::user() : null;
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace Vorkfork\Core\Controllers;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class LocaleController extends Controller
 {
     protected bool $useTemplateRenderer = false;
@@ -11,9 +13,22 @@ class LocaleController extends Controller
         parent::__construct();
     }
 
-    public function getTranslation($lang)
+    /**
+     * Gets main file translation with app translation
+     * @param string $lang
+     * @return false|string
+     */
+    public function getTranslation(string $lang)
     {
         return $this->filesystem->get('/resources/locales/' . $lang . '.json');
+    }
+
+    public function getApplicationTranslation(string $lang, string $app = null)
+    {
+        $ar = json_decode($this->filesystem->get('/apps/' . $app . '/resources/locales/' . $lang . '.json'), true);
+        return [
+            $app => $ar
+        ];
     }
 
     public function getLocaleList(): array

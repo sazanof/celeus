@@ -32,6 +32,7 @@
             }
         },
         async beforeMount() {
+            this.$store.state.currentLocale = this.$i18n.locale
             await this.$store.dispatch('checkUserIsAuthenticated')
             setTimeout(() => {
                 this.visible = true

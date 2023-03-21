@@ -26,7 +26,7 @@
         props: {
             icon: {
                 type: Boolean,
-                default: true
+                default: false
             },
             value: {
                 type: String,

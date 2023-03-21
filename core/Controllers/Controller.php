@@ -18,6 +18,7 @@ use Vorkfork\Application\Session;
 use Vorkfork\Auth\Auth;
 use Vorkfork\Controller\IController;
 use Vorkfork\Core\Templates\TemplateRenderer;
+use Vorkfork\Core\Translator\Locale;
 use Vorkfork\Database\Database;
 use Vorkfork\Database\Entity;
 use Vorkfork\DTO\BaseDto;
@@ -58,7 +59,6 @@ class Controller implements IController
         $this->dispatcher->addListener(KernelEvents::FINISH_REQUEST, function (FinishRequestEvent $event) {
             $request = $event->getRequest();
             $method = $request->getMethod();
-
             if ($method === Request::METHOD_POST || $method === Request::METHOD_PUT) {
                 $err = true;
                 $token = $request->headers->get('x-csrf-token');
@@ -93,7 +93,10 @@ class Controller implements IController
             $this->title = $this->attributes->get('title') ?? '';
             $this->data['title'] = $this->title;
             $this->data['needAuth'] = $this->needAuth();
-            $this->data['isAuthenticated'] = Auth::isAuthenticated();
+            $this->data['locale'] = Locale::getDefaultLocale();
+            if ($this->needAuth()) {
+                $this->data['isAuthenticated'] = Auth::isAuthenticated();
+            }
             $this->data['host'] = env('APP_HOST', $event->getRequest()->getHost());
             $this->data['scheme'] = env('APP_SCHEME', $event->getRequest()->getScheme());
             $request = $event->getRequest();

@@ -27,7 +27,8 @@ class ApplicationUtilities
     protected MainRouter $router;
     protected ?array $applicationsList;
 
-    public function __construct(){
+    public function __construct()
+    {
         $Vorkfork_Version = '';
         $Vorkfork_VersionArray = [];
         if (php_sapi_name() == "cli") {
@@ -37,20 +38,24 @@ class ApplicationUtilities
         }
         $this->version = $Vorkfork_Version;
         $this->versionArray = $Vorkfork_VersionArray;
+
         $this->database = Database::getInstance();
 
         self::$instance = $this;
     }
 
-    public function setDispatcher(EventDispatcher $dispatcher){
+    public function setDispatcher(EventDispatcher $dispatcher)
+    {
         $this->dispatcher = $dispatcher;
     }
 
-    public function getDispatcher(){
+    public function getDispatcher()
+    {
         return $this->dispatcher;
     }
 
-    public function setRouter(MainRouter $router){
+    public function setRouter(MainRouter $router)
+    {
         $this->router = $router;
     }
 
@@ -99,7 +104,7 @@ class ApplicationUtilities
             'app' => is_null($key) ? Application::$configKey : $key,
             'key' => 'version'
         ]);
-        if(is_null($dbVersion)){
+        if (is_null($dbVersion)) {
             throw new WrongConfigurationException();
         }
         return $dbVersion;
@@ -109,30 +114,16 @@ class ApplicationUtilities
      * @throws \Throwable
      * @throws EntityManagerNotDefinedException
      */
-    public function checkVersion(){
-        if(is_null($this->entityManager)){
+    public function checkVersion()
+    {
+        if (is_null($this->entityManager)) {
             throw new EntityManagerNotDefinedException();
         }
-        Database::getInstance()->getEntityManager()->wrapInTransaction(function (){
+        Database::getInstance()->getEntityManager()->wrapInTransaction(function () {
             $v = $this->getDatabaseAppVersion();
             //TODO compare version in file and in database
             // if not equals = UPGRADE PROCESS
         });
-    }
-
-    public function getDefaultTimezone(): string
-    {
-        //TODO check config
-        return \IntlTimeZone::createDefault()->toDateTimeZone()->getName();
-    }
-
-    public function setDefaultTimezone(): string
-    {
-        return \IntlTimeZone::createDefault()->toDateTimeZone()->getName();
-    }
-
-    public function getDefaultLocale(){
-        return env('DEFAULT_LOCALE', 'en');
     }
 
     /**
@@ -147,10 +138,10 @@ class ApplicationUtilities
             ->in($path)
             ->directories()
             ->depth(0);
-        foreach ($apps as $file){
+        foreach ($apps as $file) {
             $name = $file->getFilenameWithoutExtension();
             $path = $file->getPath();
-            $this->applicationsList[] = compact('name','path');
+            $this->applicationsList[] = compact('name', 'path');
             $this->registerAutoloadMap($file);
             $this->registerRoutes($file);
             $this->registerChildApplication($name);
@@ -188,7 +179,7 @@ class ApplicationUtilities
     public function registerAutoloadMap(SplFileInfo $file): void
     {
         $path = Path::normalize($file->getRealPath() . DIRECTORY_SEPARATOR . 'vendor/autoload.php');
-        if(file_exists($path)){
+        if (file_exists($path)) {
             require_once $path;
         } else {
             throw new AutoloadMapNotFoundException('Can not autoload class map on path ' . $path);

@@ -11,9 +11,12 @@ export default {
         commit('setLocales', locales.data)
     },
 
-    async checkUserIsAuthenticated({ commit }) {
+    async checkUserIsAuthenticated({ commit, state }) {
         return await axios.get('/login/check').then(res => {
-            commit('setAuthenticated', res.data.success)
+            commit('setAuthenticated', res.data.success === undefined && res.data.id !== undefined)
+            if (state.authenticated) {
+                commit('setUser', res.data)
+            }
         })
     },
 

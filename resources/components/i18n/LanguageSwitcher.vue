@@ -10,6 +10,7 @@
         @change="changeLocale" />
 </template>
 
+
 <script>
     import VfMultiselect from '../elements/VfMultiselect.vue'
 

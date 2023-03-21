@@ -66,10 +66,8 @@ class InstallController extends Controller
             case 4:
                 return $this->installApp($request);
             default:
-                return $this->templateRenderer->loadTemplate('/install/install', [
-                    'host' => env('APP_HOST', $request->getHost()),
-                    'scheme' => env('APP_SCHEME', $request->getScheme())
-                ]);
+                $this->data['title'] = 'Install';
+                return $this->templateRenderer->loadTemplate('/install/install', $this->data);
         }
     }
 
@@ -148,7 +146,7 @@ class InstallController extends Controller
 
         $this->admin = User::create($admin);
 
-        $this->fillDatabaseAfterInstall();
+        $this->fillDatabaseAfterInstall($request);
 
         $result = [
             'env' => $file instanceof File,
@@ -183,7 +181,7 @@ class InstallController extends Controller
             'APP_MODE' => 'production',
             'APP_WEBPACK_PROXY_HOST' => $request->getScheme() . '://' . $request->getHost() . ':80',
 
-            'DEFAULT_LOCALE' => 'ru',
+            'DEFAULT_LOCALE' => $request->get('locale'),
             'DEFAULT_FALLBACK_LOCALE' => 'en',
 
             'DB_DRIVER' => $connection['driver'],
@@ -226,10 +224,10 @@ class InstallController extends Controller
     /**
      * @throws Throwable
      */
-    private function fillDatabaseAfterInstall(): void
+    private function fillDatabaseAfterInstall(Request $request): void
     {
         $utilities = ApplicationUtilities::getInstance();
-        $event = new FillDatabaseAfterInstallEvent($this->admin, $utilities->getApplicationsList());
+        $event = new FillDatabaseAfterInstallEvent($this->admin, $utilities->getApplicationsList(), $request);
         $utilities->getDispatcher()->dispatch($event, FillDatabaseAfterInstallEvent::NAME);
     }
 }

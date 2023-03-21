@@ -8,7 +8,8 @@ export default {
     routes: [
         {
             path: '/mail',
-            component: Mail,
+            component: Mail
+
         },
     ]
 }

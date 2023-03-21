@@ -43,21 +43,23 @@ class Application
         $this->router = $router;
         $this->filesystem = new File(realpath('../'));
         $this->env = Dotenv::createImmutable(realpath('../'));
+        $errEnv = false;
         try {
             $this->env->load();
         } catch (Exception $e) {
-
+            $errEnv = true;
         };
         $this->utilities = new ApplicationUtilities();
-        try {
-            $this->connection = $this->initDatabaseConnection();
-            $this->entityManager = $this->connection->getEntityManager();
-            if (!is_null($this->entityManager)) {
-                $this->utilities->setEntityManager($this->entityManager);
+        if (!$errEnv) {
+            try {
+                $this->connection = $this->initDatabaseConnection();
+                $this->entityManager = $this->connection->getEntityManager();
+                if (!is_null($this->entityManager)) {
+                    $this->utilities->setEntityManager($this->entityManager);
+                }
+            } catch (\Doctrine\DBAL\Exception $e) {
             }
-        } catch (\Doctrine\DBAL\Exception $e) {
         }
-
         $this->dispatcher = new EventDispatcher();
         $this->utilities->setDispatcher($this->dispatcher);
         $this->router->setDispatcher($this->dispatcher);

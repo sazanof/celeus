@@ -1,5 +1,8 @@
 <?php
+
 namespace Vorkfork\Core\Events;
+
+use Symfony\Component\HttpFoundation\Request;
 use Vorkfork\Application\ApplicationUtilities;
 use Vorkfork\Core\Application;
 use Vorkfork\Core\Models\Config;
@@ -11,12 +14,15 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\Mapping\MappingException;
 use Symfony\Contracts\EventDispatcher\Event;
 use Throwable;
+use Vorkfork\Core\Translator\Locale;
 
-class FillDatabaseAfterInstallEvent extends Event {
+class FillDatabaseAfterInstallEvent extends Event
+{
     public const NAME = 'install.after';
     private ApplicationUtilities $utilities;
     private ?User $admin;
     private ?Group $group;
+    private Request $request;
 
     /**
      * @throws OptimisticLockException
@@ -24,11 +30,12 @@ class FillDatabaseAfterInstallEvent extends Event {
      * @throws ORMException
      * @throws Throwable
      */
-    public function __construct(User $admin, array $applicationsList)
+    public function __construct(User $admin, array $applicationsList, Request $request)
     {
         $this->utilities = ApplicationUtilities::getInstance();
+        $this->request = $request;
         $this->admin = $admin;
-        $this->utilities->getEntityManager()->wrapInTransaction(function (){
+        $this->utilities->getEntityManager()->wrapInTransaction(function () {
             $this->fillConfig();
             $this->fillCorePermissions();
             $this->createAdminGroup();
@@ -44,7 +51,8 @@ class FillDatabaseAfterInstallEvent extends Event {
         }*/
     }
 
-    public function getAdmin(){
+    public function getAdmin()
+    {
         return $this->admin;
     }
 
@@ -58,7 +66,8 @@ class FillDatabaseAfterInstallEvent extends Event {
      * @throws MappingException
      * @throws ORMException
      */
-    private function fillConfig(){
+    private function fillConfig()
+    {
         Config::insertBulk([
             [
                 'app' => Application::$configKey,
@@ -68,7 +77,12 @@ class FillDatabaseAfterInstallEvent extends Event {
             [
                 'app' => Application::$configKey,
                 'key' => 'timezone',
-                'value' => $this->utilities->getDefaultTimezone()
+                'value' => Locale::getDefaultTimezone()
+            ],
+            [
+                'app' => Application::$configKey,
+                'key' => 'locale',
+                'value' => $this->request->get('locale')
             ]
         ]);
     }
@@ -76,16 +90,18 @@ class FillDatabaseAfterInstallEvent extends Event {
     /**
      * @throws MappingException
      */
-    private function fillCorePermissions(){
+    private function fillCorePermissions()
+    {
         Permissions::repository()->insertDefaultPermissions();
     }
 
     /**
      * @throws MappingException
      */
-    private function createAdminGroup(){
+    private function createAdminGroup()
+    {
         $this->group = Group::create([
-            'name'=>'Administrators'
+            'name' => 'Administrators'
         ]);
     }
 
@@ -98,7 +114,8 @@ class FillDatabaseAfterInstallEvent extends Event {
         $a->setGroups([$this->group]);
     }
 
-    private function setPermissionsToAdminGroup(){
+    private function setPermissionsToAdminGroup()
+    {
         $permissions = Permissions::repository()->findAll();
         $this->group->setPermissions($permissions);
     }

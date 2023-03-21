@@ -1,16 +1,16 @@
 <?php
 
-use Vorkfork\Apps\Mail\Controllers\MailController;
+use Vorkfork\Apps\Mail\Controllers\CalendarController;
 
-if(!defined('INC_MODE')){
+if (!defined('INC_MODE')) {
     exit;
 }
 return [
-    '/mail'=>[
-        'action'=> [MailController::class, 'index'],
-        'methods'=> ['GET'],
-        'defaults'=>[
-            'public'=>true
+    '/mail' => [
+        'action' => [CalendarController::class, 'index'],
+        'methods' => ['GET'],
+        'defaults' => [
+            'public' => true
         ]
     ],
 ];

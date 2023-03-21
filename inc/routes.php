@@ -61,6 +61,13 @@ return [
             'public' => true
         ]
     ],
+    '/locales/{lang}/{app}' => [
+        'action' => [LocaleController::class, 'getApplicationTranslation'],
+        'methods' => ['GET'],
+        'defaults' => [
+            'auth' => true
+        ]
+    ],
     '/install/{step}' => [
         'action' => [InstallController::class, 'install'],
         'methods' => ['GET', 'POST'],

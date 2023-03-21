@@ -456,6 +456,7 @@
 
         methods: {
             onLocaleChange(locale) {
+
                 console.log(`Locale changed to ${locale}`)
             },
             toStep(step) {
