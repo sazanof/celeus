@@ -1,0 +1,100 @@
+<template>
+    <Popper :arrow="true">
+        <div
+            class="page-helper"
+            @click="opened = !opened">
+            <div class="helper-text">
+                {{ timestamp }}
+            </div>
+            <div class="helper-icon">
+                <ChevronUp
+                    :size="20"
+                    v-if="opened" />
+                <ChevronDown
+                    :size="20"
+                    v-else />
+            </div>
+        </div>
+        <template #content>
+            This is long content of popper.
+        </template>
+    </Popper>
+</template>
+
+<script>
+    import Popper from 'vue3-popper'
+    import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
+    import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
+
+    export default {
+        name: 'PageCenterHelper',
+        components: {
+            Popper,
+            ChevronDown,
+            ChevronUp
+        },
+        data() {
+            return {
+                opened: false,
+                timestamp: null
+            }
+        },
+        created() {
+            this.getNow()
+            setInterval(() => {
+                this.getNow()
+            }, 1000)
+        },
+        methods: {
+            getNow: function () {
+                this.timestamp = this.$moment.format('ddd, DD MMMM HH:mm')
+            }
+        }
+    }
+</script>
+
+<style lang="scss" scoped>
+.page-helper {
+  --animate-duration: var(--transition-duration-mini);
+  padding: 6px 10px 6px 16px;
+  border-radius: var(--border-radius-big);
+  color: var(--color-white);
+  background: var(--color-white-opacity10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  cursor: pointer;
+
+  .helper-icon {
+	margin-left: 6px;
+	margin-top: 2px;
+  }
+
+  .helper-content {
+	min-height: 200px;
+	padding: var(--padding-box);
+	border-radius: var(--border-radius-big);
+	width: 400px;
+	position: absolute;
+	top: 50px;
+	margin-left: -200px;
+	left: 50%;
+	color: var(--color-text);
+	background: var(--color-white);
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+	&:before {
+	  content: '';
+	  border: 10px solid transparent;
+	  border-bottom: 10px solid var(--color-white);
+	  display: block;
+	  width: 0;
+	  height: 0;
+	  position: absolute;
+	  top: -20px;
+	  left: 190px
+	}
+  }
+}
+</style>

@@ -2,11 +2,9 @@
     <div class="page">
         <div class="page-header">
             <Logo />
-            <div class="page-helper">
-                helper
-            </div>
+            <PageCenterHelper />
             <div class="user-info">
-                user-info
+                <PageUserInfo />
             </div>
         </div>
 
@@ -22,6 +20,8 @@
 </template>
 
 <script>
+    import PageUserInfo from '../chunks/PageUserInfo.vue'
+    import PageCenterHelper from '../chunks/PageCenterHelper.vue'
     import Logo from '../chunks/Logo.vue'
     import PageMenu from '../chunks/PageMenu.vue'
 
@@ -29,7 +29,9 @@
         name: 'Page',
         components: {
             Logo,
-            PageMenu
+            PageMenu,
+            PageCenterHelper,
+            PageUserInfo
         },
     }
 </script>
@@ -39,29 +41,29 @@
   padding: 0 var(--padding-box) 0 0;
 
   .page-header {
-    height: var(--header-height);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
+	height: var(--header-height);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 0;
   }
 
   .page-wrapper {
-    display: flex;
-    flex-wrap: wrap
+	display: flex;
+	flex-wrap: wrap
   }
 
   .page-sidebar {
-    width: var(--sidebar-width);
-    height: calc(100vh - var(--header-height));
+	width: var(--sidebar-width);
+	height: calc(100vh - var(--header-height));
   }
 
   .page-content {
-    width: calc(100% - var(--sidebar-width));
-    background: var(--color-white);
-    border-radius: var(--border-radius-big) var(--border-radius-big) 0 0;
-    padding: var(--padding-box);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+	width: calc(100% - var(--sidebar-width));
+	background: var(--color-white);
+	border-radius: var(--border-radius-big) var(--border-radius-big) 0 0;
+	padding: var(--padding-box);
+	box-shadow: var(--box-shadow);
   }
 }
 </style>

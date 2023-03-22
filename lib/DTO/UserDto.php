@@ -16,5 +16,7 @@ class UserDto extends BaseDto
 
     public string $lastname;
 
+    public string $photo;
+
     //public array $groups;
 }

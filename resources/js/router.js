@@ -7,7 +7,6 @@ function generateRoutes() {
     let routes = []
     let menu = []
     if (typeof window._MENU_ !== 'undefined') {
-        console.log(_MENU_)
         _MENU_.forEach((el) => {
             const appInfo = require(`../../apps/${el}/inc/${el}.js`)
             routes = routes.concat(appInfo.default.routes)
@@ -28,14 +27,18 @@ export const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-    console.log(i18n.global)
     const l = store.state.currentLocale
     const appName = to.path.replace('/', '')
+    if (typeof window._MENU_ === 'undefined') {
+        return next()
+    }
     if (_MENU_.indexOf(to.path.replace('/', '')) !== -1) {
         const appMessages = await axios.get(`locales/${l}/${appName}`).then(res => {
             return res.data
         })
-        //console.log(i18n.global.messages)
+        if (to.meta.title !== undefined) {
+            document.title = to.meta.title
+        }
         i18n.global.mergeLocaleMessage(l, appMessages)
     } else {
         next(`/${_MENU_[0]}`)

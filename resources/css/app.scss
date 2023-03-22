@@ -1,6 +1,5 @@
 @import 'variables.scss';
 @import "animate.css";
-
 @import "@vueform/multiselect/themes/default.css";
 
 html, body {
@@ -29,7 +28,7 @@ body, input, button, select, textarea {
   border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
 
   .multiselect-option:last-child {
-    border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
+	border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
   }
 }
 
@@ -47,7 +46,7 @@ div {
   margin-bottom: 16px;
 
   &:last-child {
-    margin-bottom: 0;
+	margin-bottom: 0;
   }
 }
 
