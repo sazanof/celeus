@@ -4,7 +4,9 @@
     "watch": "webpack --mode=\"development\" --watch --progress",
     "build": "webpack --mode=\"production\" --progress",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore",
-    "lint:fix": "eslint --ext .js,.vue --ignore-path .gitignore --fix resources"
+    "lint:fix": "eslint --ext .js,.vue --ignore-path .gitignore --fix resources",
+    "sass": "sass --style compressed resources/css/ public/css/",
+    "sass:watch": "sass --watch resources/css/ public/css/"
   },
   "dependencies": {
     "@vue/compiler-sfc": "^3.2.45",

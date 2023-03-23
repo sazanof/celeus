@@ -7,6 +7,7 @@ const ESLintPlugin = require('eslint-webpack-plugin')
 module.exports = {
     target: 'web',
     entry: {
+        login: '/resources/js/login.js',
         main: '/resources/js/main.js',
         install: '/resources/js/install.js'
     },

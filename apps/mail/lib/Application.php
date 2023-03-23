@@ -15,40 +15,41 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Application
 {
-    protected EventDispatcher $dispatcher;
-    protected EntityManager|CustomEntityManager|null $entityManager;
-    private Database $database;
+	protected EventDispatcher $dispatcher;
+	protected EntityManager|CustomEntityManager|null $entityManager;
+	private Database $database;
 
-    /**
-     * @throws MissingMappingDriverImplementation
-     */
-    public function __construct(ApplicationUtilities $utilities)
-    {
-        $this->dispatcher = $utilities->getDispatcher();
-        $this->database = $utilities->getDatabase();
-        $this->entityManager = $this->database->getEntityManager();
-        $this->installApplication();
-    }
+	/**
+	 * @throws MissingMappingDriverImplementation
+	 */
+	public function __construct(ApplicationUtilities $utilities)
+	{
+		$this->dispatcher = $utilities->getDispatcher();
+		$this->database = $utilities->getDatabase();
+		$this->entityManager = $this->database->getEntityManager();
+		$this->installApplication();
+	}
 
-    /**
-     * Install application after
-     * @return void
-     */
-    public function installApplication(): void
-    {
-        $this->dispatcher->addListener(FillDatabaseAfterInstallEvent::NAME, function (FillDatabaseAfterInstallEvent $event) {
-            MailPermissions::insertDefaultMailPermissions();
-            /** @var Group $group */
-            $group = Group::find(($event->getAdminGroup()->getId()));
-            $group->addPermissions(
-                Permissions::repository()
-                    ->select()
-                    ->whereNameLike('mail.%')
-                    ->results()
-            );
-            $group->em()->persist($group);
-            $group->em()->flush($group);
-        });
+	/**
+	 * Install application after
+	 * @return void
+	 */
+	public function installApplication(): void
+	{
+		$this->dispatcher->addListener(FillDatabaseAfterInstallEvent::NAME, function (FillDatabaseAfterInstallEvent $event) {
+			MailPermissions::insertDefaultMailPermissions();
+			/** @var Group $group */
+			$group = Group::find(($event->getAdminGroup()->getId()));
+			$group->addPermissions(
+				Permissions::repository()
+					->select()
+					->whereNameLike('mail.%')
+					->results()
+			);
+			$group->em()->persist($group);
+			$group->em()->flush($group);
+		});
 
-    }
+	}
+
 }

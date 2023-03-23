@@ -14,7 +14,7 @@
   ],
   "require": {
     "symfony/http-kernel": "^6.0",
-    "symfony/translation": "^6.0",
+    "symfony/translation": "^6.2",
     "symfony/routing": "^6.0",
     "twig/twig": "^3.0",
     "ext-curl": "*",
@@ -31,7 +31,8 @@
     "symfony/property-access": "^6.0",
     "symfony/password-hasher": "^6.0",
     "symfony/event-dispatcher": "^6.2",
-    "composer/pcre": "^3.1"
+    "composer/pcre": "^3.1",
+    "ext-fileinfo": "*"
   },
   "autoload": {
     "psr-4": {

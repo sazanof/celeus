@@ -6,7 +6,7 @@
                 size="48" />
             <template #content>
                 <VfList>
-                    <VfListItem>
+                    <VfListItem @click="openSettings">
                         <div class="fullname">
                             {{ fullName }}
                         </div>
@@ -18,7 +18,6 @@
                         <template #icon>
                             <LogoutIcon :size="20" />
                         </template>
-
                         {{ $t('Logout') }}
                     </VfListItem>
                 </VfList>
@@ -29,7 +28,6 @@
 
 <script>
     import LogoutIcon from 'vue-material-design-icons/Logout.vue'
-    import AccountIcon from 'vue-material-design-icons/Account.vue'
     import VfList from '../elements/VfList.vue'
     import VfListItem from '../elements/VfListItem.vue'
     import Popper from 'vue3-popper'
@@ -39,7 +37,6 @@
         name: 'PageUserInfo',
         components: {
             LogoutIcon,
-            AccountIcon,
             VfList,
             VfListItem,
             Popper,
@@ -51,6 +48,11 @@
             },
             fullName() {
                 return this.user !== null ? `${this.user.firstname} ${this.user.lastname}` : 'N/A'
+            }
+        },
+        methods: {
+            openSettings() {
+                document.location.replace('/apps/settings')
             }
         }
     }

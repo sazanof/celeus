@@ -1,7 +1,8 @@
 <template>
     <button
         class="btn"
-        :class="`btn-${type}`">
+        :class="[`btn-${type}`, onlyIcon ? 'icon' : '']">
+        <slot name="icon" />
         <slot />
     </button>
 </template>
@@ -13,6 +14,10 @@
             type: {
                 type: String,
                 default: 'primary'
+            },
+            onlyIcon: {
+                type: Boolean,
+                default: false
             }
         }
     }
@@ -31,22 +36,32 @@
   transition: var(--transition-duration-mini);
 
   &.centered {
-    justify-content: center;
+	justify-content: center;
   }
 
   &.full {
-    width: 100%
+	width: 100%
   }
 
   ::v-deep(.material-design-icon) {
-    margin-right: 6px;
-    position: relative;
-    top: 2px;
+	margin-right: 6px;
+	position: relative;
+	top: 2px;
+  }
+
+  &.icon {
+	padding: 8px;
+	width: 41px;
+	height: 41px;
+
+	::v-deep(.material-design-icon) {
+	  margin-right: 0;
+	}
   }
 
   &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+	opacity: 0.6;
+	cursor: not-allowed;
   }
 }
 
@@ -56,8 +71,8 @@
   border-color: var(--color-primary);
 
   &:hover {
-    background-color: var(--color-primary-dark);
-    border-color: var(--color-primary-dark)
+	background-color: var(--color-primary-dark);
+	border-color: var(--color-primary-dark)
   }
 }
 
@@ -67,8 +82,8 @@
   border-color: var(--color-secondary);
 
   &:hover {
-    background-color: var(--color-secondary-dark);
-    border-color: var(--color-secondary-dark)
+	background-color: var(--color-secondary-dark);
+	border-color: var(--color-secondary-dark)
   }
 }
 
@@ -78,8 +93,8 @@
   border-color: var(--color-green);
 
   &:hover {
-    background-color: var(--color-green-hover);
-    border-color: var(--color-green-hover)
+	background-color: var(--color-green-hover);
+	border-color: var(--color-green-hover)
   }
 }
 
@@ -89,8 +104,8 @@
   border-color: var(--color-orange);
 
   &:hover {
-    background-color: var(--color-orange-hover);
-    border-color: var(--color-orange-hover)
+	background-color: var(--color-orange-hover);
+	border-color: var(--color-orange-hover)
   }
 }
 
@@ -100,8 +115,8 @@
   border-color: var(--color-red);
 
   &:hover {
-    background-color: var(--color-red-hover);
-    border-color: var(--color-red-hover)
+	background-color: var(--color-red-hover);
+	border-color: var(--color-red-hover)
   }
 }
 </style>

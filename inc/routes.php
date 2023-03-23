@@ -8,72 +8,89 @@ use Vorkfork\Core\Controllers\LoginController;
 use Vorkfork\Core\Controllers\UserController;
 
 if (!defined('INC_MODE')) {
-    exit;
+	exit;
 }
 return [
-    '/' => [
-        'action' => [AppController::class, 'index'],
-        'methods' => ['GET'],
-        'defaults' => [
-            'auth' => true
-        ]
-    ],
-    '/user' => [
-        'action' => [UserController::class, 'getUser'],
-        'methods' => ['GET'],
-        'defaults' => [
-            'auth' => true
-        ]
-    ],
-    '/login' => [
-        'action' => [LoginController::class, 'getLogin'],
-        'methods' => ['GET'],
-        'defaults' => [
-            'title' => 'Default title'
-        ]
-    ],
-    '/login/process' => [
-        'action' => [LoginController::class, 'logIn'],
-        'methods' => ['POST'],
-    ],
-    '/logout' => [
-        'action' => [LoginController::class, 'logOut'],
-        'methods' => ['GET'],
-        'defaults' => [
-            'auth' => true
-        ]
-    ],
-    '/login/check' => [
-        'action' => [LoginController::class, 'checkUserIsAuthenticated'],
-        'methods' => ['GET'],
-    ],
-    '/locales' => [
-        'action' => [LocaleController::class, 'getLocaleList'],
-        'methods' => ['GET'],
-        'defaults' => [
-            'public' => true
-        ]
-    ],
-    '/locales/{lang}' => [
-        'action' => [LocaleController::class, 'getTranslation'],
-        'methods' => ['GET'],
-        'defaults' => [
-            'public' => true
-        ]
-    ],
-    '/locales/{lang}/{app}' => [
-        'action' => [LocaleController::class, 'getApplicationTranslation'],
-        'methods' => ['GET'],
-        'defaults' => [
-            'auth' => true
-        ]
-    ],
-    '/install/{step}' => [
-        'action' => [InstallController::class, 'install'],
-        'methods' => ['GET', 'POST'],
-        'defaults' => [
-            'step' => 0,
-            'public' => true
-        ]
-    ],
+	'/' => [
+		'action' => [AppController::class, 'index'],
+		'methods' => ['GET'],
+		'defaults' => [
+			'auth' => true
+		]
+	],
+	'/user' => [
+		'action' => [UserController::class, 'getUser'],
+		'methods' => ['GET'],
+		'defaults' => [
+			'auth' => true
+		]
+	],
+	'/login' => [
+		'action' => [LoginController::class, 'getLogin'],
+		'methods' => ['GET'],
+		'defaults' => [
+			'title' => 'Default title'
+		]
+	],
+	'/login/process' => [
+		'action' => [LoginController::class, 'logIn'],
+		'methods' => ['POST'],
+	],
+	'/logout' => [
+		'action' => [LoginController::class, 'logOut'],
+		'methods' => ['GET'],
+		'defaults' => [
+			'auth' => true
+		]
+	],
+	'/login/check' => [
+		'action' => [LoginController::class, 'checkUserIsAuthenticated'],
+		'methods' => ['GET'],
+	],
+	'/locales' => [
+		'action' => [LocaleController::class, 'getLocaleList'],
+		'methods' => ['GET'],
+		'defaults' => [
+			'public' => true
+		]
+	],
+	'/locales/{lang}' => [
+		'action' => [LocaleController::class, 'getTranslation'],
+		'methods' => ['GET'],
+		'defaults' => [
+			'public' => true
+		]
+	],
+	'/locales/{lang}/{app}' => [
+		'action' => [LocaleController::class, 'getApplicationTranslation'],
+		'methods' => ['GET'],
+		'defaults' => [
+			'auth' => true
+		]
+	],
+	'/install/{step}' => [
+		'action' => [InstallController::class, 'install'],
+		'methods' => ['GET', 'POST'],
+		'defaults' => [
+			'step' => 0,
+			'public' => true
+		]
+	],
+	'/apps/{name}' => [
+		'action' => [AppController::class, 'runApp'],
+		'methods' => ['GET', 'POST'],
+		'defaults' => [
+			'auth' => true
+		]
+	],
+	'/files/{path}' => [
+		'action' => [AppController::class, 'fileResponse'],
+		'methods' => ['GET', 'POST'],
+		'defaults' => [
+			'auth' => true
+		],
+		'requirements' => [
+			'path' => '.+',
+		]
+	],
 ];

@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html lang="{{ locale }}">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
 
-    <meta name="theme-color" content="#ffffff">
-    <meta name="csrf-token" content="{{ token }}">
-    <title>{{ title }}</title>
+	<meta name="theme-color" content="#ffffff">
+	<meta name="csrf-token" content="{{ token }}">
+	<title>{{ title }}</title>
+	<link rel="stylesheet" type="text/css" href="/css/app.css">
 </head>
 <body>
 {% block app %}
-    <div id="app"></div>
+	<div id="app"></div>
 {% endblock %}
 {% block scripts %}
-    {% if env('APP_MODE', 'production') == 'production' %}
-        <script type="text/javascript" src="{{ scheme }}://{{ host }}/dist/main.js"></script>
-    {% else %}
-        <script type="text/javascript" src="{{ scheme }}://{{ host }}:8080/main.js"></script>
-    {% endif %}
+	{% if env('APP_MODE', 'production') == 'production' %}
+		<script type="text/javascript" src="{{ scheme }}://{{ host }}/dist/main.js"></script>
+	{% else %}
+		<script type="text/javascript" src="{{ scheme }}://{{ host }}:8080/main.js"></script>
+	{% endif %}
 {% endblock %}
 </body>
 </html>

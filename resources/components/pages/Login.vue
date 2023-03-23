@@ -43,10 +43,13 @@
 </template>
 
 <script>
+    import { useToast } from 'vue-toastification'
     import VfInput from '../elements/VfInput.vue'
     import VfButton from '../elements/VfButton.vue'
     import Account from 'vue-material-design-icons/Account.vue'
     import Key from 'vue-material-design-icons/Key.vue'
+
+    const toast = useToast()
 
     export default {
         name: 'Login',
@@ -63,12 +66,14 @@
             }
         },
         methods: {
-            logIn() {
-                this.$store.dispatch('logIn', {
+            async logIn() {
+                await this.$store.dispatch('logIn', {
                     username: this.username,
                     password: this.password
                 }).then(() => {
                     document.location.replace('/')
+                }).catch(() => {
+                    toast.error(this.$t('Authentication error'))
                 })
             },
             forgotPassword() {
@@ -94,30 +99,30 @@
   flex-direction: column;
 
   img {
-    width: 100%;
-    display: block;
-    margin: 0 auto 28px auto;
+	width: 100%;
+	display: block;
+	margin: 0 auto 28px auto;
   }
 
   .login-form {
-    padding: calc(1.5 * var(--padding-box)) calc(2.5 * var(--padding-box));
-    background: var(--color-white);
-    border-radius: var(--border-radius-big);
-    max-width: 400px;
-    width: 100%;
+	padding: calc(1.5 * var(--padding-box)) calc(2.5 * var(--padding-box));
+	background: var(--color-white);
+	border-radius: var(--border-radius-big);
+	max-width: 400px;
+	width: 100%;
   }
 
   .forgot-password {
-    margin-top: 16px;
+	margin-top: 16px;
 
-    a {
-      color: var(--color-white-opacity50);
-      text-decoration: none;
+	a {
+	  color: var(--color-white-opacity50);
+	  text-decoration: none;
 
-      &:hover {
-        color: var(--color-white)
-      }
-    }
+	  &:hover {
+		color: var(--color-white)
+	  }
+	}
   }
 }
 

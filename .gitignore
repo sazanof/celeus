@@ -33,4 +33,6 @@ dist/
 
 /apps*/*
 /apps/*/node_modules
+!/apps/settings
 !/apps/mail
+!/apps/calendar

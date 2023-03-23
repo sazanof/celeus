@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Vorkfork\Application\ApplicationUtilities;
 use Vorkfork\Auth\Auth;
 use Vorkfork\Core\Exceptions\EntityManagerNotDefinedException;
+use Vorkfork\Core\Translator\Translate;
 use Vorkfork\Database\CustomEntityManager;
 use Vorkfork\Database\Database;
 use Vorkfork\Database\IDatabase;
@@ -26,128 +27,137 @@ use Throwable;
 
 class Application
 {
-    /**
-     * @var IRouter
-     */
-    protected IRouter $router;
-    protected ?IDatabase $connection = null;
-    protected Dotenv $env;
-    protected File $filesystem;
-    protected ?CustomEntityManager $entityManager = null;
-    protected ApplicationUtilities $utilities;
-    public static string $configKey = 'core';
-    private EventDispatcher $dispatcher;
+	/**
+	 * @var IRouter
+	 */
+	protected IRouter $router;
+	protected ?IDatabase $connection = null;
+	protected Dotenv $env;
+	protected File $filesystem;
+	protected ?CustomEntityManager $entityManager = null;
+	protected ApplicationUtilities $utilities;
+	public static string $configKey = 'core';
+	private EventDispatcher $dispatcher;
+	protected Translate $translate;
+	protected static Application|null $instance = null;
 
-    public function __construct(IRouter $router)
-    {
-        $this->router = $router;
-        $this->filesystem = new File(realpath('../'));
-        $this->env = Dotenv::createImmutable(realpath('../'));
-        $errEnv = false;
-        try {
-            $this->env->load();
-        } catch (Exception $e) {
-            $errEnv = true;
-        };
-        $this->utilities = new ApplicationUtilities();
-        if (!$errEnv) {
-            try {
-                $this->connection = $this->initDatabaseConnection();
-                $this->entityManager = $this->connection->getEntityManager();
-                if (!is_null($this->entityManager)) {
-                    $this->utilities->setEntityManager($this->entityManager);
-                }
-            } catch (\Doctrine\DBAL\Exception $e) {
-            }
-        }
-        $this->dispatcher = new EventDispatcher();
-        $this->utilities->setDispatcher($this->dispatcher);
-        $this->router->setDispatcher($this->dispatcher);
-        $this->utilities->setRouter($this->router);
-        $this->utilities->findApps(); // Register applications
-    }
+	public function __construct(IRouter $router)
+	{
+		$this->translate = new Translate();
+		$this->router = $router;
+		$this->filesystem = new File(realpath('../'));
+		$this->env = Dotenv::createImmutable(realpath('../'));
+		$errEnv = false;
+		try {
+			$this->env->load();
+		} catch (Exception $e) {
+			$errEnv = true;
+		};
+		$this->utilities = new ApplicationUtilities();
+		if (!$errEnv) {
+			try {
+				$this->connection = $this->initDatabaseConnection();
+				$this->entityManager = $this->connection->getEntityManager();
+				if (!is_null($this->entityManager)) {
+					$this->utilities->setEntityManager($this->entityManager);
+				}
+			} catch (\Doctrine\DBAL\Exception $e) {
+			}
+		}
+		$this->dispatcher = new EventDispatcher();
+		$this->utilities->setDispatcher($this->dispatcher);
+		$this->router->setDispatcher($this->dispatcher);
+		$this->utilities->setRouter($this->router);
+		$this->utilities->findApps(); // Register applications
+		self::$instance = $this;
+	}
 
-    public function checkUpdates(): void
-    {
-        if (!is_null($this->entityManager)) {
-            try {
-                $this->utilities->checkVersion();
-            } catch (EntityManagerNotDefinedException|Throwable $e) {
-            }
-        }
+	public function checkUpdates(): void
+	{
+		if (!is_null($this->entityManager)) {
+			try {
+				$this->utilities->checkVersion();
+			} catch (EntityManagerNotDefinedException|Throwable $e) {
+			}
+		}
 
-    }
+	}
 
-    /**
-     * @throws Throwable
-     */
-    //TODO add Router redirect to update process...
-    public function isAppInstalled(): bool
-    {
-        return !$this->filesystem->exists('../config/NOT_INSTALLED')
-            && $this->entityManager instanceof CustomEntityManager
-            && $this->utilities->getVersion() === $this->utilities->getDatabaseAppVersion()->value;
-    }
+	/**
+	 * @throws Throwable
+	 */
+	//TODO add Router redirect to update process...
+	public function isAppInstalled(): bool
+	{
+		return !$this->filesystem->exists('../config/NOT_INSTALLED')
+			&& $this->entityManager instanceof CustomEntityManager
+			&& $this->utilities->getVersion() === $this->utilities->getDatabaseAppVersion()->value;
+	}
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
-    private function initDatabaseConnection(): IDatabase
-    {
-        return new Database();
-    }
+	/**
+	 * @throws \Doctrine\DBAL\Exception
+	 */
+	private function initDatabaseConnection(): IDatabase
+	{
+		return new Database();
+	}
 
-    /**
-     * @throws Throwable
-     */
-    public function watch()
-    {
-        $request = Request::createFromGlobals();
-        try {
-            $matcher = $this->router->matchRoute($_SERVER['REQUEST_URI']);
-        } catch (ResourceNotFoundException $exception) {
-            return (new Response($exception->getMessage(), 404, []))->send();
-        } catch (MethodNotAllowedException $exception) {
-            return (new Response($exception->getMessage(), 403, []))->send();
-        }
+	/**
+	 * @throws Throwable
+	 */
+	public function watch()
+	{
+		$request = Request::createFromGlobals();
+		try {
+			$matcher = $this->router->matchRoute($_SERVER['REQUEST_URI']);
+		} catch (ResourceNotFoundException $exception) {
+			return (new Response($exception->getMessage(), 404, []))->send();
+		} catch (MethodNotAllowedException $exception) {
+			return (new Response($exception->getMessage(), 403, []))->send();
+		}
 
 
-        //$dispatcher->addSubscriber(new RouterListener($matcher, new RequestStack()));
+		//$dispatcher->addSubscriber(new RouterListener($matcher, new RequestStack()));
 
-        if (!$this->isAppInstalled() && !$matcher['public']) {
-            return $this->router->redirectTo('/install');
-        } else {
-            if ($this->isAppInstalled() && $matcher['_route'] === '/install/{step}') {
-                return $this->router->redirectTo('/');
-            }
-        }
+		if (!$this->isAppInstalled() && !$matcher['public']) {
+			return $this->router->redirectTo('/install');
+		} else {
+			if ($this->isAppInstalled() && $matcher['_route'] === '/install/{step}') {
+				return $this->router->redirectTo('/');
+			}
+		}
 
-        if (isset($matcher['auth']) && $matcher['auth'] === true) {
-            if (!Auth::isAuthenticated()) {
-                return $this->router->redirectTo('/login');
-            }
-        }
-        $controllerResolver = new ControllerResolver();
-        $argumentResolver = new ArgumentResolver();
-        $request->attributes->add($matcher);
-        $kernel = new HttpKernel(
-            $this->dispatcher,
-            $controllerResolver,
-            new RequestStack(),
-            $argumentResolver);
-        $response = $kernel->handle($request);
-        $response->send();
-        $kernel->terminate($request, $response);
-    }
+		if (isset($matcher['auth']) && $matcher['auth'] === true) {
+			if (!Auth::isAuthenticated()) {
+				return $this->router->redirectTo('/login');
+			}
+		}
+		$controllerResolver = new ControllerResolver();
+		$argumentResolver = new ArgumentResolver();
+		$request->attributes->add($matcher);
+		$kernel = new HttpKernel(
+			$this->dispatcher,
+			$controllerResolver,
+			new RequestStack(),
+			$argumentResolver);
+		$response = $kernel->handle($request);
+		$response->send();
+		$kernel->terminate($request, $response);
+	}
 
-    private static function JsonResponseException(Exception|\Error $exception, $statusCode = 500): void
-    {
-        $response = new JsonResponse([
-            'code' => $exception->getCode(),
-            'message' => $exception->getMessage()
-        ], $statusCode);
-        $response->send();
-    }
+	public static function getTranslator(): ?Translate
+	{
+		return self::$instance?->translate;
+	}
+
+	private static function JsonResponseException(Exception|\Error $exception, $statusCode = 500): void
+	{
+		$response = new JsonResponse([
+			'code' => $exception->getCode(),
+			'message' => $exception->getMessage()
+		], $statusCode);
+		$response->send();
+	}
 
 
 }
