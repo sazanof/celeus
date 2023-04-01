@@ -3,7 +3,10 @@
 namespace Vorkfork\Apps\Settings;
 
 use Vorkfork\Application\ApplicationUtilities;
+use Vorkfork\Apps\Settings\Repositories\SettingsRepository;
 use Vorkfork\Core\Events\FillDatabaseAfterInstallEvent;
+use Vorkfork\Core\Models\Group;
+use Vorkfork\Core\Models\Permissions;
 use Vorkfork\Database\CustomEntityManager;
 use Vorkfork\Database\Database;
 use Doctrine\ORM\EntityManager;
@@ -34,7 +37,22 @@ class Application
 	public function installApplication(): void
 	{
 		$this->dispatcher->addListener(FillDatabaseAfterInstallEvent::NAME, function (FillDatabaseAfterInstallEvent $event) {
-
+			SettingsRepository::insertDefaultSettingsPermissions();
+			/** @var Group $group */
+			$group = Group::find(($event->getAdminGroup()->getId()));
+			try {
+				$group->addPermissions(
+					Permissions::repository()
+						->select()
+						->whereNameLike('settings.%')
+						->results()
+				);
+				$group->em()->persist($group);
+				$group->em()->flush($group);
+			} catch (\Exception $e) {
+				dd($e);
+				ApplicationUtilities::errorResponse($e->getMessage())->send();
+			}
 		});
 
 	}

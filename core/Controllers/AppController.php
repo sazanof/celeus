@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Vorkfork\Application\ApplicationUtilities;
 use Vorkfork\Auth\Auth;
+use Vorkfork\Core\Events\AddApplicationScripts;
 use Vorkfork\Core\Translator\Translate;
 use Vorkfork\DTO\UserDto;
 
@@ -21,18 +22,26 @@ class AppController extends Controller
 	{
 		$apps = ApplicationUtilities::getInstance()->getApplicationsList();
 		if (!empty($apps)) {
-			return new RedirectResponse('/apps/' . $apps[0]['name']);
+			return new RedirectResponse('/app/' . $apps[0]['name']);
 		}
 	}
+
 
 	//TODO render app with custom template and js
 	public function runApp($name)
 	{
-		$path = realpath('../apps/' . $name . '/index.php');
+		//Получаем событие от шаблонизатора с массивом скриптов для подключения
+		$this->dispatcher->addListener(AddApplicationScripts::NAME, function (AddApplicationScripts $event) {
+			$this->data['scripts'] = $event->getScripts();
+		});
+
+		$path = realpath('./apps/' . $name . '/index.php');
+
 		if ($path && $this->filesystem->exists($path)) {
 			$apps = ApplicationUtilities::getInstance()->getApplicationsList();
+			// TODO render JS to main template
 			$this->data['application'] = require $path;
-			$this->user = Auth::user()->toDto(UserDto::class);
+			$this->user = Auth::user();
 			$this->data['user'] = $this->user;
 			$this->data['title'] = Translate::t(ApplicationUtilities::getApplicationInformation($name)->information['name']);
 			$menu = [];

@@ -10,6 +10,7 @@
 </template>
 
 <script>
+    import { getLocale } from '../../js/l10n'
     import PageNotifications from './PageNotifications.vue'
     import Logo from './Logo.vue'
     import PageCenterHelper from './PageCenterHelper.vue'
@@ -26,20 +27,22 @@
         computed: {
             authenticated() {
                 return this.$store.getters.isAuthenticated
+            },
+            user() {
+                return this.$store.state.getUser
             }
         },
         created() {
-            setTimeout(() => {
-                document.querySelector('.page').classList.add('loaded')
-            }, 400)
+
         },
-        async beforeMount() {
-            this.$store.state.currentLocale = this.$i18n.locale
+        async beforeCreate() {
+            this.$store.state.currentLocale = getLocale()
             await this.$store.dispatch('checkUserIsAuthenticated')
             setTimeout(() => {
                 this.visible = true
             }, 200)
-        }
+        },
+        methods: {}
     }
 </script>
 

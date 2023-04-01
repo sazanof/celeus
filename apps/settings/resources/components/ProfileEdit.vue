@@ -1,12 +1,12 @@
 <template>
-    <div id="mail">
-        Calendar
+    <div class="profile-edit">
+        Profile Edit
     </div>
 </template>
 
 <script>
     export default {
-        name: 'Mail'
+        name: 'ProfileEdit'
     }
 </script>
 

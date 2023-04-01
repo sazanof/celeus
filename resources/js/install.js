@@ -1,4 +1,4 @@
-import '../css/app.scss'
+import '../css/app.extended.scss'
 import 'vue-toastification/dist/index.css'
 import Toast from 'vue-toastification'
 import i18n from './i18n'

@@ -6,17 +6,23 @@ use Vorkfork\Core\Models\Group;
 
 class UserDto extends BaseDto
 {
-    public int $id;
 
-    public string $username;
+	public int $id;
 
-    public string $email;
+	public string $username;
 
-    public string $firstname;
+	public string $email;
 
-    public string $lastname;
+	public string $firstname;
 
-    public string $photo;
+	public string $lastname;
 
-    //public array $groups;
+	public string $photo;
+
+	public array $groups;
+
+	public static function setGroups()
+	{
+		return [1, 2];
+	}
 }

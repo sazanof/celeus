@@ -47,7 +47,7 @@ class User extends Entity
 	#[ORM\Column(type: Types::STRING)]
 	private string $lastname;
 
-	#[ORM\Column(type: Types::STRING)]
+	#[ORM\Column(type: Types::STRING, nullable: true)]
 	private string $photo;
 
 	#[ORM\JoinTable(name: 'users_groups')]

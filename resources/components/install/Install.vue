@@ -257,7 +257,9 @@
                             <div
                                 class="install-info"
                                 ref="installInfo">
-                                {{ $t('The system is ready for installation. To continue, click on the Install button.') }}
+                                {{
+                                    $t('The system is ready for installation. To continue, click on the Install button.')
+                                }}
                             </div>
                         </div>
 
@@ -356,7 +358,7 @@
         },
         computed: {
             disabled() {
-                return this.errorExtensions.length > 0
+                return this.errorExtensions.length > 0 || this.loading
             },
             errorExtensions() {
                 return this.extensions.filter(e => {
@@ -489,6 +491,7 @@
                 const res = await axios.post(`install/${this.step}`, this.dataToServer, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 }).catch(e => {
+                    this.loading = false
                     toast.error(this.$t(e.response.data.message))
                 })
                 this.loading = false
@@ -515,15 +518,15 @@
   padding-bottom: 26px;
 
   .step-progress-item {
-    font-size: 0;
-    width: calc(20% - 10px);
-    height: 6px;
-    border-radius: 6px;
-    background: var(--color-white-opacity50);
+	font-size: 0;
+	width: calc(20% - 10px);
+	height: 6px;
+	border-radius: 6px;
+	background: var(--color-white-opacity50);
 
-    &.active {
-      background: var(--color-white)
-    }
+	&.active {
+	  background: var(--color-white)
+	}
   }
 }
 
@@ -542,96 +545,96 @@
   flex-wrap: wrap;
 
   .install-inner {
-    max-width: 460px;
-    width: 100%;
-    padding: var(--padding-box) 40px;
-    background: var(--color-white);
-    border-radius: var(--border-radius-big);
-    opacity: 0;
-    transition: 2s;
+	max-width: 460px;
+	width: 100%;
+	padding: var(--padding-box) 40px;
+	background: var(--color-white);
+	border-radius: var(--border-radius-big);
+	opacity: 0;
+	transition: 2s;
 
-    &.visible {
-      opacity: 1;
-    }
+	&.visible {
+	  opacity: 1;
+	}
 
-    .logo {
-      color: var(--color-text);
-      padding: 20px 0;
+	.logo {
+	  color: var(--color-text);
+	  padding: 20px 0;
 
-      img {
-        fill: var(--color-primary);
-        display: block;
-        margin: 0 auto;
-      }
-    }
+	  img {
+		fill: var(--color-primary);
+		display: block;
+		margin: 0 auto;
+	  }
+	}
 
-    .description {
-      font-size: 14px;
-      display: block;
-      text-align: center;
-      margin-bottom: 30px;
-      margin-top: 14px;
-      color: var(--color-text)
-    }
+	.description {
+	  font-size: 14px;
+	  display: block;
+	  text-align: center;
+	  margin-bottom: 30px;
+	  margin-top: 14px;
+	  color: var(--color-text)
+	}
 
-    .switcher {
-      max-width: 260px;
-      margin: 0 auto;
+	.switcher {
+	  max-width: 260px;
+	  margin: 0 auto;
 
-      .btn {
-        margin-top: 20px;
-        width: 100%;
-      }
-    }
+	  .btn {
+		margin-top: 20px;
+		width: 100%;
+	  }
+	}
   }
 
   .next-steps {
-    position: relative;
+	position: relative;
 
-    .next-steps-wrapper {
-      background: var(--color-white-opacity90);
-      padding: 26px 0;
-      border-radius: var(--border-radius);
-      height: 100%;
-      position: relative;
+	.next-steps-wrapper {
+	  background: var(--color-white-opacity90);
+	  padding: 26px 0;
+	  border-radius: var(--border-radius);
+	  height: 100%;
+	  position: relative;
 
-      .step-inner {
-        max-height: 500px;
-        overflow-y: auto;
-      }
+	  .step-inner {
+		max-height: 500px;
+		overflow-y: auto;
+	  }
 
-      .heading {
-        text-align: center;
-        font-weight: bold;
-        margin-bottom: 20px;
-      }
+	  .heading {
+		text-align: center;
+		font-weight: bold;
+		margin-bottom: 20px;
+	  }
 
-      .install-info {
-        color: var(--color-light)
-      }
+	  .install-info {
+		color: var(--color-light)
+	  }
 
-      .actions {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin: 20px -10px 0 -10px;
+	  .actions {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin: 20px -10px 0 -10px;
 
-        &.center {
-          justify-content: center;
-        }
-      }
-    }
+		&.center {
+		  justify-content: center;
+		}
+	  }
+	}
   }
 }
 
 .extensions {
   .extension {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--color-lighter);
-    padding: 6px 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid var(--color-lighter);
+	padding: 6px 0;
   }
 }
 
@@ -645,11 +648,11 @@ input {
   justify-content: space-between;
 
   .host {
-    width: calc(100% - 130px);
+	width: calc(100% - 130px);
   }
 
   .port {
-    width: 120px;
+	width: 120px;
   }
 }
 

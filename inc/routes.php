@@ -18,6 +18,13 @@ return [
 			'auth' => true
 		]
 	],
+	'/app/{name}' => [
+		'action' => [AppController::class, 'runApp'],
+		'methods' => ['GET', 'POST'],
+		'defaults' => [
+			'auth' => true
+		]
+	],
 	'/user' => [
 		'action' => [UserController::class, 'getUser'],
 		'methods' => ['GET'],
@@ -74,23 +81,6 @@ return [
 		'defaults' => [
 			'step' => 0,
 			'public' => true
-		]
-	],
-	'/apps/{name}' => [
-		'action' => [AppController::class, 'runApp'],
-		'methods' => ['GET', 'POST'],
-		'defaults' => [
-			'auth' => true
-		]
-	],
-	'/files/{path}' => [
-		'action' => [AppController::class, 'fileResponse'],
-		'methods' => ['GET', 'POST'],
-		'defaults' => [
-			'auth' => true
-		],
-		'requirements' => [
-			'path' => '.+',
 		]
 	],
 ];

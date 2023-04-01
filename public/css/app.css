@@ -1,56 +1,4 @@
-:root {
-  --border-width: 2px;
-  --border-radius: 8px;
-  --border-radius-big: 44px;
-  --padding-box: 20px;
-  --border-color: rgba(0, 0, 0, 0.1);
-  --box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-  --color-text: #222;
-  --color-white: #fff;
-  --color-white-opacity90: rgba(255, 255, 255, 0.9);
-  --color-white-opacity50: rgba(255, 255, 255, 0.5);
-  --color-white-opacity10: rgba(255, 255, 255, 0.1);
-  --color-primary: #4346b1;
-  --color-primary-dark: #383b96;
-  --color-secondary: #4a4a72;
-  --color-secondary-dark: #3d3d60;
-  --color-light: #999;
-  --color-lighter: #ededed;
-  --color-green-light: #00c86c;
-  --color-green: #2a9a68;
-  --color-green-hover: #228458;
-  --color-orange-light: #c8b700;
-  --color-orange: #b0a20f;
-  --color-orange-hover: #968a0a;
-  --color-red-light: #c82f00;
-  --color-red: #af3613;
-  --color-red-hover: #963417;
-  --font-size: 16px;
-  --font-size-small: 14px;
-  --font-face: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Cantarell, Ubuntu, "Helvetica Neue", Arial, sans-serif, "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  --header-height: 80px;
-  --transition-duration: 0.5s;
-  --transition-duration-mini: 0.3s;
-  --ms-radius: var(--border-radius-big);
-  --ms-border-width: var(--border-width);
-  --ms-dropdown-border-width: var(--border-width);
-  --ms-dropdown-border-color: var(--border-color);
-  --ms-border-color: var(--border-color);
-  --ms-font-size: var(--font-size);
-  --ms-line-height: inherit;
-  --ms-py: 5.5px;
-  --sidebar-width: 100px;
-  --popper-theme-background-color: #ffffff;
-  --popper-theme-background-color-hover: #ffffff;
-  --popper-theme-text-color: inherit;
-  --popper-theme-border-width: var(--border-width);
-  --popper-theme-border-style: solid;
-  --popper-theme-border-color: transparent;
-  --popper-theme-border-radius: var(--border-radius);
-  --popper-theme-padding: calc(var(--padding-box) / 2);
-  --popper-theme-box-shadow: var(--box-shadow);
-}
-
+@import "variables.css";
 html, body {
   padding: 0;
   margin: 0;
@@ -76,6 +24,7 @@ body, input, button, select, textarea {
 .multiselect-options {
   border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
 }
+
 .multiselect-options .multiselect-option:last-child {
   border-radius: 0 0 var(--border-radius-big) var(--border-radius-big);
 }
@@ -97,6 +46,7 @@ div {
   display: block;
   margin-bottom: 16px;
 }
+
 .form-group:last-child {
   margin-bottom: 0;
 }
@@ -105,14 +55,17 @@ div {
   padding: 0 var(--padding-box) 0 0;
   transition: opacity var(--transition-duration);
 }
+
 .page .page-wrapper {
   display: flex;
   flex-wrap: wrap;
 }
+
 .page .page-sidebar {
   width: var(--sidebar-width);
   height: calc(100vh - var(--header-height));
 }
+
 .page .page-content {
   width: calc(100% - var(--sidebar-width));
   background: var(--color-white);
@@ -128,9 +81,11 @@ div {
   position: relative;
   margin-top: 30px;
 }
+
 .menu .menu-item {
   position: relative;
 }
+
 .menu .menu-item a {
   box-sizing: border-box;
   padding: 18px 14px;
@@ -143,12 +98,14 @@ div {
   transition: background-color var(--transition-duration);
   position: relative;
 }
+
 .menu .menu-item a img {
   width: 36px;
   height: auto;
   display: block;
   margin: 0 auto;
 }
+
 .menu .menu-item a .menu-tooltip {
   opacity: 0;
   z-index: 2;
@@ -161,13 +118,16 @@ div {
   right: 0;
   transition: opacity var(--transition-duration);
 }
+
 .menu .menu-item a:hover .menu-tooltip {
   z-index: 2;
   opacity: 1;
 }
+
 .menu .menu-item a:hover {
   background: var(--color-primary-dark);
 }
+
 .menu .menu-item a.active:before {
   content: "";
   width: 10px;
@@ -178,5 +138,7 @@ div {
   bottom: calc(50% - 4px);
   border-radius: 50%;
 }
+
+
 
 /*# sourceMappingURL=app.css.map */

@@ -9,9 +9,9 @@
 						{% for item in menu %}
 							{% if item.showInMenu %}
 								<div class="menu-item">
-									<a href="/apps/{{ item.name | lower }}"
-									   class="{{ currentRoute == '/apps/' ~ item.name | lower ? 'active' : '' }}">
-										<img src="/files/apps/{{ item.name | lower }}/img/{{ item.name | lower }}.svg"/>
+									<a href="/app/{{ item.name | lower }}"
+									   class="{{ currentRoute == '/app/' ~ item.name | lower ? 'active' : '' }}">
+										<img src="/apps/{{ item.name | lower }}/img/{{ item.name | lower }}.svg"/>
 										<div class="menu-tooltip">
 											{{ t(item.name) }}
 										</div>

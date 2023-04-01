@@ -1,5 +1,7 @@
 <template>
-    <div class="login">
+    <div
+        class="login"
+        @keyup.enter="logIn">
         <div class="login-form">
             <img src="../../images/vorkfork3.svg">
             <div class="form-group">

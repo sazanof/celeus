@@ -5,6 +5,7 @@ namespace Vorkfork\Application;
 use Vorkfork\Core\Application;
 use Vorkfork\Core\Exceptions\AutoloadMapNotFoundException;
 use Vorkfork\Core\Exceptions\EntityManagerNotDefinedException;
+use Vorkfork\Core\Exceptions\ErrorResponse;
 use Vorkfork\Core\Exceptions\WrongConfigurationException;
 use Vorkfork\Core\Models\Config;
 use Vorkfork\Core\Router\MainRouter;
@@ -35,7 +36,7 @@ class ApplicationUtilities
 		if (php_sapi_name() == "cli") {
 			require realpath('./inc/version.php');
 		} else {
-			require realpath('../inc/version.php');
+			require realpath('./inc/version.php');
 		}
 		$this->version = $Vorkfork_Version;
 		$this->versionArray = $Vorkfork_VersionArray;
@@ -134,7 +135,7 @@ class ApplicationUtilities
 	 */
 	public function findApps(): void
 	{
-		$path = realpath('../apps');
+		$path = realpath('./apps');
 		$apps = Finder::create()
 			->in($path)
 			->directories()
@@ -169,7 +170,7 @@ class ApplicationUtilities
 
 	public function registerChildApplication($app): void
 	{
-		require_once realpath('../apps/' . $app . '/index.php');
+		require_once realpath('./apps/' . $app . '/index.php');
 	}
 
 	/**
@@ -199,5 +200,41 @@ class ApplicationUtilities
 	{
 
 		return new ApplicationInformation($appName);
+	}
+
+	/**
+	 * Gets build js in application
+	 * @param string $app
+	 * @param string $folder
+	 * @return array|null
+	 */
+	public static function buildApplicationJs(string $app, string $folder): ?array
+	{
+		$pathRelative = './apps/' . $app . DIRECTORY_SEPARATOR . $folder;
+		$path = Path::normalize(realpath($pathRelative));
+		if (file_exists($path)) {
+			$scriptsFiles = Finder::create()
+				->in($path)
+				->path($app . '.js')
+				->files();
+			if ($scriptsFiles->count() > 0) {
+				$scripts = [];
+				foreach ($scriptsFiles as $file) {
+					$scripts[] = $file->getFilename();
+				}
+				return $scripts;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param mixed $data
+	 * @param int $code
+	 * @return ErrorResponse
+	 */
+	public static function errorResponse(string $className, int $code = 500)
+	{
+		return (new ErrorResponse($className, $code));
 	}
 }

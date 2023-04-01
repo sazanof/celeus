@@ -9,7 +9,7 @@
 	<meta name="theme-color" content="#ffffff">
 	<meta name="csrf-token" content="{{ token }}">
 	<title>{{ title }}</title>
-	<link rel="stylesheet" type="text/css" href="/css/app.css">
+	<link rel="stylesheet" type="text/css" href="/public/css/app.css">
 </head>
 <body>
 {% block app %}
@@ -17,10 +17,23 @@
 {% endblock %}
 {% block scripts %}
 	{% if env('APP_MODE', 'production') == 'production' %}
-		<script type="text/javascript" src="{{ scheme }}://{{ host }}/dist/main.js"></script>
+		<script type="text/javascript" src="{{ scheme }}://{{ host }}/public/dist/l10n.js"></script>
+		<script type="text/javascript" src="{{ scheme }}://{{ host }}/public/dist/emitter.js"></script>
+		<script type="text/javascript" src="{{ scheme }}://{{ host }}/public/dist/main.js"></script>
 	{% else %}
+		<script type="text/javascript" src="{{ scheme }}://{{ host }}:8080/l10n.js"></script>
+		<script type="text/javascript" src="{{ scheme }}://{{ host }}:8080/emitter.js"></script>
 		<script type="text/javascript" src="{{ scheme }}://{{ host }}:8080/main.js"></script>
 	{% endif %}
 {% endblock %}
+{% if scripts %}
+	{% for script in scripts %}
+		{% if env('APP_MODE', 'production') == 'production' %}
+			<script type="text/javascript" src="{{ scheme }}://{{ host }}/public/dist/{{ script }}"></script>
+		{% else %}
+			<script type="text/javascript" src="{{ scheme }}://{{ host }}:8080/{{ script }}"></script>
+		{% endif %}
+	{% endfor %}
+{% endif %}
 </body>
 </html>

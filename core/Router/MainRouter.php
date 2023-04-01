@@ -69,7 +69,7 @@ class MainRouter implements IRouter
 
 	public function addRoutesFromAppInc(string $path = null)
 	{
-		$path = is_null($path) ? realpath('../inc/routes.php') : $path;
+		$path = is_null($path) ? realpath('./inc/routes.php') : $path;
 		$routes = require_once $path;
 		if (!empty($routes)) {
 			$this->registerRoutes($routes);

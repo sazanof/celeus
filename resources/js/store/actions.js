@@ -16,6 +16,7 @@ export default {
             commit('setAuthenticated', res.data.success === undefined && res.data.id !== undefined)
             if (state.authenticated) {
                 commit('setUser', res.data)
+                Emitter.emit('store.update.user', res.data)
             }
         })
     },
@@ -31,6 +32,14 @@ export default {
         return await axios.post('/login/process', credentials).then(res => {
             if (res.data !== undefined && res.data !== null) {
                 commit('setAuthenticated', res.data.username === credentials.username)
+            }
+        })
+    },
+
+    async logOut({ commit, state }, credentials) {
+        return await axios.get('/logout').then(res => {
+            if (res.data !== undefined && res.data !== null) {
+                commit('setAuthenticated', false)
             }
         })
     }

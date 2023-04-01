@@ -7,9 +7,13 @@ const ESLintPlugin = require('eslint-webpack-plugin')
 module.exports = {
     target: 'web',
     entry: {
+        l10n: '/resources/js/l10n.js',
+        emitter: '/resources/js/emitter.js',
         login: '/resources/js/login.js',
         main: '/resources/js/main.js',
-        install: '/resources/js/install.js'
+        install: '/resources/js/install.js',
+        settings: '/apps/settings/resources/js/settings.js',
+        mail: '/apps/mail/resources/js/mail.js',
     },
     performance: { hints: false },
     output: {

@@ -3,7 +3,7 @@
         <Popper :arrow="true">
             <VfAvatar
                 :fullname="fullName"
-                size="48" />
+                :size="48" />
             <template #content>
                 <VfList>
                     <VfListItem @click="openSettings">
@@ -11,14 +11,14 @@
                             {{ fullName }}
                         </div>
                         <div class="small">
-                            {{ $t('Enter profile') }}
+                            {{ $t('core', 'Enter profile') }}
                         </div>
                     </VfListItem>
-                    <VfListItem>
+                    <VfListItem @click="logOut">
                         <template #icon>
                             <LogoutIcon :size="20" />
                         </template>
-                        {{ $t('Logout') }}
+                        {{ $t('core', 'Logout') }}
                     </VfListItem>
                 </VfList>
             </template>
@@ -52,7 +52,11 @@
         },
         methods: {
             openSettings() {
-                document.location.replace('/apps/settings')
+                document.location.replace('/app/settings')
+            },
+            async logOut() {
+                await this.$store.dispatch('logOut')
+                window.location.replace('/login')
             }
         }
     }

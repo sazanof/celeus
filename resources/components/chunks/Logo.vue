@@ -1,6 +1,8 @@
 <template>
     <div class="logo">
-        <img src="../../images/vorkfork.svg">
+        <a href="/">
+            <img src="../../images/vorkfork.svg">
+        </a>
     </div>
 </template>
 
@@ -15,10 +17,10 @@
   width: var(--sidebar-width);
 
   img {
-    max-width: 60px;
-    width: 90%;
-    margin: 0 auto;
-    display: block;
+	max-width: 60px;
+	width: 90%;
+	margin: 0 auto;
+	display: block;
   }
 }
 </style>

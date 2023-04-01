@@ -45,8 +45,8 @@ class Application
 	{
 		$this->translate = new Translate();
 		$this->router = $router;
-		$this->filesystem = new File(realpath('../'));
-		$this->env = Dotenv::createImmutable(realpath('../'));
+		$this->filesystem = new File(realpath('./'));
+		$this->env = Dotenv::createImmutable(realpath('./'));
 		$errEnv = false;
 		try {
 			$this->env->load();
@@ -89,7 +89,7 @@ class Application
 	//TODO add Router redirect to update process...
 	public function isAppInstalled(): bool
 	{
-		return !$this->filesystem->exists('../config/NOT_INSTALLED')
+		return !$this->filesystem->exists('./config/NOT_INSTALLED')
 			&& $this->entityManager instanceof CustomEntityManager
 			&& $this->utilities->getVersion() === $this->utilities->getDatabaseAppVersion()->value;
 	}

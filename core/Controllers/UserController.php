@@ -3,15 +3,16 @@
 namespace Vorkfork\Core\Controllers;
 
 use Vorkfork\Auth\Auth;
-use Vorkfork\Core\Models\User;
+use Vorkfork\DTO\BaseDto;
+use Vorkfork\DTO\UserDto;
 
 class UserController extends Controller
 {
-    /**
-     * @return User
-     */
-    public function getUser(): User
-    {
-        return Auth::getLoginUser();
-    }
+	/**
+	 * @return BaseDto
+	 */
+	public function getUser(): BaseDto
+	{
+		return Auth::getLoginUser()->toDto(UserDto::class);
+	}
 }

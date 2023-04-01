@@ -1,5 +1,4 @@
-import { createI18n, useI18n } from 'vue-i18n'
-import store from './store'
+import { createI18n } from 'vue-i18n'
 
 /**
  * Load locale messages
@@ -22,7 +21,6 @@ function loadLocaleMessages() {
         }
     })
     return messages
-
 }
 
 //TODO dynamic locale select, based on DB config and user settings
