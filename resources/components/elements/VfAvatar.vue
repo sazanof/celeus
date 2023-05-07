@@ -27,9 +27,9 @@
                 default: 50
             },
             radius: {
-                type: Number,
-                default: 50,
-                validator: value => value >= 0 && value <= 50
+                type: String,
+                default: '50%',
+            //validator: value => value >= 0 && value <= 50
             },
             color: {
                 type: String, default: ''
@@ -49,7 +49,7 @@
                 return {
                     width: this.size + 'px',
                     height: this.size + 'px',
-                    'border-radius': this.radius + '%',
+                    'border-radius': this.radius,
                     'font-size': fontSize + 'px',
                     'background-color':
                         this.color === '' ? this.toColor(this.fullname) : this.color,
@@ -81,7 +81,6 @@
 	width: 48px;
 	height: 48px;
 	font-size: 12px;
-	border-radius: 50%;
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;

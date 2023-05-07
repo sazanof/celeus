@@ -2,10 +2,17 @@
 
 namespace Vorkfork\Database;
 
+use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vorkfork\Core\Exceptions\EntityAlreadyExistsException;
 use Vorkfork\Core\Repositories\Repository;
+use Vorkfork\Core\Translator\Translate;
 use Vorkfork\DTO\BaseDto;
-use Vorkfork\DTO\UserDto;
 use Vorkfork\Serializer\JsonSerializer;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
@@ -19,7 +26,8 @@ use Doctrine\Persistence\Mapping\MappingException;
 use Doctrine\Persistence\ObjectRepository;
 
 #[ORM\MappedSuperclass]
-class Entity implements IEntity
+#[ORM\HasLifecycleCallbacks]
+abstract class Entity implements IEntity
 {
 	const BATCH_SIZE = 25;
 	protected string $table = '';
@@ -31,6 +39,7 @@ class Entity implements IEntity
 	protected QueryBuilder $qb;
 	protected string $className = '';
 	protected ObjectRepository|Repository $repository;
+	public ?ValidatorInterface $validator = null;
 
 	protected array $fillable = [];
 
@@ -49,6 +58,12 @@ class Entity implements IEntity
 		$this->repository = $this->em->getRepository($this->className);
 		self::$instance = $this;
 		return $this;
+	}
+
+	#[ORM\PreFlush]
+	function validateEntity(PreFlushEventArgs $args)
+	{
+		$this->validate();
 	}
 
 	/**
@@ -85,9 +100,8 @@ class Entity implements IEntity
 	 * Assign entity properties using an array
 	 *
 	 * @param array $attributes assoc array of values to assign
-	 * @return null
 	 */
-	public function fromArray(array $attributes, $allowedFields = array())
+	public function fromArray(array $attributes, $allowedFields = array()): static
 	{
 		foreach ($attributes as $name => $value) {
 			if (in_array($name, $allowedFields)) {
@@ -100,6 +114,26 @@ class Entity implements IEntity
 					}
 				}
 			}
+		}
+		return $this;
+	}
+
+	private function createValidator()
+	{
+		if (!$this->validator instanceof ValidatorInterface) {
+			$this->validator = Validation::createValidatorBuilder()
+				->addMethodMapping('loadValidatorMetadata')
+				->getValidator();
+		}
+	}
+
+	public function validate()
+	{
+		$this->createValidator();
+		$violations = $this->validator->validate($this);
+		if ($violations->count() > 0) {
+
+			throw new ValidationFailedException(Translate::t('Error when saving the profile'), $violations);
 		}
 	}
 
@@ -219,7 +253,7 @@ class Entity implements IEntity
 		$this->className = get_class($this);
 		$this->fromArray($arguments, $this->fillable);
 		$this->em()->persist($this);
-		$this->em()->flush();
+		$this->em()->flush($this);
 		return $this;
 	}
 

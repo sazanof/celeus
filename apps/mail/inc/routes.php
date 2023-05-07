@@ -1,16 +1,16 @@
 <?php
 
-use Vorkfork\Apps\Mail\Controllers\SettingsController;
+use Vorkfork\Apps\Mail\Controllers\MailController;
 
 if (!defined('INC_MODE')) {
 	exit;
 }
 return [
-	'/mail' => [
-		'action' => [SettingsController::class, 'index'],
+	'/app/mail/accounts' => [
+		'action' => [MailController::class, 'loadAccounts'],
 		'methods' => ['GET'],
 		'defaults' => [
-			'public' => true
+			'auth' => true
 		]
 	],
 ];

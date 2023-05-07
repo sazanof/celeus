@@ -6,7 +6,10 @@
 
 <script>
     export default {
-        name: 'Mail'
+        name: 'Mail',
+        beforeCreate() {
+            this.$store.dispatch('loadAccounts')
+        }
     }
 </script>
 

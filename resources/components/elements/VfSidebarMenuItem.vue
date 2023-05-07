@@ -1,14 +1,32 @@
 <template>
-    <div class="sidebar-menu-item">
+    <router-link
+        class="sidebar-menu-item"
+        :to="to"
+        v-if="to">
         <div class="smi-icon">
             <slot name="button" />
         </div>
         <div
             class="smi-text"
             v-if="to">
-            <router-link :to="to">
-                <slot />
-            </router-link>
+            <slot />
+        </div>
+        <div
+            class="smi-text"
+            v-else>
+            <slot />
+        </div>
+    </router-link>
+    <div
+        class="sidebar-menu-item"
+        v-else>
+        <div class="smi-icon">
+            <slot name="button" />
+        </div>
+        <div
+            class="smi-text"
+            v-if="to">
+            <slot />
         </div>
         <div
             class="smi-text"
@@ -48,8 +66,13 @@
 	margin-right: 6px;
   }
 
-  &:hover {
+  &:hover, &.router-link-active {
 	background: var(--color-lighter);
   }
+}
+
+a.sidebar-menu-item {
+  color: var(--color-text);
+  text-decoration: none;
 }
 </style>

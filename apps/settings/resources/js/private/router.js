@@ -5,7 +5,11 @@ export default createRouter({
     history: createWebHashHistory(),
     routes: [
         {
-            path: '/',
+            path: '/profile',
+            component: ProfileEdit
+        },
+        {
+            path: '/notifications',
             component: ProfileEdit
         },
     ]

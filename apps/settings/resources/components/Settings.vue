@@ -2,13 +2,13 @@
     <div id="settings">
         <div class="settings-wrapper">
             <VfSidebar>
-                <VfSidebarMenuItem>
+                <VfSidebarMenuItem to="/profile">
                     <template #button>
                         <AccountIcon :size="20" />
                     </template>
                     {{ $t('settings', 'My profile') }}
                 </VfSidebarMenuItem>
-                <VfSidebarMenuItem>
+                <VfSidebarMenuItem to="/notifications">
                     <template #button>
                         <BellIcon :size="20" />
                     </template>
@@ -16,7 +16,6 @@
                 </VfSidebarMenuItem>
             </VfSidebar>
             <VfContent>
-                {{ user }}
                 <router-view />
             </VfContent>
         </div>
@@ -39,14 +38,15 @@
             AccountIcon,
             BellIcon
         },
-        computed: {
-            user() {
-                return this.$store.getters.getUser
+        computed: {},
+        beforeCreate() {
+            if (this.$route.path === '/') {
+                this.$router.push('/profile')
             }
         },
-        async mounted() {
-            console.log(window.L10N)
-            await Emitter.on('store.update.user', (user) => {
+        beforeMount() {
+            console.log('Settings,vue Emitter.on(\'store.update.user\') ')
+            Emitter.on('store.update.user', (user) => {
                 this.$store.commit('saveUser', user)
             })
         },
@@ -59,7 +59,5 @@
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-
-
 }
 </style>

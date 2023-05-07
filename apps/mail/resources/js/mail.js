@@ -1,4 +1,7 @@
 import { createApp } from 'vue'
+import store from './store/store'
 import Mail from '../../components/Mail.vue'
 
-createApp(Mail).mount('#mail')
+const app = createApp(Mail)
+app.use(store)
+app.mount('#mail')

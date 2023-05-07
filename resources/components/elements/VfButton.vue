@@ -1,6 +1,7 @@
 <template>
     <button
         class="btn"
+        :disabled="disabled"
         :class="[`btn-${type}`, onlyIcon ? 'icon' : '']">
         <slot name="icon" />
         <slot />
@@ -14,6 +15,10 @@
             type: {
                 type: String,
                 default: 'primary'
+            },
+            disabled: {
+                type: Boolean,
+                default: false
             },
             onlyIcon: {
                 type: Boolean,

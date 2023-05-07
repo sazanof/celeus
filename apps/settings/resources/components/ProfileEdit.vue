@@ -1,15 +1,200 @@
 <template>
-    <div class="profile-edit">
-        Profile Edit
+    <div
+        class="profile-edit"
+        v-if="user !== null">
+        <div class="profile-inner">
+            <VfAvatar
+                v-if="user.photo === undefined || user.photo === '' || user.photo === null"
+                :size="200"
+                :fullname="`${user.firstname} ${user.lastname}`" />
+            <img
+                v-else
+                class="user-pic"
+                :src="user.photo">
+            <div class="profile-main">
+                <VfSection
+                    :title="$t('core', 'Profile')"
+                    :description="$t('core','Basic information')">
+                    <template #icon>
+                        <AccountIcon :size="42" />
+                    </template>
+                    <div class="form-group form-group-50">
+                        <VfInput
+                            :value="user.firstname"
+                            :label="$t('core','Firstname')"
+                            @on-change="user.firstname = $event.target.value" />
+                        <VfInput
+                            :value="user.lastname"
+                            :label="$t('core','Lastname')"
+                            @on-change="user.lastname = $event.target.value" />
+                    </div>
+                    <div class="form-group">
+                        <VfInput
+                            type="email"
+                            :value="user.email"
+                            :label="$t('core','Email')"
+                            @on-change="user.email = $event.target.value" />
+                    </div>
+                    <div class="form-group">
+                        <VfInput
+                            :value="user.organization"
+                            :label="$t('core','Organization')"
+                            @on-change="user.organization = $event.target.value" />
+                    </div>
+                    <div class="form-group">
+                        <VfInput
+                            :value="user.position"
+                            :label="$t('core','Position')"
+                            @on-change="user.position = $event.target.value" />
+                    </div>
+                    <div class="form-group">
+                        <VfInput
+                            :value="user.phone"
+                            :label="$t('core','Phone')"
+                            @on-change="user.phone = $event.target.value" />
+                    </div>
+                    <div class="form-group">
+                        <VfTextarea
+                            mode="richtext"
+                            :value="user.about"
+                            :label="$t('core','About')"
+                            @update:text="user.about = $event" />
+                    </div>
+                    <div class="form-group">
+                        <VfRadioCheck
+                            :label="$t('core', 'Change password')"
+                            :checked="changePassword"
+                            @update:checked="changePassword = !changePassword" />
+                    </div>
+                    <div
+                        class="form-group form-group-50"
+                        v-if="changePassword">
+                        <VfInput
+                            :value="password"
+                            :label="$t('core','Password')"
+                            type="password"
+                            @on-change="password = $event.target.value" />
+                        <VfInput
+                            :value="repeatPassword"
+                            :label="$t('core','Password confirmation')"
+                            type="password"
+                            @on-change="repeatPassword = $event.target.value" />
+                    </div>
+                    <div class="form-group">
+                        <VfButton
+                            @click="saveProfile">
+                            <ContentSave :size="20" />
+                            {{ $t('settings', 'Save profile') }}
+                        </VfButton>
+                    </div>
+                </VfSection>
+                <VfSection
+                    :title="$t('core', 'Groups')"
+                    :description="$t('core', 'You are a member of the following groups')">
+                    <template #icon>
+                        <AccountMultipleIcon :size="42" />
+                    </template>
+                    <div
+                        class="user-groups"
+                        v-if="user.groups.length > 0">
+                        <div
+                            class="group"
+                            v-for="group in user.groups"
+                            :key="group.id">
+                            {{ group.name }}
+                        </div>
+                    </div>
+                </VfSection>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
+    import AccountIcon from 'vue-material-design-icons/Account.vue'
+    import AccountMultipleIcon from 'vue-material-design-icons/AccountMultiple.vue'
+    import VfSection from '../../../../resources/components/elements/VfSection.vue'
+    import { useToast } from 'vue-toastification'
+    import VfRadioCheck from '../../../../resources/components/elements/VfRadioCheck.vue'
+    import VfTextarea from '../../../../resources/components/elements/VfTextarea.vue'
+    import VfInput from '../../../../resources/components/elements/VfInput.vue'
+    import VfButton from '../../../../resources/components/elements/VfButton.vue'
+    import VfAvatar from '../../../../resources/components/elements/VfAvatar.vue'
+    import ContentSave from 'vue-material-design-icons/ContentSave.vue'
+
+    const toast = useToast()
+
     export default {
-        name: 'ProfileEdit'
+        name: 'ProfileEdit',
+        components: {
+            VfAvatar,
+            VfTextarea,
+            VfInput,
+            VfButton,
+            VfRadioCheck,
+            VfSection,
+            ContentSave,
+            AccountIcon,
+            AccountMultipleIcon
+        },
+        data() {
+            return {
+                changePassword: false,
+                password: '',
+                repeatPassword: '',
+            }
+        },
+        computed: {
+            user() {
+                return this.$store.getters.getUser
+            },
+        },
+        watch: {
+            changePassword() {
+                if (!this.changePassword) {
+                    this.password = ''
+                    this.repeatPassword = ''
+                }
+            }
+        },
+        methods: {
+            async saveProfile() {
+                this.data = this.changePassword ? Object.assign(this.user, {
+                    password: this.password,
+                    repeatPassword: this.repeatPassword
+                }) : this.user
+                await this.$store.dispatch('saveUser', this.user).then(() => {
+                    toast.success('Saved')
+                }).catch(e => {
+                    // TODO toast error component
+                    console.log(e.response.data.message)
+                    toast.error('Error')
+                })
+            },
+        }
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.profile-inner {
+  display: flex;
+  flex-wrap: wrap;
 
+  .user-pic {
+	display: block;
+	width: 200px;
+	height: auto;
+  }
+
+  .profile-main {
+	width: calc(100% - 200px);
+	padding-left: 32px;
+  }
+
+}
+
+
+h1 {
+  margin-top: 0
+}
 </style>

@@ -60,6 +60,7 @@ class Auth implements IAuthenticate
 	public static function check(string $username, string $password): bool
 	{
 		$user = User::repository()->findByUsername($username);
+
 		if (is_null($user)) {
 			throw new UserNotFoundException();
 		}
@@ -67,6 +68,7 @@ class Auth implements IAuthenticate
 			self::$user = $user->toDto(UserDto::class);
 			return true;
 		}
+		return false;
 	}
 
 	/**

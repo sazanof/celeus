@@ -69,14 +69,15 @@
         },
         methods: {
             async logIn() {
-                await this.$store.dispatch('logIn', {
+                const res = await this.$store.dispatch('logIn', {
                     username: this.username,
                     password: this.password
-                }).then(() => {
-                    document.location.replace('/')
                 }).catch(() => {
                     toast.error(this.$t('Authentication error'))
                 })
+                if (res.id) {
+                    document.location.replace('/')
+                }
             },
             forgotPassword() {
                 console.log('Forgot password form')

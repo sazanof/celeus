@@ -7,9 +7,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Vorkfork\Application\ApplicationUtilities;
 use Vorkfork\Auth\Auth;
 use Vorkfork\Core\Exceptions\EntityManagerNotDefinedException;
+use Vorkfork\Core\Exceptions\ValidationExceptionResponse;
 use Vorkfork\Core\Translator\Translate;
 use Vorkfork\Database\CustomEntityManager;
 use Vorkfork\Database\Database;
@@ -140,9 +142,13 @@ class Application
 			$controllerResolver,
 			new RequestStack(),
 			$argumentResolver);
-		$response = $kernel->handle($request);
-		$response->send();
-		$kernel->terminate($request, $response);
+		try {
+			$response = $kernel->handle($request);
+			$response->send();
+			$kernel->terminate($request, $response);
+		} catch (ValidationFailedException $exception) {
+			return (new ValidationExceptionResponse($exception->getViolations()))->send();
+		}
 	}
 
 	public static function getTranslator(): ?Translate

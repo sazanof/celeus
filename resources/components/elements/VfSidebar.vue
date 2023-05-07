@@ -11,6 +11,8 @@
 </script>
 
 <style lang="scss" scoped>
+
+
 .vf-sidebar {
   width: var(--vf-sidebar-width);
 }

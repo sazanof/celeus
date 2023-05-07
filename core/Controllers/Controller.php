@@ -2,20 +2,14 @@
 
 namespace Vorkfork\Core\Controllers;
 
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
-use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Contracts\EventDispatcher\Event;
 use Vorkfork\Application\ApplicationUtilities;
-use Vorkfork\Application\Session;
 use Vorkfork\Auth\Auth;
 use Vorkfork\Controller\IController;
 use Vorkfork\Core\Templates\TemplateRenderer;
@@ -23,7 +17,6 @@ use Vorkfork\Core\Translator\Locale;
 use Vorkfork\Database\Database;
 use Vorkfork\Database\Entity;
 use Vorkfork\DTO\BaseDto;
-use Vorkfork\DTO\UserDto;
 use Vorkfork\File\File;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;

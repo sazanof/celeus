@@ -52,15 +52,10 @@ class LoginController extends Controller
 		$username = $credentials['username'];
 		$password = $credentials['password'];
 		if (Str::containsLetters($username)) {
-			Auth::login($username, $password);
-			$user = Auth::user();
-			$userDto = $user->toDto(UserDto::class);
-			//$userDto->set('acl', $user->getGroups());
-			//$userDto->set('groups', [1, 2, 3]);
-			//dd($userDto);
-			return $userDto;
+			if (Auth::login($username, $password) instanceof UserDto) {
+				return Auth::user();
+			}
 		}
-		//$username = $credentials
 		return null;
 	}
 

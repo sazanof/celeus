@@ -1,3 +1,5 @@
+import UserDto from '../DTO/userDto.js'
+
 export default {
 
     getMenu(state) {
@@ -12,7 +14,7 @@ export default {
     },
 
     setUser(state, user) {
-        state.user = user
+        state.user = new UserDto(user)
     },
 
     setAcl(state, user) {

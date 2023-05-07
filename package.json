@@ -9,8 +9,11 @@
     "sass:watch": "sass --watch resources/css/sass/:public/css/"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^37.1.0",
+    "@ckeditor/ckeditor5-vue": "^5.1.0",
     "@vue/compiler-sfc": "^3.2.45",
     "@vueform/multiselect": "^2.5.7",
+    "@vueup/vue-quill": "^1.1.1",
     "animate.css": "^4.1.1",
     "axios": "^1.2.1",
     "babel-loader": "^9.1.0",

@@ -114,11 +114,13 @@ class MainRouter implements IRouter
 		return $redirect->send();
 	}
 
-	public function group($callback)
+	public static function group(string $prefix, array $routes): array
 	{
-		foreach (wrap($callback) as $route) {
-			dump($route);
+		$ar = [];
+		foreach ($routes as $key => $route) {
+			$ar[$prefix . $key] = $route;
 		}
+		return $ar;
 	}
 
 	public function getRoute(string $url)

@@ -24,6 +24,11 @@ class File extends Filesystem
 		return $this;
 	}
 
+	public static function fs(): Filesystem
+	{
+		return new Filesystem();
+	}
+
 	public function get($path = null)
 	{
 		$path = !is_null($path) ? $this->root . $path : $this->path;

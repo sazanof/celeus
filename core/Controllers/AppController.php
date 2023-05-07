@@ -10,6 +10,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Vorkfork\Application\ApplicationUtilities;
 use Vorkfork\Auth\Auth;
 use Vorkfork\Core\Events\AddApplicationScripts;
+use Vorkfork\Core\Exceptions\ErrorResponse;
 use Vorkfork\Core\Translator\Translate;
 use Vorkfork\DTO\UserDto;
 
@@ -57,7 +58,7 @@ class AppController extends Controller
 			$this->data['menu'] = $menu;
 			return $this->templateRenderer->loadTemplate('/pages/main', $this->data);
 		}
-		throw new NotFoundHttpException();
+		return new ErrorResponse('Page not found', 404);
 	}
 
 	/**
