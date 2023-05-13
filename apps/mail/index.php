@@ -8,6 +8,7 @@ use Vorkfork\Core\Events\AddApplicationScripts;
 use Vorkfork\Core\Templates\TemplateRenderer;
 
 if (!defined('INC_MODE')) {
+	header('Location: /');
 	exit;
 }
 try {

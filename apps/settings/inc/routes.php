@@ -6,7 +6,7 @@ use Vorkfork\Core\Router\MainRouter;
 if (!defined('INC_MODE')) {
 	exit;
 }
-return MainRouter::group('/app/settings/', [
+return MainRouter::group('/apps/settings/', [
 	'profile' => [
 		'action' => [SettingsController::class, 'saveProfile'],
 		'methods' => ['POST'],

@@ -15,8 +15,8 @@ class Translate extends Translator
 
 	public function __construct()
 	{
-		$this->cacheDir = './resources/cache';
-		$this->localeDir = './resources/locales/';
+		$this->cacheDir = '../resources/cache';
+		$this->localeDir = '../resources/locales/';
 		$this->locale = Locale::getDefaultLocale();
 		$this->translations = json_decode(file_get_contents(realpath($this->localeDir . $this->locale . '.json')), true);
 

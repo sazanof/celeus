@@ -19,10 +19,10 @@ class Config implements IConfig
 	{
 		$this->fileName = $this->fileName !== null ? $this->fileName : $fileName;
 		if (!is_null($this->fileName)) {
-			if (php_sapi_name() == "cli") {
+			if (php_sapi_name() === "cli") {
 				$pathToConfig = realpath("./config/{$this->fileName}.php");
 			} else {
-				$pathToConfig = realpath("./config/{$this->fileName}.php");
+				$pathToConfig = realpath("../config/{$this->fileName}.php");
 			}
 
 			$fs = new File($pathToConfig);

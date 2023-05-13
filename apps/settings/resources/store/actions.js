@@ -4,7 +4,7 @@ import { getToken } from '../../../../resources/js/CSRFToken'
 axios.defaults.headers.post['X-CSRF-TOKEN'] = getToken()
 axios.defaults.headers.common['X-AJAX-CALL'] = true
 
-const PREFIX = '/app/settings/'
+const PREFIX = '/apps/settings/'
 
 export default {
     async saveUser({}, user) {

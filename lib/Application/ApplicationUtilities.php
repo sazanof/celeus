@@ -33,10 +33,10 @@ class ApplicationUtilities
 	{
 		$Vorkfork_Version = '';
 		$Vorkfork_VersionArray = [];
-		if (php_sapi_name() == "cli") {
+		if (php_sapi_name() === "cli") {
 			require realpath('./inc/version.php');
 		} else {
-			require realpath('./inc/version.php');
+			require realpath('../inc/version.php');
 		}
 		$this->version = $Vorkfork_Version;
 		$this->versionArray = $Vorkfork_VersionArray;
@@ -135,7 +135,7 @@ class ApplicationUtilities
 	 */
 	public function findApps(): void
 	{
-		$path = realpath('./apps');
+		$path = realpath('../apps');
 		$apps = Finder::create()
 			->in($path)
 			->directories()
@@ -170,7 +170,7 @@ class ApplicationUtilities
 
 	public function registerChildApplication($app): void
 	{
-		require_once realpath('./apps/' . $app . '/index.php');
+		require_once realpath('../apps/' . $app . '/index.php');
 	}
 
 	/**
@@ -210,7 +210,7 @@ class ApplicationUtilities
 	 */
 	public static function buildApplicationJs(string $app, string $folder): ?array
 	{
-		$pathRelative = './apps/' . $app . DIRECTORY_SEPARATOR . $folder;
+		$pathRelative = '../apps/' . $app . DIRECTORY_SEPARATOR . $folder;
 		$path = Path::normalize(realpath($pathRelative));
 		if (file_exists($path)) {
 			$scriptsFiles = Finder::create()

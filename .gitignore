@@ -29,8 +29,6 @@ nbproject/
 # PhpStorm
 .idea
 
-dist/
-
 /apps*/*
 /apps/*/node_modules
 /apps/*/vendor
@@ -41,5 +39,6 @@ dist/
 !/apps/shares
 /cache/*
 !/cache/.htaccess
-/public/*
+/public/dist
+/public/css
 /resources/css/*.css

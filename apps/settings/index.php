@@ -24,8 +24,9 @@ try {
 		utilities: $u
 	);
 	$path = __DIR__ . '/resources/templates';
+	$user = Auth::getLoginUser();
 	return TemplateRenderer::create($path)->loadTemplate('settings', [
-		'user' => Auth::user()->toString(true)
+		'user' => !is_null($user) ? $user->toString(true) : ''
 	]);
 
 } catch (MissingMappingDriverImplementation $e) {

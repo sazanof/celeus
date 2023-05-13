@@ -6,7 +6,7 @@ use Vorkfork\Core\Router\MainRouter;
 if (!defined('INC_MODE')) {
 	exit;
 }
-return MainRouter::group('app/dav/', [
+return MainRouter::group('apps/dav/', [
 	'server/' => [
 		'action' => [DavController::class, 'server'],
 		'methods' => ['GET'],

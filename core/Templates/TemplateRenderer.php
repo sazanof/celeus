@@ -16,7 +16,7 @@ class TemplateRenderer implements ITemplateRenderer
 	private string $defaultPath;
 	private Environment $template;
 
-	public function __construct($defaultPath = './resources/templates')
+	public function __construct($defaultPath = '../resources/templates')
 	{
 		$this->defaultPath = $defaultPath;
 		$this->paths[] = $this->defaultPath;

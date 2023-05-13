@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Vorkfork\Core\Controllers;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -23,20 +24,20 @@ class AppController extends Controller
 	{
 		$apps = ApplicationUtilities::getInstance()->getApplicationsList();
 		if (!empty($apps)) {
-			return new RedirectResponse('/app/' . $apps[0]['name']);
+			return new RedirectResponse('/apps/' . $apps[0]['name']);
 		}
 	}
 
 
 	//TODO render app with custom template and js
-	public function runApp($name)
+	public function runApp($name): ErrorResponse|string
 	{
 		//Получаем событие от шаблонизатора с массивом скриптов для подключения
 		$this->dispatcher->addListener(AddApplicationScripts::NAME, function (AddApplicationScripts $event) {
 			$this->data['scripts'] = $event->getScripts();
 		});
 
-		$path = realpath('./apps/' . $name . '/index.php');
+		$path = realpath('../apps/' . $name . '/index.php');
 
 		if ($path && $this->filesystem->exists($path)) {
 			$apps = ApplicationUtilities::getInstance()->getApplicationsList();
@@ -78,5 +79,11 @@ class AppController extends Controller
 			$response->setContent(file_get_contents($root));
 			return $response;
 		}
+	}
+
+	public function getApplicationPicture(string $name, string $image, Request $request)
+	{
+		$path = $request->getPathInfo();
+		return $this->fileResponse($path);
 	}
 }

@@ -56,7 +56,7 @@
         },
         methods: {
             openSettings() {
-                document.location.replace('/app/settings')
+                document.location.replace('/apps/settings')
             },
             async logOut() {
                 await this.$store.dispatch('logOut')

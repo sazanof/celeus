@@ -19,9 +19,16 @@ return [
 			'auth' => true
 		]
 	],
-	'/app/{name}' => [
+	'/apps/{name}/' => [
 		'action' => [AppController::class, 'runApp'],
 		'methods' => ['GET', 'POST'],
+		'defaults' => [
+			'auth' => true
+		]
+	],
+	'/apps/{name}/img/{image}' => [
+		'action' => [AppController::class, 'getApplicationPicture'],
+		'methods' => ['GET'],
 		'defaults' => [
 			'auth' => true
 		]

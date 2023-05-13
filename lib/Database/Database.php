@@ -53,7 +53,7 @@ class Database implements IDatabase
 	public function connect(): Connection|null
 	{
 		$config = ORMSetup::createAttributeMetadataConfiguration(
-			paths: array(realpath('./core/Models')),
+			paths: array(realpath('../core/Models')),
 			isDevMode: true,
 		);
 		$this->configuration = $config;

@@ -76,7 +76,7 @@ class Auth implements IAuthenticate
 	 */
 	public static function getLoginUser(): ?UserDto
 	{
-		if (is_null(self::$user)) {
+		if (is_null(self::$user) && self::getLoginUserID() !== null) {
 			$user = User::repository()->findById(self::getLoginUserID());
 			/* @var UserDto $userDto */
 			$userDto = $user->toDto(UserDto::class);
