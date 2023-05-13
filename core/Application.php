@@ -12,6 +12,7 @@ use Vorkfork\Application\ApplicationUtilities;
 use Vorkfork\Auth\Auth;
 use Vorkfork\Core\Exceptions\EntityManagerNotDefinedException;
 use Vorkfork\Core\Exceptions\ValidationExceptionResponse;
+use Vorkfork\Core\Router\MainRouter;
 use Vorkfork\Core\Translator\Translate;
 use Vorkfork\Database\CustomEntityManager;
 use Vorkfork\Database\Database;
@@ -43,10 +44,8 @@ class Application
 	protected Translate $translate;
 	protected static Application|null $instance = null;
 
-	public function __construct(IRouter $router)
+	public function __construct()
 	{
-		$this->translate = new Translate();
-		$this->router = $router;
 		$this->filesystem = new File(realpath('./'));
 		$this->env = Dotenv::createImmutable(realpath('./'));
 		$errEnv = false;
@@ -66,12 +65,22 @@ class Application
 			} catch (\Doctrine\DBAL\Exception $e) {
 			}
 		}
+		$this->translate = new Translate();
 		$this->dispatcher = new EventDispatcher();
 		$this->utilities->setDispatcher($this->dispatcher);
+		self::$instance = $this;
+	}
+
+	public function setRouter(MainRouter $router)
+	{
+		$this->router = $router;
 		$this->router->setDispatcher($this->dispatcher);
 		$this->utilities->setRouter($this->router);
+	}
+
+	public function registerApplications()
+	{
 		$this->utilities->findApps(); // Register applications
-		self::$instance = $this;
 	}
 
 	public function checkUpdates(): void

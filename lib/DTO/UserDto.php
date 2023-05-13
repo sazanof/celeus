@@ -2,11 +2,10 @@
 
 namespace Vorkfork\DTO;
 
-use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Regex;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\TransactionRequiredException;
+use Vorkfork\Application\UserManager;
 
 class UserDto extends BaseDto
 {
@@ -21,8 +20,6 @@ class UserDto extends BaseDto
 
 	public string $lastname;
 
-	public string $photo;
-
 	public string $organization;
 
 	public string $position;
@@ -30,6 +27,8 @@ class UserDto extends BaseDto
 	public string $language;
 
 	public ?string $phone;
+	
+	public ?string $photo;
 
 	public string $about;
 
@@ -38,6 +37,16 @@ class UserDto extends BaseDto
 	public static function setGroups()
 	{
 		return [1, 2];
+	}
+
+	/**
+	 * @throws OptimisticLockException
+	 * @throws TransactionRequiredException
+	 * @throws ORMException
+	 */
+	public function getUserManager()
+	{
+		return UserManager::getManagerStatic($this->id);
 	}
 
 }

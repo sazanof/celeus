@@ -1,9 +1,10 @@
 <template>
     <div class="user-info">
         <Popper :arrow="true">
-            <VfAvatar
-                :fullname="fullName"
-                :size="48" />
+            <img
+                ref="userAvatar"
+                class="user-avatar-header"
+                :src="`/user/${user.username}/avatar?size=48`">
             <template #content>
                 <VfList>
                     <VfListItem @click="openSettings">
@@ -31,7 +32,6 @@
     import VfList from '../elements/VfList.vue'
     import VfListItem from '../elements/VfListItem.vue'
     import Popper from 'vue3-popper'
-    import VfAvatar from '../elements/VfAvatar.vue'
 
     export default {
         name: 'PageUserInfo',
@@ -40,7 +40,6 @@
             VfList,
             VfListItem,
             Popper,
-            VfAvatar
         },
         computed: {
             user() {
@@ -49,6 +48,11 @@
             fullName() {
                 return this.user !== null ? `${this.user.firstname} ${this.user.lastname}` : 'N/A'
             }
+        },
+        mounted() {
+            Emitter.on('settings.avatar.change', blob => {
+                this.$refs.userAvatar.src = blob
+            })
         },
         methods: {
             openSettings() {
@@ -64,10 +68,13 @@
 
 <style lang="scss" scoped>
 .user-info {
-  ::v-deep(.avatar) {
+  .user-avatar-header {
 	cursor: pointer;
 	border: 2px solid var(--color-white);
+	border-radius: 50%;
 	transition: var(--transition-duration);
+	width: 48px;
+	height: 48px;
 
 	&:hover {
 	  box-shadow: var(--box-shadow);

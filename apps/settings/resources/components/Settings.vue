@@ -43,12 +43,11 @@
             if (this.$route.path === '/') {
                 this.$router.push('/profile')
             }
+            const user = atob(document.querySelector('input[name="preload_state_user"]').value)
+            this.$store.commit('saveUser', JSON.parse(user))
         },
-        beforeMount() {
-            console.log('Settings,vue Emitter.on(\'store.update.user\') ')
-            Emitter.on('store.update.user', (user) => {
-                this.$store.commit('saveUser', user)
-            })
+        created() {
+            console.log('MOUNT Settings.vue')
         },
 
     }

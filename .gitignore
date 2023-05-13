@@ -33,6 +33,13 @@ dist/
 
 /apps*/*
 /apps/*/node_modules
+/apps/*/vendor
 !/apps/settings
 !/apps/mail
 !/apps/calendar
+!/apps/dav
+!/apps/shares
+/cache/*
+!/cache/.htaccess
+/public/*
+/resources/css/*.css

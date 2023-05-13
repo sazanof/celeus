@@ -14,11 +14,14 @@ use Vorkfork\Core\Router\MainRouter;
 
 // TODO add referer to route param to make work route only if referer is set & matches
 // TODO move routes.php to routes.php or yaml
+$application = new Application();
 $router = new MainRouter();
 $router->addRoutesFromAppInc();
+$application->setRouter($router);
+$application->registerApplications();
 
 // todo добавление и регистрация приложений и их роутов из apps
 
-$application = new Application($router);
+
 return $application->watch();
 

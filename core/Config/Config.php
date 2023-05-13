@@ -9,6 +9,7 @@ use Vorkfork\File\File;
 class Config implements IConfig
 {
 	private mixed $configArray = [];
+	protected ?string $fileName = null;
 
 	/**
 	 * @param $fileName
@@ -16,11 +17,12 @@ class Config implements IConfig
 	 */
 	public function __construct($fileName = null)
 	{
-		if (!is_null($fileName)) {
+		$this->fileName = $this->fileName !== null ? $this->fileName : $fileName;
+		if (!is_null($this->fileName)) {
 			if (php_sapi_name() == "cli") {
-				$pathToConfig = realpath("./config/{$fileName}.php");
+				$pathToConfig = realpath("./config/{$this->fileName}.php");
 			} else {
-				$pathToConfig = realpath("./config/{$fileName}.php");
+				$pathToConfig = realpath("./config/{$this->fileName}.php");
 			}
 
 			$fs = new File($pathToConfig);

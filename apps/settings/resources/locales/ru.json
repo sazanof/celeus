@@ -1,6 +1,13 @@
 {
+  "Crop": "Кадрировать",
+  "Cancel": "Отмена",
+  "Error saving profile photo": "Ошибка сохранения фотографии профиля",
+  "Image saved successfully": "Изображение сохранено успешно",
   "My profile": "Мой профиль",
   "Notification settings": "Настройки уведомлений",
+  "Profile saved": "Профиль сохранен",
+  "Save": "Сохранить",
   "Save profile": "Сохранить профиль",
-  "Settings": "Настройки"
+  "Settings": "Настройки",
+  "Upload photo": "Загрузить фотографию"
 }

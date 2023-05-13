@@ -1,6 +1,7 @@
 import { translate, registerTranslationObject, getLocale } from './l10n'
 import 'animate.css'
 import 'vue-toastification/dist/index.css'
+import 'vue-advanced-cropper/dist/style.css'
 import moment from 'moment'
 import Toast from 'vue-toastification'
 import store from './store'

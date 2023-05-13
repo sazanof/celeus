@@ -33,7 +33,9 @@
     "symfony/event-dispatcher": "^6.2",
     "composer/pcre": "^3.1",
     "ext-fileinfo": "*",
-    "symfony/validator": "^6.2"
+    "symfony/validator": "^6.2",
+    "symfony/mime": "^6.2",
+    "gregwar/image": "^2.1"
   },
   "autoload": {
     "psr-4": {

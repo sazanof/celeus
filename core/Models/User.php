@@ -18,6 +18,7 @@ use Vorkfork\Core\Repositories\UserRepository;
 use Vorkfork\Database\Entity;
 use Vorkfork\Database\IdGenerator;
 use Vorkfork\Database\Trait\Timestamps;
+use Vorkfork\DTO\UserDto;
 use Vorkfork\Security\PasswordHasher;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -27,6 +28,7 @@ use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Persistence\ObjectRepository;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
+/** @method UserDto toDto(string $dtoClass)* */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Index(columns: ['id'], name: 'user_id')]
 #[ORM\Index(columns: ['email'], name: 'email')]
@@ -58,10 +60,10 @@ class User extends Entity
 	#[ORM\Column(type: Types::STRING)]
 	private string $lastname;
 
-	#[ORM\Column(type: Types::STRING, nullable: true)]
+	#[ORM\Column(type: Types::STRING, nullable: true, columnDefinition: "VARCHAR(255) AFTER `firstname`")]
 	private string $photo;
 
-	#[ORM\Column(type: Types::STRING, nullable: true, columnDefinition: "VARCHAR(255) AFTER `photo`")]
+	#[ORM\Column(type: Types::STRING, nullable: true, columnDefinition: "VARCHAR(255) AFTER `lastname`")]
 	private string $language;
 
 	#[ORM\Column(type: Types::STRING, nullable: true, columnDefinition: "VARCHAR(255) AFTER `language`")]
@@ -192,12 +194,18 @@ class User extends Entity
 		$this->lastname = $lastname;
 	}
 
-	public function getPhoto()
+	/**
+	 * @return string
+	 */
+	public function getPhoto(): string
 	{
 		return $this->photo;
 	}
 
-	public function setPhoto(string $photo)
+	/**
+	 * @param string $photo
+	 */
+	public function setPhoto(string $photo): void
 	{
 		$this->photo = $photo;
 	}

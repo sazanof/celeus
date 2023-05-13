@@ -16,8 +16,8 @@ export default {
             commit('setAuthenticated', res.data.success === undefined && res.data.id !== undefined)
             if (state.authenticated) {
                 commit('setUser', res.data)
-                console.log('App,vue Emitter.on(\'store.update.user\') ')
                 Emitter.emit('store.update.user', state.user)
+                console.log('1) Check user and fire event в App.vue, ')
             }
         })
     },

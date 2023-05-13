@@ -6,6 +6,7 @@ use Vorkfork\Core\Controllers\InstallController;
 use Vorkfork\Core\Controllers\LocaleController;
 use Vorkfork\Core\Controllers\LoginController;
 use Vorkfork\Core\Controllers\UserController;
+use Vorkfork\Core\Translator\Translate;
 
 if (!defined('INC_MODE')) {
 	exit;
@@ -25,18 +26,13 @@ return [
 			'auth' => true
 		]
 	],
-	'/user' => [
-		'action' => [UserController::class, 'getUser'],
-		'methods' => ['GET'],
-		'defaults' => [
-			'auth' => true
-		]
-	],
 	'/login' => [
 		'action' => [LoginController::class, 'getLogin'],
 		'methods' => ['GET'],
 		'defaults' => [
-			'title' => 'Default title'
+			'title' => Translate::t('Log in to the system', [
+				'{name}' => env('APP_NAME')
+			])
 		]
 	],
 	'/login/process' => [
@@ -81,6 +77,21 @@ return [
 		'defaults' => [
 			'step' => 0,
 			'public' => true
+		]
+	],
+	'/user' => [
+		'action' => [UserController::class, 'getUser'],
+		'methods' => ['GET'],
+		'defaults' => [
+			'auth' => true
+		]
+	],
+	'/user/{username}/avatar?size={size}' => [
+		'action' => [UserController::class, 'getUserAvatar'],
+		'methods' => ['GET'],
+		'defaults' => [
+			'size' => 32,
+			'auth' => true
 		]
 	],
 ];

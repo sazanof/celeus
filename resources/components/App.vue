@@ -38,7 +38,7 @@
                 this.visible = true
             }, 200)
 
-        }
+        },
     }
 </script>
 

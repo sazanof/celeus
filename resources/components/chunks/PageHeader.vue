@@ -1,5 +1,7 @@
 <template>
-    <div class="page-header">
+    <div
+        class="page-header"
+        v-if="visible">
         <Logo />
         <PageCenterHelper />
         <div class="user-info">
@@ -24,6 +26,11 @@
             PageCenterHelper,
             PageNotifications
         },
+        data() {
+            return {
+                visible: false
+            }
+        },
         computed: {
             authenticated() {
                 return this.$store.getters.isAuthenticated
@@ -32,15 +39,17 @@
                 return this.$store.state.getUser
             }
         },
-        created() {
-
-        },
-        async beforeCreate() {
+        async created() {
             this.$store.state.currentLocale = getLocale()
             await this.$store.dispatch('checkUserIsAuthenticated')
             setTimeout(() => {
                 this.visible = true
+                Emitter.emit('header.mounted')
             }, 200)
+            console.log('MOUNT PageHeader.vue')
+            Emitter.on('profile.saved', user => {
+                this.$store.commit('setUser', user)
+            })
         },
         methods: {}
     }

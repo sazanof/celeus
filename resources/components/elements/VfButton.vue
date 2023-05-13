@@ -92,6 +92,17 @@
   }
 }
 
+.btn-gray {
+  background: var(--color-background-light);
+  color: var(--color-text-light);
+  border-color: var(--color-background-light);
+
+  &:hover {
+	background-color: var(--color-background);
+	border-color: var(--color-background)
+  }
+}
+
 .btn-green {
   background: var(--color-green);
   color: var(--color-white);
@@ -123,5 +134,10 @@
 	background-color: var(--color-red-hover);
 	border-color: var(--color-red-hover)
   }
+}
+
+.btn-transparent {
+  background: none;
+  border-color: transparent;
 }
 </style>

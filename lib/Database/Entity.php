@@ -5,6 +5,7 @@ namespace Vorkfork\Database;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validation;
@@ -285,6 +286,18 @@ abstract class Entity implements IEntity
 		}
 		$em->flush(); // Persist objects that did not make up an entire batch
 		$em->clear();
+	}
+
+	/**
+	 * Save the model
+	 * @throws OptimisticLockException
+	 * @throws ORMException
+	 * @throws MissingMappingDriverImplementation
+	 */
+	public function save()
+	{
+		$this->em()->persist($this);
+		$this->em()->flush();
 	}
 
 	public function getFillable()

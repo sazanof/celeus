@@ -13,5 +13,12 @@ return MainRouter::group('/app/settings/', [
 		'defaults' => [
 			'auth' => true
 		]
+	],
+	'profile/photo' => [
+		'action' => [SettingsController::class, 'saveProfilePhoto'],
+		'methods' => ['POST'],
+		'defaults' => [
+			'auth' => true
+		]
 	]
 ]);

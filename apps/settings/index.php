@@ -5,6 +5,7 @@ use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Vorkfork\Application\ApplicationUtilities;
 use Vorkfork\Application\Session;
 use Vorkfork\Apps\Settings\Application;
+use Vorkfork\Auth\Auth;
 use Vorkfork\Core\Events\AddApplicationScripts;
 use Vorkfork\Core\Templates\TemplateRenderer;
 
@@ -24,7 +25,7 @@ try {
 	);
 	$path = __DIR__ . '/resources/templates';
 	return TemplateRenderer::create($path)->loadTemplate('settings', [
-
+		'user' => Auth::user()->toString(true)
 	]);
 
 } catch (MissingMappingDriverImplementation $e) {

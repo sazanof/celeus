@@ -24,10 +24,14 @@ class PasswordIsDifficultValidator extends ConstraintValidator
 		if (!is_string($value)) {
 			throw new UnexpectedValueException($value, 'string');
 		}
-		$request = Request::createFromGlobals()->toArray();
-		if (isset($request['password']) && !PasswordValidator::isDifficult($request['password'])) {
-			$this->context->buildViolation($constraint->message)
-				->addViolation();
+		$request = Request::createFromGlobals();
+		if (!empty($request->getContent())) {
+			$request = $request->toArray();
+			if (isset($request['password']) && !PasswordValidator::isDifficult($request['password'])) {
+				$this->context->buildViolation($constraint->message)
+					->addViolation();
+			}
 		}
+
 	}
 }
