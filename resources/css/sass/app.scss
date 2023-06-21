@@ -96,7 +96,22 @@ div {
 	border-radius: var(--border-radius-big) var(--border-radius-big) 0 0;
 	padding: var(--padding-box);
 	box-shadow: var(--box-shadow);
+	height: calc(100vh - var(--header-height));
+	overflow: auto;
+
+	& > .simplebar-track {
+	  top: 36px !important;
+	  bottom: 6px !important;
+	}
   }
+}
+
+.simplebar-scrollbar:before {
+  background: var(--border-color) !important;
+}
+
+.simplebar-scrollbar.simplebar-visible:before {
+  opacity: 1 !important;
 }
 
 .menu {

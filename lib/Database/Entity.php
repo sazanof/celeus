@@ -3,10 +3,8 @@
 namespace Vorkfork\Database;
 
 use Doctrine\ORM\Event\PreFlushEventArgs;
-use Doctrine\ORM\Event\PrePersistEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
-use Symfony\Component\HttpFoundation\Request;
+use Sabre\DAV\Exception;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -93,6 +91,7 @@ abstract class Entity implements IEntity
 	{
 		$class = new static();
 		$class->fromArray($args[0], $class->fillable);
+		self::$instance = $class;
 		return $class;
 	}
 
@@ -128,13 +127,15 @@ abstract class Entity implements IEntity
 		}
 	}
 
-	public function validate()
+	/**
+	 * @return void
+	 */
+	public function validate(): void
 	{
 		$this->createValidator();
 		$violations = $this->validator->validate($this);
 		if ($violations->count() > 0) {
-
-			throw new ValidationFailedException(Translate::t('Error when saving the profile'), $violations);
+			throw new ValidationFailedException(Translate::t('Error when saving the entity'), $violations);
 		}
 	}
 
@@ -216,7 +217,7 @@ abstract class Entity implements IEntity
 	/**
 	 * @inheritDoc
 	 */
-	public static function find(int $id): Entity
+	public static function find(int $id): ?static
 	{
 		$class = self::get();
 		return $class->em->find($class->className, $id);
@@ -297,6 +298,18 @@ abstract class Entity implements IEntity
 	public function save()
 	{
 		$this->em()->persist($this);
+		$this->em()->flush();
+	}
+
+	/**
+	 * @return void
+	 * @throws MissingMappingDriverImplementation
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 */
+	public function remove(): void
+	{
+		$this->em()->remove($this);
 		$this->em()->flush();
 	}
 

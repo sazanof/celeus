@@ -23,7 +23,6 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Vorkfork\File\Storage;
-use Vorkfork\Response\TokenMismatchResponse;
 use Vorkfork\Security\CSRFToken;
 
 class Controller implements IController

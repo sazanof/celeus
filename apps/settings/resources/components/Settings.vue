@@ -14,6 +14,12 @@
                     </template>
                     {{ $t('settings', 'Notification settings') }}
                 </VfSidebarMenuItem>
+                <VfSidebarMenuItem to="/regional">
+                    <template #button>
+                        <EarthIcon :size="20" />
+                    </template>
+                    {{ $t('settings', 'Regional settings') }}
+                </VfSidebarMenuItem>
             </VfSidebar>
             <VfContent>
                 <router-view />
@@ -25,6 +31,7 @@
 <script>
     import AccountIcon from 'vue-material-design-icons/Account.vue'
     import BellIcon from 'vue-material-design-icons/Bell.vue'
+    import EarthIcon from 'vue-material-design-icons/Earth.vue'
     import VfContent from '../../../../resources/components/elements/VfContent.vue'
     import VfSidebar from '../../../../resources/components/elements/VfSidebar.vue'
     import VfSidebarMenuItem from '../../../../resources/components/elements/VfSidebarMenuItem.vue'
@@ -36,7 +43,8 @@
             VfContent,
             VfSidebarMenuItem,
             AccountIcon,
-            BellIcon
+            BellIcon,
+            EarthIcon
         },
         computed: {},
         beforeCreate() {

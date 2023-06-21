@@ -43,6 +43,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  min-height: 30px;
 
   .label {
 	margin-left: 1px;
@@ -129,7 +130,7 @@ input[type="checkbox"]:not(:checked) + label:after {
 input[type="radio"]:checked + label:after,
 input[type="radio"]:not(:checked) + label:after {
   left: 5px;
-  top: 5px;
+  top: -4px;
   width: 10px;
   height: 10px;
   border-radius: 100%;

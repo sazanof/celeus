@@ -76,6 +76,8 @@ class Database implements IDatabase
 	{
 		if (!is_null($this->connection) && is_null($this->entityManager)) {
 			$this->entityManager = new CustomEntityManager($this->connection, $this->configuration);
+		} else if (!$this->entityManager->isOpen()) {
+			$this->entityManager = new CustomEntityManager($this->connection, $this->configuration);
 		}
 
 		return $this->entityManager;

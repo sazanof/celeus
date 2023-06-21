@@ -19,7 +19,7 @@ try {
 	$app = new Application(
 		utilities: ApplicationUtilities::getInstance()
 	);
-	$path = __DIR__ . '/resources/templates';
+	$path = __DIR__ . '/templates';
 	return TemplateRenderer::create($path)->loadTemplate('mail', []);
 
 } catch (MissingMappingDriverImplementation $e) {

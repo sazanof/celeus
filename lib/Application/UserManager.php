@@ -20,6 +20,7 @@ use Vorkfork\Database\Entity;
 use Vorkfork\DTO\UserDto;
 use Vorkfork\File\Avatar;
 use Vorkfork\Graphics\Image;
+use Vorkfork\Security\Str;
 
 class UserManager
 {
@@ -44,6 +45,11 @@ class UserManager
 		$this->principalRootDirectory = $this->makeUserPrincipalSharesUri();
 		$this->directory = new ACLDirectory($this->principalRootDirectory, $this->getOwner());
 		self::$instance = $this;
+	}
+
+	public function getFullname(): string
+	{
+		return $this->model->getFirstname() . ' ' . $this->model->getLastname();
 	}
 
 	/**
@@ -172,5 +178,10 @@ class UserManager
 	public function setOwner(): void
 	{
 		$this->owner = $this->configurator->getBaseUri() . DIRECTORY_SEPARATOR . $this->model->getUsername();
+	}
+
+	public function getModel()
+	{
+		return $this->model;
 	}
 }

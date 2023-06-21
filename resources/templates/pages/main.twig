@@ -10,7 +10,7 @@
 							{% if item.showInMenu %}
 								<div class="menu-item">
 									<a href="/apps/{{ item.name | lower }}"
-									   class="{{ currentRoute == '/apps/' ~ item.name | lower ~ '/' ? 'active' : '' }}">
+									   class="{{ currentRoute == '/apps/' ~ item.name | lower ? 'active' : '' }}">
 										<img src="/apps/{{ item.name | lower }}/img/{{ item.name | lower }}.svg"/>
 										<div class="menu-tooltip">
 											{{ t(item.name) }}
@@ -21,7 +21,7 @@
 						{% endfor %}
 					</div>
 				</div>
-				<div class="page-content">
+				<div class="page-content" data-simplebar>
 					{{ application | raw }}
 				</div>
 			</div>

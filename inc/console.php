@@ -55,13 +55,23 @@ try {
 	$paths[] = realpath('./core/Models');
 // Get ORM Models from apps
 	$dirs = ApplicationUtilities::getApplicationDirectories();
+	$_commands = [];
 	foreach ($dirs as $dir) {
-		$path = Path::normalize($dir->getRealPath() . '/lib/Models');
-		if (is_dir($path)) {
-			$paths[] = $path;
+		$pathToModels = Path::normalize($dir->getRealPath() . '/lib/Models');
+		$pathToCommands = Path::normalize($dir->getRealPath() . '/lib/Commands');
+		if (is_dir($pathToModels)) {
+			$paths[] = $pathToModels;
+		}
+		if (is_dir($pathToCommands)) {
+			$classes = \Symfony\Component\Finder\Finder::create()->in($pathToCommands)->name('*Command.php');
+			foreach ($classes as $file) {
+				$class = \Vorkfork\Security\Str::trimEnd($file->getFilename(), '.php');
+				$autoload = dirname($file->getPath(), 2) . '/vendor/autoload.php';
+				require_once $autoload;
+				$_commands[] = new('\Vorkfork\\Apps\\' . \Vorkfork\Security\Str::ucfirst($dir->getBasename() . '\\Commands\\' . $class));
+			}
 		}
 	}
-
 	$isDevMode = env('APP_MODE') === 'development';
 
 	$ormConfig = ORMSetup::createAttributeMetadataConfiguration(
@@ -84,7 +94,6 @@ try {
 		new ExistingEntityManager($entityManager)
 	);
 
-
 	$commands = [
 		new UpgradeCommand(),
 		new DoctrineCommand\CurrentCommand($dependencyFactory),
@@ -101,11 +110,10 @@ try {
 		new DoctrineCommand\UpToDateCommand($dependencyFactory),
 		new DoctrineCommand\VersionCommand($dependencyFactory),
 	];
-
 	try {
 		ConsoleRunner::run(
 			new SingleManagerProvider($entityManager),
-			$commands
+			array_merge($commands, $_commands)
 		);
 	} catch (Exception $e) {
 		//log

@@ -23,7 +23,7 @@ try {
 	$app = new Application(
 		utilities: $u
 	);
-	$path = __DIR__ . '/resources/templates';
+	$path = __DIR__ . '/templates';
 	$user = Auth::getLoginUser();
 	return TemplateRenderer::create($path)->loadTemplate('settings', [
 		'user' => !is_null($user) ? $user->toString(true) : ''

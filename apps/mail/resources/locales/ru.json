@@ -1,3 +1,16 @@
 {
-  "Mail": "Почта"
+  "Add your first email account": "Добавьте свой первый почтовый аккаунт",
+  "Add account": "Добавить аккаунт",
+  "Account successfully created": "Аккаунт успешно создан",
+  "Account saved": "Аккаунт сохранен",
+  "Connect": "Подключиться",
+  "Connection error": "Ошибка подключения",
+  "Connection established": "Соединение установлено",
+  "Continue": "Продолжить",
+  "Error saving account": "Ошибка сохранения аккаутнта",
+  "IMAP settings": "Настройки IMAP",
+  "Mail": "Почта",
+  "New message": "Новое сообщение",
+  "Search messages": "Поиск сообщений",
+  "SMTP settings": "Настройки SMTP"
 }

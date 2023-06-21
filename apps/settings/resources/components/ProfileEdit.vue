@@ -31,7 +31,9 @@
             </div>
 
 
-            <div class="profile-main">
+            <div
+                class="profile-main"
+                data-simplebar>
                 <VfSection
                     :title="$t('core', 'Profile')"
                     :description="$t('core','Basic information')">
@@ -240,7 +242,12 @@
 
   .profile-main {
 	width: calc(100% - 260px);
-	padding-left: 32px;
+	height: calc(100vh - var(--header-height) - (var(--padding-box) * 2));
+	padding: 0 20px 0 32px;
+
+	& > ::v-deep(.simplebar-vertical) {
+	  top: 20px
+	}
   }
 
   .button-upload {

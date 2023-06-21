@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Vorkfork\Application\ApplicationUtilities;
 use Vorkfork\Auth\Auth;
+use Vorkfork\Core\Exceptions\CustomPageException;
 use Vorkfork\Core\Exceptions\EntityManagerNotDefinedException;
 use Vorkfork\Core\Exceptions\ValidationExceptionResponse;
 use Vorkfork\Core\Router\MainRouter;
@@ -122,12 +123,10 @@ class Application
 		try {
 			$matcher = $this->router->matchRoute($_SERVER['REQUEST_URI']);
 		} catch (ResourceNotFoundException $exception) {
-			return (new Response($exception->getMessage(), 404, []))->send();
+			return new CustomPageException($exception->getMessage(), 404);
 		} catch (MethodNotAllowedException $exception) {
 			return (new Response($exception->getMessage(), 403, []))->send();
 		}
-
-		//$dispatcher->addSubscriber(new RouterListener($matcher, new RequestStack()));
 
 		if (!$this->isAppInstalled() && !$matcher['public']) {
 			return $this->router->redirectTo('/install');

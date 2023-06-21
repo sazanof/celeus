@@ -47,7 +47,8 @@
         },
         methods: {
             getNow: function () {
-                this.timestamp = this.$moment.format('ddd, DD MMMM HH:mm')
+
+                this.timestamp = this.$moment().locale(this.$locale).format('ddd, DD MMMM HH:mm')
             }
         }
     }

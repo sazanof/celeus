@@ -19,7 +19,7 @@ return [
 			'auth' => true
 		]
 	],
-	'/apps/{name}/' => [
+	'/apps/{name}' => [
 		'action' => [AppController::class, 'runApp'],
 		'methods' => ['GET', 'POST'],
 		'defaults' => [

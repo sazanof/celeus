@@ -41,7 +41,12 @@ class InstallController extends Controller
 		'ldap',
 		'mysqli',
 		'pdo',
-		'sodium'
+		'sodium',
+		'fileinfo',
+		'iconv',
+		'imap',
+		'mbstring',
+		'json'
 	];
 
 

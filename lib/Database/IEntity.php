@@ -12,41 +12,44 @@ use Throwable;
 
 interface IEntity
 {
-    /**
-     * Find and return an entity
-     * @throws OptimisticLockException
-     * @throws TransactionRequiredException
-     * @throws ORMException
-     */
-    public static function find(int $id): Entity;
+	/**
+	 * Find and return an entity
+	 * @param int $id
+	 * @return static
+	 * @throws TransactionRequiredException
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 */
+	public static function find(int $id): ?static;
 
-    /**
-     * Create new Entity
-     * @return Entity
-     * @throws MappingException
-     */
+	/**
+	 * Create new Entity
+	 * @return Entity
+	 * @return static
+	 * @throws MappingException
+	 */
 
-    public static function create(): Entity;
+	public static function create(): static;
 
-    /**
-     * Updates an Entity by id
-     * @param int $id
-     * @param array $arguments
-     * @return Entity
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws TransactionRequiredException
-     * @throws Throwable
-     */
-    public static function updateStaticByID(int $id, array $arguments): Entity;
+	/**
+	 * Updates an Entity by id
+	 * @param int $id
+	 * @param array $arguments
+	 * @return static
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 * @throws TransactionRequiredException
+	 * @throws Throwable
+	 */
+	public static function updateStaticByID(int $id, array $arguments): static;
 
-    /**
-     * @param array $arguments
-     * @return Entity
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws MissingMappingDriverImplementation
-     */
-    public function update(array $arguments): Entity;
+	/**
+	 * @param array $arguments
+	 * @return static
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 * @throws MissingMappingDriverImplementation
+	 */
+	public function update(array $arguments): static;
 
 }

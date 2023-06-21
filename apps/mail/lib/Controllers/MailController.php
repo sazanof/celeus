@@ -2,16 +2,101 @@
 
 namespace Vorkfork\Apps\Mail\Controllers;
 
+use Doctrine\Persistence\Mapping\MappingException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\Exception\TransportException;
+use Vorkfork\Apps\Mail\ACL\AccountAcl;
+use Vorkfork\Apps\Mail\Collections\AccountCollection;
+use Vorkfork\Apps\Mail\DTO\AccountDto;
+use Vorkfork\Apps\Mail\Encryption\MailPassword;
+use Vorkfork\Apps\Mail\Exceptions\AccountAlreadyExistsException;
+use Vorkfork\Apps\Mail\IMAP\Mailbox;
+use Vorkfork\Apps\Mail\IMAP\Server;
 use Vorkfork\Apps\Mail\Models\Account;
-use Vorkfork\Auth\Auth;
+use Vorkfork\Apps\Mail\SMTP\Smtp;
+use Vorkfork\Apps\Mail\SMTP\SmtpConfig;
 use Vorkfork\Core\Controllers\Controller;
+use Vorkfork\Core\Exceptions\ErrorResponse;
 
 class MailController extends Controller
 {
+	/**
+	 * Load user accounts list as Dto collection
+	 * @return mixed
+	 */
 	public function loadAccounts()
 	{
-		$user = Auth::user();
-		dd(Account::repository()->getAccountsByUsername($user->username));
-		return Auth::user();
+		return AccountCollection::getUserAccounts($this->user->username);
 	}
+
+	/**
+	 * Check and add user email account
+	 * @throws AccountAlreadyExistsException
+	 */
+	public function addAccount(Request $request)
+	{
+		if (!$request->headers->get(X_AJAX_CALL)) {
+			die;
+		}
+		$ar = $request->toArray();
+		$imap = $ar['imap'];
+		$smtp = $ar['smtp'];
+
+		try {
+			// Checking if account already exists in user's account list
+			$existing = Account::repository()->getUserAccountByEmail($imap['user'], $this->user->username);
+			if (count($existing) > 0) {
+				return new ErrorResponse((new AccountAlreadyExistsException())->getMessage(), 409);
+			}
+			// Testing smtp connection
+			Smtp::test(new SmtpConfig(
+				host: $smtp['host'],
+				port: $smtp['port'],
+				username: $smtp['user'],
+				password: $smtp['password'],
+				tls: $smtp['encryption'] !== 'none'
+			));
+			// Testing imap connection
+			$connection = new Mailbox(
+				new Server(
+					host: $imap['host'],
+					port: $imap['port'],
+				), $imap['user'], $imap['password'], OP_HALFOPEN);
+			if ($connection->check()) {
+				$account = Account::create([
+					'user' => $this->user->username,
+					'email' => $imap['user'],
+					'name' => $this->user->getUserManager()->getFullname(),
+					'smtpUser' => $smtp['user'],
+					'smtpPassword' => MailPassword::encrypt($smtp['password']),
+					'smtpServer' => $smtp['host'],
+					'smtpPort' => $smtp['port'],
+					'smtpEncryption' => $smtp['encryption'],
+					'imapUser' => $imap['user'],
+					'imapPassword' => MailPassword::encrypt($imap['password']),
+					'imapServer' => $imap['host'],
+					'imapPort' => $imap['port'],
+					'imapEncryption' => $imap['encryption'],
+					'isDefault' => Account::repository()->count([]) === 0
+				]);
+				return [
+					'success' => true,
+					'account' => $account->toDto(AccountDto::class)
+				];
+			}
+
+		} catch (TransportException $e) {
+			return new ErrorResponse($e->getMessage());
+		}
+		return false;
+	}
+
+	public function saveAccount(int $id, Request $request)
+	{
+		$account = Account::find($id);
+		if (!is_null($account) && AccountAcl::belongsToAuthenticatedUser($account)) {
+			return $account->update($request->toArray())->toDto(AccountDto::class);
+		}
+	}
+
 }

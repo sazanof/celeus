@@ -5,7 +5,7 @@
 {% endblock %}
 {% block scripts %}
 	{% if env('APP_MODE', 'production') == 'production' %}
-		<script type="text/javascript" src="{{ scheme }}://{{ host }}/public/dist/install.js"></script>
+		<script type="text/javascript" src="{{ scheme }}://{{ host }}/dist/install.js"></script>
 	{% else %}
 		<script type="text/javascript" src="{{ scheme }}://{{ host }}:8080/install.js"></script>
 	{% endif %}

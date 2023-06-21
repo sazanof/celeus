@@ -2,10 +2,14 @@
 
 namespace Vorkfork\Core\Repositories;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Query\Expr\Andx;
+use Doctrine\ORM\Query\Expr\Comparison;
 use Doctrine\ORM\QueryBuilder;
+use Vorkfork\Serializer\JsonSerializer;
 
 class Repository extends EntityRepository
 {
@@ -49,13 +53,77 @@ class Repository extends EntityRepository
 		return $this;
 	}
 
+	public function delete(): static
+	{
+		$this->_qb = $this->_em->createQueryBuilder();
+		$this->_qb->delete($this->getClassName(), $this->as);
+
+		return $this;
+	}
+
+	/**
+	 * @param string $field
+	 * @param string $comparator
+	 * @param string $value
+	 * @return $this
+	 */
+	public function where(string $field, string $comparator = '=', string $value = '')
+	{
+		$part = '';
+		switch ($comparator) {
+			case Comparison::EQ:
+				$part = $this->_qb->expr()->andX(
+					$this->_qb->expr()->eq($this->as . '.' . $field, $value)
+				);
+				break;
+			case Comparison::NEQ:
+				$part = $this->_qb->expr()->not(
+					$this->_qb->expr()->eq($this->as . '.' . $field, $value)
+				);
+				break;
+		}
+		$this->_qb->andWhere($part);
+		return $this;
+	}
+
+	/**
+	 * @param string $field
+	 * @param array $values
+	 * @return $this
+	 */
+	public function in(string $field, array $values)
+	{
+		if (!empty($values)) {
+			$this->_qb->add('where', $this->_qb->expr()->in($this->as . '.' . $field, $values));
+		}
+		return $this;
+	}
+
+	public function getSql(): ?string
+	{
+		return $this->_qb->getDQL();
+	}
+
+	/**
+	 * @param string $field
+	 * @param array $values
+	 * @return static
+	 */
+	public function notIn(string $field, array $values): static
+	{
+		if (!empty($values)) {
+			$this->_qb->andWhere($this->_qb->expr()->notIn($this->as . '.' . $field, $values));
+		}
+		return $this;
+	}
+
 	/**
 	 * @return float|int|mixed|string
 	 */
-	public function results(): mixed
+	public function results(string $dtoClass = null): mixed
 	{
 		$results = $this->_qb->getQuery()->getResult();
-		return $results;
+		return !is_null($dtoClass) ? JsonSerializer::deserializeArrayStatic($results, $dtoClass) : $results;
 	}
 
 	public static function __callStatic($name, $arguments)
