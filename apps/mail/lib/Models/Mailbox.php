@@ -29,9 +29,6 @@ class Mailbox extends Entity
 	#[ORM\GeneratedValue]
 	protected int $id;
 
-	#[ORM\Column(name: 'account_id', type: Types::BIGINT)]
-	protected int $accountId;
-
 	#[ORM\Column(type: Types::STRING)]
 	protected string $name;
 
@@ -50,8 +47,12 @@ class Mailbox extends Entity
 	#[ORM\Column(name: 'last_sync', type: Types::DATETIME_MUTABLE)]
 	protected \DateTime $lastSync;
 
+	/** Many mailboxes have one product. This is the owning side. */
+	#[ORM\ManyToOne(targetEntity: Account::class, inversedBy: 'mailboxes')]
+	#[ORM\JoinColumn(name: 'account_id', referencedColumnName: 'id')]
+	private Account|null $account = null;
+
 	protected array $fillable = [
-		'accountId',
 		'name',
 		'delimiter',
 		'total',
@@ -80,22 +81,6 @@ class Mailbox extends Entity
 	public function getId(): int
 	{
 		return $this->id;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getAccountId(): int
-	{
-		return $this->accountId;
-	}
-
-	/**
-	 * @param int $accountId
-	 */
-	public function setAccountId(int $accountId): void
-	{
-		$this->accountId = $accountId;
 	}
 
 	/**
@@ -193,6 +178,21 @@ class Mailbox extends Entity
 	public function setUidValidity(int $uidValidity): void
 	{
 		$this->uidValidity = $uidValidity;
+	}
+
+	/**
+	 * @return Account|null
+	 */
+	public function getAccount(): ?Account
+	{
+		return $this->account;
+	}
+
+	public function setAccount(?Account $account)
+	{
+		$this->account = $account;
+		$account->addMailbox($this);
+		return $this;
 	}
 
 }

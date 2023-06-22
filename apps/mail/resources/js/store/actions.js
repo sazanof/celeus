@@ -8,6 +8,11 @@ axios.defaults.headers.common['X-AJAX-CALL'] = true
 const PREFIX = '/apps/mail/'
 
 export default {
+    /**
+     * Load user accounts
+     * @param commit
+     * @returns {Promise<axios.AxiosResponse<any>>}
+     */
     async loadAccounts({ commit }) {
         return await axios.get(`${PREFIX}accounts`).then(res => {
             commit('setAccounts', res.data)
@@ -15,16 +20,44 @@ export default {
         })
     },
 
+    /**
+     * Add user account
+     * @param commit
+     * @param data
+     * @returns {Promise<axios.AxiosResponse<any>>}
+     */
     async addAccount({ commit }, data) {
         return await axios.post(`${PREFIX}accounts/add`, data).then(res => {
             return res.data
         })
     },
 
+    /**
+     * Save user account
+     * @param commit
+     * @param state
+     * @param data
+     * @returns {Promise<axios.AxiosResponse<any>>}
+     */
     async saveAccount({ commit, state }, data) {
         return await axios.put(`${PREFIX}accounts/${data.id}`, data).then(res => {
             commit('saveAccount', res.data)
             return res.data
+        })
+    },
+
+    /**
+     * Get user's account mailboxes
+     * @param commit
+     * @param id
+     * @returns {Promise<axios.AxiosResponse<any>>}
+     */
+    async getMailboxes({ commit }, id) {
+        return await axios.get(`${PREFIX}accounts/${id}/mailboxes`).then(res => {
+            commit('setMailboxes', {
+                accountId: id,
+                mailboxes: res.data
+            })
         })
     }
 }

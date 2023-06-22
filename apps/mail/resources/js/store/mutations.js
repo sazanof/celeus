@@ -17,5 +17,16 @@ export default {
     },
     setActiveAccount(state, account) {
         state.activeAccount = state.accounts.find(a => a.id === account.id)
+    },
+    setMailboxes(state, data) {
+        //TODO check existing
+        const accountId = data.accountId
+        const mailboxes = data.mailboxes
+        state.accounts = state.accounts.map(acc => {
+            if (acc.id === accountId) {
+                acc.mailboxes = mailboxes
+            }
+            return acc
+        })
     }
 }

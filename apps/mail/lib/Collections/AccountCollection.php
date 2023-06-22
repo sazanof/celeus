@@ -3,6 +3,7 @@
 namespace Vorkfork\Apps\Mail\Collections;
 
 use Vorkfork\Apps\Mail\DTO\AccountDto;
+use Vorkfork\Apps\Mail\DTO\MailboxDTO;
 use Vorkfork\Apps\Mail\Models\Account;
 use Vorkfork\Serializer\JsonSerializer;
 
@@ -12,6 +13,8 @@ class AccountCollection
 
 	public static function getUserAccounts(string $username)
 	{
-		return JsonSerializer::deserializeArrayStatic(Account::repository()->getAccountsByUsername($username), self::DTO_CLASS);
+		return JsonSerializer::deserializeArrayStatic(
+			Account::repository()->getAccountsByUsername($username), self::DTO_CLASS
+		);
 	}
 }

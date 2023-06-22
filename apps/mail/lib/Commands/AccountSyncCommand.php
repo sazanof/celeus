@@ -62,21 +62,12 @@ class AccountSyncCommand extends Command
 					$synchronizer->sync($f);
 				}
 			} else {
-				$imapFolders = $synchronizer->getMailbox()->getMailboxes();
-				/** @var Folder $imapFolder */
-				foreach ($imapFolders as $imapFolder) {
-					$output->writeln('Start to MBOX: ' . $imapFolder->full_name);
+				$synchronizer->getAllFolders(function (Folder $imapFolder) use ($synchronizer) {
 					$synchronizer->sync($imapFolder);
-					$output->writeln('End sync MBOX: ' . $imapFolder->full_name);
-					$names[] = $imapFolder->full_name;
-				}
-				$synchronizer->deleteIfMailBoxNotExists($names);
-				//$foldersDB = Mailbox::repository()->findBy(['accountId' => $account->getId()]);
-				/** @var Mailbox $item */
-				//dump($syncronizer->getMailbox()->getStatus());
+				});
 			}
 		} catch (\Exception $exception) {
-
+			// TODO log
 		}
 		return self::SUCCESS;
 	}

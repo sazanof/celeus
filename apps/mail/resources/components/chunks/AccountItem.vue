@@ -16,10 +16,12 @@
                 </div>
             </div>
         </div>
+        <Mailboxes :account="account" />
     </div>
 </template>
 
 <script>
+    import Mailboxes from './Mailboxes.vue'
     import CogIcon from 'vue-material-design-icons/Cog.vue'
     import DotsHorizontalIcon from 'vue-material-design-icons/DotsHorizontal.vue'
 
@@ -27,7 +29,8 @@
         name: 'AccountItem',
         components: {
             CogIcon,
-            DotsHorizontalIcon
+            DotsHorizontalIcon,
+            Mailboxes
         },
         props: {
             account: {

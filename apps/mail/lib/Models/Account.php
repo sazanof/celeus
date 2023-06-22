@@ -3,6 +3,8 @@
 namespace Vorkfork\Apps\Mail\Models;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Vorkfork\Apps\Mail\Repositories\MailAccountsRepository;
 use Vorkfork\Database\Entity;
 use Vorkfork\Database\Trait\Timestamps;
@@ -74,6 +76,16 @@ class Account extends Entity
 		nullable: true,
 	)]
 	private DateTime $lastSync;
+
+	#[ORM\OneToMany(mappedBy: 'account', targetEntity: Mailbox::class)]
+	#[ORM\JoinColumn(name: 'id', referencedColumnName: 'account_id', nullable: false)]
+	private Collection $mailboxes;
+
+	public function __construct()
+	{
+		parent::__construct();
+		$this->mailboxes = new ArrayCollection();
+	}
 
 	protected array $fillable = [
 		'user',
@@ -339,5 +351,30 @@ class Account extends Entity
 	public function setLastSync(DateTime $lastSync): void
 	{
 		$this->lastSync = $lastSync;
+	}
+
+	/**
+	 * @return Collection
+	 */
+	public function getMailboxes(): Collection
+	{
+		return $this->mailboxes;
+	}
+
+	/**
+	 * @param Collection $mailboxes
+	 */
+	public function setMailboxes(Collection $mailboxes): void
+	{
+		$this->mailboxes = $mailboxes;
+	}
+
+	/**
+	 * @param Mailbox $mailbox
+	 */
+	public function addMailbox(Mailbox $mailbox)
+	{
+		$this->mailboxes->add($mailbox);
+		return $this;
 	}
 }

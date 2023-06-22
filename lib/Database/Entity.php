@@ -89,8 +89,12 @@ abstract class Entity implements IEntity
 
 	protected static function initClass(array $args): Entity
 	{
+		//TODO переписать с использованием аргументов
 		$class = new static();
 		$class->fromArray($args[0], $class->fillable);
+		if (is_callable($args[1])) {
+			$args[1]($class);
+		}
 		self::$instance = $class;
 		return $class;
 	}

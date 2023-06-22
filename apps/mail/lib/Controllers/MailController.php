@@ -2,24 +2,37 @@
 
 namespace Vorkfork\Apps\Mail\Controllers;
 
+use Defuse\Crypto\Exception\EnvironmentIsBrokenException;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\TransactionRequiredException;
 use Doctrine\Persistence\Mapping\MappingException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Vorkfork\Apps\Mail\ACL\AccountAcl;
 use Vorkfork\Apps\Mail\Collections\AccountCollection;
 use Vorkfork\Apps\Mail\DTO\AccountDto;
+use Vorkfork\Apps\Mail\DTO\MailboxDTO;
 use Vorkfork\Apps\Mail\Encryption\MailPassword;
 use Vorkfork\Apps\Mail\Exceptions\AccountAlreadyExistsException;
+use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
 use Vorkfork\Apps\Mail\IMAP\Mailbox;
+use Vorkfork\Apps\Mail\IMAP\MailboxSynchronizer;
 use Vorkfork\Apps\Mail\IMAP\Server;
 use Vorkfork\Apps\Mail\Models\Account;
 use Vorkfork\Apps\Mail\SMTP\Smtp;
 use Vorkfork\Apps\Mail\SMTP\SmtpConfig;
 use Vorkfork\Core\Controllers\Controller;
 use Vorkfork\Core\Exceptions\ErrorResponse;
+use Vorkfork\Serializer\JsonSerializer;
+use Webklex\PHPIMAP\Folder;
 
 class MailController extends Controller
 {
+
+	protected ?MailboxSynchronizer $synchronizer = null;
+
 	/**
 	 * Load user accounts list as Dto collection
 	 * @return mixed
@@ -97,6 +110,28 @@ class MailController extends Controller
 		if (!is_null($account) && AccountAcl::belongsToAuthenticatedUser($account)) {
 			return $account->update($request->toArray())->toDto(AccountDto::class);
 		}
+	}
+
+	/**
+	 * @param int $id
+	 * @return MailboxDTO
+	 * @throws EnvironmentIsBrokenException
+	 * @throws WrongKeyOrModifiedCiphertextException
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 * @throws TransactionRequiredException
+	 * @throws ImapErrorException
+	 */
+	public function syncMailboxes(int $id): mixed
+	{
+		$this->synchronizer = MailboxSynchronizer::register(Account::find($id));
+		$this->synchronizer->getAllFolders(function (Folder $imapFolder) {
+			$this->synchronizer->syncFolder($imapFolder);
+		});
+		return JsonSerializer::deserializeArrayStatic(
+			Account::find($id)->getMailboxes(),
+			MailboxDTO::class
+		);
 	}
 
 }

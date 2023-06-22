@@ -2,6 +2,7 @@
 
 namespace Vorkfork\Serializer;
 
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -21,7 +22,11 @@ class JsonSerializer implements ISerializer
 
 	public function serialize(mixed $data, $format = 'json'): string
 	{
-		return $this->serializer->serialize($data, $format);
+		return $this->serializer->serialize($data, $format,
+			[
+				'circular_reference_handler' => function ($object) {
+					return $object->getId();
+				}]);
 	}
 
 	public function deserialize(string $json, string $dtoClass, $format = 'json'): mixed
@@ -55,7 +60,7 @@ class JsonSerializer implements ISerializer
 
 	public static function deserializeArrayStatic(mixed $data, string $dtoClass, $format = 'json'): mixed
 	{
-		if (is_array($data)) {
+		if (is_array($data) || $data instanceof Collection) {
 			$data = JsonSerializer::serializeStatic($data);
 		}
 		if (!self::$instance instanceof ISerializer) {
@@ -63,4 +68,5 @@ class JsonSerializer implements ISerializer
 		}
 		return self::$instance->deserializeArray($data, $dtoClass, $format);
 	}
+
 }

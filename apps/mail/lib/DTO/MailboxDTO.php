@@ -7,8 +7,10 @@ use Vorkfork\Apps\Mail\IMAP\DTO\MailboxImapDTO;
 class MailboxDTO extends MailboxImapDTO
 {
 	public int $id;
-
-	public int $accountId;
-
+	
 	public int $uidValidity;
+
+	public int $total;
+
+	public int $unseen;
 }

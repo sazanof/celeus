@@ -16,6 +16,13 @@ use Vorkfork\Apps\Mail\Models\Account;
 use Vorkfork\Apps\Mail\Models\Recipient;
 use Webklex\PHPIMAP\Address;
 use Webklex\PHPIMAP\Attribute;
+use Webklex\PHPIMAP\Exceptions\AuthFailedException;
+use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
+use Webklex\PHPIMAP\Exceptions\FolderFetchingException;
+use Webklex\PHPIMAP\Exceptions\ImapBadRequestException;
+use Webklex\PHPIMAP\Exceptions\ImapServerErrorException;
+use Webklex\PHPIMAP\Exceptions\ResponseException;
+use Webklex\PHPIMAP\Exceptions\RuntimeException;
 use Webklex\PHPIMAP\Folder;
 use Webklex\PHPIMAP\Message;
 use Vorkfork\Apps\Mail\Models\Message as MessageModel;
@@ -30,6 +37,7 @@ final class MailboxSynchronizer
 	protected static ?MailboxSynchronizer $instance = null;
 	protected Folder $folder;
 	protected MailboxImapDTO $mailboxDTO;
+	protected ?LengthAwarePaginator $paginator = null;
 
 
 	/**
@@ -101,6 +109,30 @@ final class MailboxSynchronizer
 	}
 
 	/**
+	 * @throws RuntimeException
+	 * @throws ResponseException
+	 * @throws ImapErrorException
+	 * @throws FolderFetchingException
+	 * @throws ImapBadRequestException
+	 * @throws ConnectionFailedException
+	 * @throws AuthFailedException
+	 * @throws ImapServerErrorException
+	 */
+	public function getAllFolders(\Closure $closure = null): void
+	{
+		$names = [];
+		$imapFolders = $this->getMailbox()->getMailboxes();
+		/** @var Folder $imapFolder */
+		foreach ($imapFolders as $imapFolder) {
+			if (is_callable($closure)) {
+				$closure($imapFolder);
+			}
+			$names[] = $imapFolder->full_name;
+		}
+		$this->deleteIfMailBoxNotExists($names);
+	}
+
+	/**
 	 * @param Folder $folder
 	 * @return void
 	 * @throws ImapErrorException
@@ -110,7 +142,6 @@ final class MailboxSynchronizer
 		$this->folder = $folder;
 		$this->mailbox->ping();
 		$data = [
-			'accountId' => $this->account->getId(),
 			'name' => $folder->full_name,
 			'delimiter' => $folder->delimiter,
 			'total' => $folder->status['exists'],
@@ -121,14 +152,19 @@ final class MailboxSynchronizer
 		/** @var MailboxModel $mbox */
 		$mbox = MailboxModel::repository()
 			->findOneBy([
-				'accountId' => $this->account->getId(),
+				'account' => $this->account,
 				'name' => $folder->full_name
 			]);
 		try {
 			if (!is_null($mbox)) {
-				$this->mailboxDTO = $mbox->update($data)->toDto(MailboxImapDTO::class);
+				$this->mailboxDTO = $mbox->update($data)
+					->toDto(MailboxImapDTO::class);
 			} else {
-				$this->mailboxDTO = MailboxModel::create($data)->toDto(MailboxImapDTO::class);
+				$this->mailboxDTO = MailboxModel
+					::create($data, function (MailboxModel $mailbox) {
+						$mailbox->setAccount($this->account);
+					})
+					->toDto(MailboxImapDTO::class);
 			}
 		} catch (\Exception $exception) {
 			// todo log
@@ -141,14 +177,14 @@ final class MailboxSynchronizer
 	 * @param int $total
 	 * @return void
 	 */
-	public function syncMessages(Folder $folder, int $page, int $total = MESSAGES_PER_PAGE)
+	public function syncMessages(Folder $folder, int $page = 1, int $total = MESSAGES_PER_PAGE)
 	{
 		$this->mailbox->setFolder($folder);
-		$paginator = $this->mailbox->getMessagesByPage($total, $page);
-		if ($paginator->count() > 0) {
+		$this->paginator = $this->mailbox->getMessagesByPage($total, $page);
+		if ($this->paginator->count() > 0) {
 			/** @var Message $message */
-			echo 'Load page ' . $page . ' from ' . $paginator->lastPage() . PHP_EOL;
-			foreach ($paginator as $message) {
+			echo 'Load page ' . $page . ' from ' . $this->paginator->lastPage() . PHP_EOL;
+			foreach ($this->paginator as $message) {
 				try {
 					$this->addMessageFromImapToDb($message);
 				} catch (MissingMappingDriverImplementation $e) {
@@ -160,6 +196,23 @@ final class MailboxSynchronizer
 	}
 
 	/**
+	 * Sync all messages in folder
+	 * @param Folder $folder
+	 * @param int $page
+	 * @param int $total
+	 * @return void
+	 */
+	public function syncAllMessagesInFolder(Folder $folder, int $page = 1, int $total = MESSAGES_PER_PAGE)
+	{
+		/** @var LengthAwarePaginator $paginator */
+		$this->paginator = $this->mailbox->getMessagesByPage($total, $page);
+		do {
+			$this->syncMessages($folder, $page);
+			$page++;
+		} while ($this->paginator->lastPage() >= $page);
+	}
+
+	/**
 	 * @param Folder $folder
 	 * @return MailboxImapDTO|null
 	 * @throws ImapErrorException
@@ -167,12 +220,7 @@ final class MailboxSynchronizer
 	public function sync(Folder $folder): ?MailboxImapDTO
 	{
 		$this->syncFolder($folder);
-		$page = 1;
-		/** @var LengthAwarePaginator $paginator */
-		do {
-			$this->syncMessages($folder, $page);
-			$page++;
-		} while ($paginator->lastPage() >= $page);
+		$this->syncAllMessagesInFolder($folder);
 		return null;
 
 	}
@@ -292,12 +340,13 @@ final class MailboxSynchronizer
 
 	public function deleteIfMailBoxNotExists(array $names)
 	{
-		return MailboxModel::repository()
+		// переписать на орм
+		/*return MailboxModel::repository()
 			->delete()
 			->notIn('name', $names)
 			->where(
 				'accountId', '=', $this->account->getId()
 			)
-			->results();
+			->results();*/
 	}
 }
