@@ -32,6 +32,9 @@ class Mailbox extends Entity
 	#[ORM\Column(type: Types::STRING)]
 	protected string $name;
 
+	#[ORM\Column(type: Types::STRING)]
+	protected string $path;
+
 	#[ORM\Column(type: Types::STRING, length: 1)]
 	protected string $delimiter;
 
@@ -47,7 +50,10 @@ class Mailbox extends Entity
 	#[ORM\Column(name: 'last_sync', type: Types::DATETIME_MUTABLE)]
 	protected \DateTime $lastSync;
 
-	/** Many mailboxes have one product. This is the owning side. */
+	#[ORM\Column(type: Types::INTEGER, nullable: true)]
+	protected int $position;
+
+	/** Many mailboxes have one account. This is the owning side. */
 	#[ORM\ManyToOne(targetEntity: Account::class, inversedBy: 'mailboxes')]
 	#[ORM\JoinColumn(name: 'account_id', referencedColumnName: 'id')]
 	private Account|null $account = null;
@@ -59,6 +65,8 @@ class Mailbox extends Entity
 		'lastSync',
 		'unseen',
 		'uidValidity',
+		'position',
+		'path'
 	];
 
 	/**
@@ -195,4 +203,35 @@ class Mailbox extends Entity
 		return $this;
 	}
 
+	/**
+	 * @return int
+	 */
+	public function getPosition(): int
+	{
+		return $this->position;
+	}
+
+	/**
+	 * @param int $position
+	 */
+	public function setPosition(int $position): void
+	{
+		$this->position = $position;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPath(): string
+	{
+		return $this->path;
+	}
+
+	/**
+	 * @param string $path
+	 */
+	public function setPath(string $path): void
+	{
+		$this->path = $path;
+	}
 }

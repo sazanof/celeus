@@ -45,11 +45,12 @@ interface IEntity
 
 	/**
 	 * @param array $arguments
+	 * @param \Closure|null $closure
 	 * @return static
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 * @throws MissingMappingDriverImplementation
 	 */
-	public function update(array $arguments): static;
+	public function update(array $arguments, \Closure $closure = null): static;
 
 }

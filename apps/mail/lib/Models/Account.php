@@ -79,6 +79,7 @@ class Account extends Entity
 
 	#[ORM\OneToMany(mappedBy: 'account', targetEntity: Mailbox::class)]
 	#[ORM\JoinColumn(name: 'id', referencedColumnName: 'account_id', nullable: false)]
+	#[ORM\OrderBy(['position' => 'ASC'])]
 	private Collection $mailboxes;
 
 	public function __construct()
@@ -375,6 +376,24 @@ class Account extends Entity
 	public function addMailbox(Mailbox $mailbox)
 	{
 		$this->mailboxes->add($mailbox);
+		return $this;
+	}
+
+	public function removeMailbox(Mailbox $mailbox)
+	{
+		$this->mailboxes->removeElement($mailbox);
+		return $this;
+	}
+
+	public function removeUnusedMailboxes(array $existingMailboxesNames)
+	{
+		/** @var Mailbox $mailbox */
+		foreach ($this->getMailboxes() as $mailbox) {
+			if (!in_array($mailbox->getName(), $existingMailboxesNames)) {
+				$this->removeMailbox($mailbox);
+				$mailbox->remove();
+			}
+		}
 		return $this;
 	}
 }

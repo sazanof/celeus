@@ -10,6 +10,9 @@ class MailboxRepository extends Repository
 {
 	public function getUnusedMailboxesByNames(array $names)
 	{
-		return JsonSerializer::deserializeArrayStatic($this->notIn('name', $names)->results(), MailboxDTO::class);
+		return JsonSerializer::deserializeArrayStatic(
+			$this->notIn('name', $names)->results(),
+			MailboxDTO::class
+		);
 	}
 }

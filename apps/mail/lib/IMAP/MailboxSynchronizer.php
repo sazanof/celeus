@@ -118,37 +118,42 @@ final class MailboxSynchronizer
 	 * @throws AuthFailedException
 	 * @throws ImapServerErrorException
 	 */
-	public function getAllFolders(\Closure $closure = null): void
+	public function getAllFolders(\Closure $closure = null, bool $hierarchical = false): void
 	{
 		$names = [];
-		$imapFolders = $this->getMailbox()->getMailboxes();
+		$imapFolders = $this->getMailbox()->getMailboxes($hierarchical);
 		/** @var Folder $imapFolder */
+		$i = 0;
 		foreach ($imapFolders as $imapFolder) {
 			if (is_callable($closure)) {
-				$closure($imapFolder);
+				$closure($imapFolder, $i);
 			}
 			$names[] = $imapFolder->full_name;
+			$i++;
 		}
-		$this->deleteIfMailBoxNotExists($names);
+		//$this->deleteIfMailBoxNotExists($names);
 	}
 
 	/**
 	 * @param Folder $folder
+	 * @param int|null $position
 	 * @return void
 	 * @throws ImapErrorException
 	 */
-	public function syncFolder(Folder $folder)
+	public function syncFolder(Folder $folder, int $position = 0)
 	{
 		$this->folder = $folder;
 		$this->mailbox->ping();
 		$data = [
-			'name' => $folder->full_name,
+			'name' => $folder->name,
+			'path' => $folder->full_name,
 			'delimiter' => $folder->delimiter,
 			'total' => $folder->status['exists'],
 			'unseen' => $folder->status['unseen'] ?? 0,
 			'uidValidity' => $folder->status['uidvalidity'],
-			'lastSync' => new \DateTime()
+			'lastSync' => new \DateTime(),
 		];
+		$data['position'] = $position;
 		/** @var MailboxModel $mbox */
 		$mbox = MailboxModel::repository()
 			->findOneBy([
@@ -167,6 +172,7 @@ final class MailboxSynchronizer
 					->toDto(MailboxImapDTO::class);
 			}
 		} catch (\Exception $exception) {
+			dd($exception);
 			// todo log
 		}
 	}
@@ -341,12 +347,8 @@ final class MailboxSynchronizer
 	public function deleteIfMailBoxNotExists(array $names)
 	{
 		// переписать на орм
-		/*return MailboxModel::repository()
-			->delete()
-			->notIn('name', $names)
-			->where(
-				'accountId', '=', $this->account->getId()
-			)
-			->results();*/
+		$this->account->removeUnusedMailboxes($names);
+		$this->account->save();
+
 	}
 }

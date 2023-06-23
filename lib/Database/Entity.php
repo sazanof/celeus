@@ -92,7 +92,7 @@ abstract class Entity implements IEntity
 		//TODO переписать с использованием аргументов
 		$class = new static();
 		$class->fromArray($args[0], $class->fillable);
-		if (is_callable($args[1])) {
+		if (isset($args[1]) && is_callable($args[1])) {
 			$args[1]($class);
 		}
 		self::$instance = $class;
@@ -254,10 +254,13 @@ abstract class Entity implements IEntity
 	/**
 	 * @inheritDoc
 	 */
-	public function update(array $arguments): static
+	public function update(array $arguments, \Closure $closure = null): static
 	{
 		$this->className = get_class($this);
 		$this->fromArray($arguments, $this->fillable);
+		if (is_callable($closure)) {
+			$closure($this);
+		}
 		$this->em()->persist($this);
 		$this->em()->flush($this);
 		return $this;

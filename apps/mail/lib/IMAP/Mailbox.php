@@ -75,6 +75,7 @@ class Mailbox
 
 
 	/**
+	 * @param bool $hierarchical
 	 * @return FolderCollection
 	 * @throws AuthFailedException
 	 * @throws ConnectionFailedException
@@ -84,9 +85,9 @@ class Mailbox
 	 * @throws ResponseException
 	 * @throws RuntimeException
 	 */
-	public function getMailboxes()
+	public function getMailboxes(bool $hierarchical = false): FolderCollection
 	{
-		return Imap::getMailboxes();
+		return Imap::getMailboxes($hierarchical);
 	}
 
 	/**

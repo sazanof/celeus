@@ -114,20 +114,27 @@ class MailController extends Controller
 
 	/**
 	 * @param int $id
-	 * @return MailboxDTO
+	 * @return mixed
 	 * @throws EnvironmentIsBrokenException
-	 * @throws WrongKeyOrModifiedCiphertextException
+	 * @throws ImapErrorException
 	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 * @throws TransactionRequiredException
-	 * @throws ImapErrorException
+	 * @throws WrongKeyOrModifiedCiphertextException
+	 * @throws \Webklex\PHPIMAP\Exceptions\AuthFailedException
+	 * @throws \Webklex\PHPIMAP\Exceptions\ConnectionFailedException
+	 * @throws \Webklex\PHPIMAP\Exceptions\FolderFetchingException
+	 * @throws \Webklex\PHPIMAP\Exceptions\ImapBadRequestException
+	 * @throws \Webklex\PHPIMAP\Exceptions\ImapServerErrorException
+	 * @throws \Webklex\PHPIMAP\Exceptions\ResponseException
+	 * @throws \Webklex\PHPIMAP\Exceptions\RuntimeException
 	 */
 	public function syncMailboxes(int $id): mixed
 	{
 		$this->synchronizer = MailboxSynchronizer::register(Account::find($id));
-		$this->synchronizer->getAllFolders(function (Folder $imapFolder) {
-			$this->synchronizer->syncFolder($imapFolder);
-		});
+		$this->synchronizer->getAllFolders(function (Folder $imapFolder, $index) {
+			$this->synchronizer->syncFolder($imapFolder, $index);
+		}, false);
 		return JsonSerializer::deserializeArrayStatic(
 			Account::find($id)->getMailboxes(),
 			MailboxDTO::class

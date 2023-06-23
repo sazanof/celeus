@@ -1,16 +1,37 @@
 <template>
     <div class="mailboxes">
-        {{ mailboxes }}
+        {{ mailboxesTree }}
+        <MailboxItem
+            v-for="mailbox in mailboxes"
+            :key="mailbox.id"
+            :mailbox="mailbox" />
     </div>
 </template>
 
 <script>
+    import MailboxItem from './MailboxItem.vue'
+
     export default {
         name: 'Mailboxes',
+        components: {
+            MailboxItem
+        },
         props: {
             account: {
                 type: Object,
                 required: true
+            }
+        },
+        data() {
+            return {
+                tree: [
+                    'A',
+                    'A|A-A',
+                    'A|A-A|A-A-A',
+                    'B',
+                    'B|B-B',
+                    'B|B-B|B-B-B',
+                ]
             }
         },
         computed: {
@@ -22,6 +43,9 @@
             },
             mailboxes() {
                 return this.$store.getters.getAccountMailboxes(this.id)
+            },
+            mailboxesTree() {
+
             }
         },
         created() {
@@ -32,7 +56,8 @@
         methods: {
             async getMailboxes() {
                 await this.$store.dispatch('getMailboxes', this.id)
-            }
+            },
+
         }
     }
 </script>
