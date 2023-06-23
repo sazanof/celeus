@@ -5,6 +5,9 @@ namespace Vorkfork\Apps\Mail\Models;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Vorkfork\Apps\Mail\Repositories\MailAccountsRepository;
 use Vorkfork\Database\Entity;
 use Vorkfork\Database\Trait\Timestamps;
@@ -78,7 +81,7 @@ class Account extends Entity
 	private DateTime $lastSync;
 
 	#[ORM\OneToMany(mappedBy: 'account', targetEntity: Mailbox::class)]
-	#[ORM\JoinColumn(name: 'id', referencedColumnName: 'account_id', nullable: false)]
+	#[ORM\JoinColumn(name: 'id', referencedColumnName: 'account_id')]
 	#[ORM\OrderBy(['position' => 'ASC'])]
 	private Collection $mailboxes;
 
@@ -372,10 +375,17 @@ class Account extends Entity
 
 	/**
 	 * @param Mailbox $mailbox
+	 * @return Account
 	 */
 	public function addMailbox(Mailbox $mailbox)
 	{
-		$this->mailboxes->add($mailbox);
+		$ind = $this->mailboxes->indexOf($mailbox);
+		if ($ind === -1) {
+			$this->mailboxes->add($mailbox);
+		} else {
+			$this->mailboxes[$ind] = $mailbox;
+		}
+
 		return $this;
 	}
 
@@ -385,6 +395,11 @@ class Account extends Entity
 		return $this;
 	}
 
+	/**
+	 * @throws OptimisticLockException
+	 * @throws MissingMappingDriverImplementation
+	 * @throws ORMException
+	 */
 	public function removeUnusedMailboxes(array $existingMailboxesNames)
 	{
 		/** @var Mailbox $mailbox */

@@ -145,7 +145,7 @@ final class MailboxSynchronizer
 		$this->folder = $folder;
 		$this->mailbox->ping();
 		$data = [
-			'name' => $folder->name,
+			'name' => $folder->full_name,
 			'path' => $folder->full_name,
 			'delimiter' => $folder->delimiter,
 			'total' => $folder->status['exists'],
@@ -162,7 +162,10 @@ final class MailboxSynchronizer
 			]);
 		try {
 			if (!is_null($mbox)) {
-				$this->mailboxDTO = $mbox->update($data)
+				$this->mailboxDTO = $mbox
+					->update($data, function (MailboxModel $mailbox) {
+						$mailbox->setAccount($this->account);
+					})
 					->toDto(MailboxImapDTO::class);
 			} else {
 				$this->mailboxDTO = MailboxModel
@@ -172,7 +175,7 @@ final class MailboxSynchronizer
 					->toDto(MailboxImapDTO::class);
 			}
 		} catch (\Exception $exception) {
-			dd($exception);
+			//dd($exception);
 			// todo log
 		}
 	}

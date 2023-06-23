@@ -131,6 +131,7 @@ class MailController extends Controller
 	 */
 	public function syncMailboxes(int $id): mixed
 	{
+
 		$this->synchronizer = MailboxSynchronizer::register(Account::find($id));
 		$this->synchronizer->getAllFolders(function (Folder $imapFolder, $index) {
 			$this->synchronizer->syncFolder($imapFolder, $index);
