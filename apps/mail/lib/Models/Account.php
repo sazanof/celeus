@@ -380,10 +380,10 @@ class Account extends Entity
 	public function addMailbox(Mailbox $mailbox)
 	{
 		$ind = $this->mailboxes->indexOf($mailbox);
-		if ($ind === -1) {
+		if ($ind === false) {
 			$this->mailboxes->add($mailbox);
 		} else {
-			$this->mailboxes[$ind] = $mailbox;
+			$this->mailboxes->set($ind, $mailbox);
 		}
 
 		return $this;

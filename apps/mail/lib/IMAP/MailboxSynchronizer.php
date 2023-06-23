@@ -140,12 +140,12 @@ final class MailboxSynchronizer
 	 * @return void
 	 * @throws ImapErrorException
 	 */
-	public function syncFolder(Folder $folder, int $position = 0)
+	public function syncFolder(Folder $folder, int $position = 0, MailboxModel $parent = null)
 	{
 		$this->folder = $folder;
 		$this->mailbox->ping();
 		$data = [
-			'name' => $folder->full_name,
+			'name' => $folder->name,
 			'path' => $folder->full_name,
 			'delimiter' => $folder->delimiter,
 			'total' => $folder->status['exists'],
@@ -179,6 +179,7 @@ final class MailboxSynchronizer
 			// todo log
 		}
 	}
+
 
 	/**
 	 * @param Folder $folder
