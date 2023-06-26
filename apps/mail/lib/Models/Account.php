@@ -358,10 +358,16 @@ class Account extends Entity
 	}
 
 	/**
+	 * @param \Closure|null $filter
 	 * @return Collection
 	 */
-	public function getMailboxes(): Collection
+	public function getMailboxes(\Closure $filter = null): Collection
 	{
+		if (is_callable($filter)) {
+			return $this->mailboxes->filter(function (Mailbox $element) use ($filter) {
+				return $filter($element);
+			});
+		}
 		return $this->mailboxes;
 	}
 
@@ -379,11 +385,12 @@ class Account extends Entity
 	 */
 	public function addMailbox(Mailbox $mailbox)
 	{
+
 		$ind = $this->mailboxes->indexOf($mailbox);
-		if ($ind === false) {
+		if (!$this->mailboxes->contains($mailbox)) {
 			$this->mailboxes->add($mailbox);
 		} else {
-			$this->mailboxes->set($ind, $mailbox);
+			$this->mailboxes[$ind] = $mailbox;
 		}
 
 		return $this;

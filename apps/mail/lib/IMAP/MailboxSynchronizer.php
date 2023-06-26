@@ -136,7 +136,8 @@ final class MailboxSynchronizer
 
 	/**
 	 * @param Folder $folder
-	 * @param int|null $position
+	 * @param int $position
+	 * @param MailboxModel|null $parent
 	 * @return void
 	 * @throws ImapErrorException
 	 */
@@ -162,17 +163,30 @@ final class MailboxSynchronizer
 			]);
 		try {
 			if (!is_null($mbox)) {
-				$this->mailboxDTO = $mbox
-					->update($data, function (MailboxModel $mailbox) {
+				$target = $mbox
+					->update($data, function (MailboxModel $mailbox) use ($parent) {
 						$mailbox->setAccount($this->account);
-					})
-					->toDto(MailboxImapDTO::class);
+						if ($parent instanceof MailboxModel) {
+							$mailbox->setParent($parent);
+							$parent->addChild($mailbox);
+						}
+					});
 			} else {
-				$this->mailboxDTO = MailboxModel
-					::create($data, function (MailboxModel $mailbox) {
+				$target = MailboxModel
+					::create($data, function (MailboxModel $mailbox) use ($parent) {
 						$mailbox->setAccount($this->account);
-					})
-					->toDto(MailboxImapDTO::class);
+						if ($parent instanceof MailboxModel) {
+							$mailbox->setParent($parent);
+							$parent->addChild($mailbox);
+						}
+					});
+			}
+			if ($folder->hasChildren()) {
+				$i = 0;
+				foreach ($folder->getChildren() as $child) {
+					$this->syncFolder($child, $i, $target);
+					$i++;
+				}
 			}
 		} catch (\Exception $exception) {
 			//dd($exception);

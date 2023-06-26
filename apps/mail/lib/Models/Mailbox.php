@@ -2,6 +2,8 @@
 
 namespace Vorkfork\Apps\Mail\Models;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Vorkfork\Apps\Mail\Exceptions\MailboxAlreadyExists;
 use Vorkfork\Apps\Mail\IMAP\DTO\MailboxImapDTO;
@@ -58,6 +60,13 @@ class Mailbox extends Entity
 	#[ORM\JoinColumn(name: 'account_id', referencedColumnName: 'id')]
 	private Account|null $account = null;
 
+	#[ORM\ManyToOne(targetEntity: Mailbox::class, inversedBy: 'children')]
+	private ?Mailbox $parent;
+
+	#[ORM\OneToMany(mappedBy: 'parent', targetEntity: Mailbox::class)]
+	private ?Collection $children;
+
+
 	protected array $fillable = [
 		'name',
 		'delimiter',
@@ -68,6 +77,12 @@ class Mailbox extends Entity
 		'position',
 		'path'
 	];
+
+	public function __construct()
+	{
+		$this->children = new ArrayCollection();
+		parent::__construct();
+	}
 
 	/**
 	 * @param PrePersistEventArgs $args
@@ -233,5 +248,42 @@ class Mailbox extends Entity
 	public function setPath(string $path): void
 	{
 		$this->path = $path;
+	}
+
+	/**
+	 * @param Mailbox|null $parent
+	 */
+	public function setParent(?Mailbox $parent): void
+	{
+		$this->parent = $parent;
+	}
+
+	/**
+	 * @return Mailbox|null
+	 */
+	public function getParent(): ?Mailbox
+	{
+		return $this->parent;
+	}
+
+	/**
+	 * @return Collection|null
+	 */
+	public function getChildren(): ?Collection
+	{
+		return $this->children;
+	}
+
+	public function addChild(?Mailbox $mailbox)
+	{
+		if (!is_null($mailbox)) {
+			$ind = $this->children->indexOf($mailbox);
+
+			if ($ind === false) {
+				$this->children->add($mailbox);
+			} else {
+				$this->children[$ind] = $mailbox;
+			}
+		}
 	}
 }

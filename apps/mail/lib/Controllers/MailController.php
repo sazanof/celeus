@@ -7,7 +7,6 @@ use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\TransactionRequiredException;
-use Doctrine\Persistence\Mapping\MappingException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Vorkfork\Apps\Mail\ACL\AccountAcl;
@@ -132,12 +131,23 @@ class MailController extends Controller
 	public function syncMailboxes(int $id): mixed
 	{
 
+		dd(
+			JsonSerializer::deserializeArrayStatic(
+				Account::find($id)->getMailboxes(function (\Vorkfork\Apps\Mail\Models\Mailbox $mailbox) {
+					return $mailbox->getParent() === null;
+				}),
+				MailboxDTO::class
+			)
+		);
 		$this->synchronizer = MailboxSynchronizer::register(Account::find($id));
 		$this->synchronizer->getAllFolders(function (Folder $imapFolder, $index) {
 			$this->synchronizer->syncFolder($imapFolder, $index);
-		}, false);
+		}, true);
+		//dd(Account::find($id)->getMailboxes())
 		return JsonSerializer::deserializeArrayStatic(
-			Account::find($id)->getMailboxes(),
+			Account::find($id)->getMailboxes(function (\Vorkfork\Apps\Mail\Models\Mailbox $mailbox) {
+				return $mailbox->getParent() === null;
+			}),
 			MailboxDTO::class
 		);
 	}
