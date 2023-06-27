@@ -56,6 +56,7 @@ class Str
 		if (str_ends_with($value, $search)) {
 			return rtrim($value, $search);
 		}
+		return '';
 	}
 
 	/**

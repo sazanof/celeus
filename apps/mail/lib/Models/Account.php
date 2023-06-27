@@ -72,7 +72,7 @@ class Account extends Entity
 	private string $imapEncryption;
 
 	#[ORM\Column(name: 'is_default', columnDefinition: "BOOLEAN AFTER `imap_encryption`")]
-	private string $isDefault;
+	private bool $isDefault;
 
 	#[ORM\Column(
 		name: 'last_sync',
@@ -327,17 +327,17 @@ class Account extends Entity
 	}
 
 	/**
-	 * @return string
+	 * @return bool
 	 */
-	public function getIsDefault(): string
+	public function getIsDefault(): bool
 	{
 		return $this->isDefault;
 	}
 
 	/**
-	 * @param string $isDefault
+	 * @param bool $isDefault
 	 */
-	public function setIsDefault(string $isDefault): void
+	public function setIsDefault(bool $isDefault): void
 	{
 		$this->isDefault = $isDefault;
 	}

@@ -24,6 +24,10 @@
     }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.mailbox {
+  .children {
+	margin-left: 16px;
+  }
+}
 </style>

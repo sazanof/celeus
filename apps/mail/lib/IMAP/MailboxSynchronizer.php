@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception\SyntaxErrorException;
 use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Doctrine\ORM\Exception\ORMException;
-use Doctrine\ORM\OptimisticLockException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Vorkfork\Application\Session;
 use Vorkfork\Apps\Mail\Exceptions\MailboxAlreadyExists;
@@ -18,6 +17,7 @@ use Vorkfork\Apps\Mail\Encryption\MailPassword;
 use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
 use Vorkfork\Apps\Mail\Models\Account;
 use Vorkfork\Apps\Mail\Models\Recipient;
+use Vorkfork\Security\Str;
 use Webklex\PHPIMAP\Address;
 use Webklex\PHPIMAP\Attribute;
 use Webklex\PHPIMAP\Exceptions\AuthFailedException;
@@ -180,13 +180,33 @@ final class MailboxSynchronizer
 
 	/**
 	 * @param Folder $folder
+	 * @return string
+	 */
+	public function getParentPathFromFolder(Folder $folder): string
+	{
+		$explode = explode($folder->delimiter, $folder->full_name);
+		unset($explode[array_key_last($explode)]);
+		return implode($folder->delimiter, $explode);
+	}
+
+	/**
+	 * @param Folder $folder
 	 * @param int $position
-	 * @param MailboxModel|null $parent
 	 * @return void
 	 * @throws ImapErrorException
 	 */
-	public function syncFolder(Folder $folder, int $position = 0, MailboxModel $parent = null)
+	public function syncFolder(Folder $folder, int $position = 0)
 	{
+		/** @var MailboxModel $parent */
+		$parent = null;
+		$parentPath = $this->getParentPathFromFolder($folder);
+		if (!empty($parentPath)) {
+			$parent = MailboxModel::repository()->findOneBy(
+				[
+					'account' => $this->account,
+					'path' => $parentPath
+				]);
+		}
 		$this->folder = $folder;
 		$this->mailbox->ping();
 		$data = [
@@ -228,14 +248,16 @@ final class MailboxSynchronizer
 			}
 
 			$this->syncedFolders->add($target->getPath());
+			//if ($folder->hasChildren()) {
+			//	$i = 0;
 
-			if ($folder->hasChildren()) {
-				$i = 0;
-				foreach ($folder->getChildren() as $child) {
-					$this->syncFolder($child, $i, $target);
-					$i++;
-				}
-			}
+			/** @var Folder $child */
+			//	foreach ($folder->getChildren() as $child) {
+			//		dump($child->full_name);
+			//		$this->syncFolder($child, $i, $target);
+			//		$i++;
+			//	}
+			//}
 		} catch (\Exception $exception) {
 			if (!$exception instanceof MailboxAlreadyExists) {
 				dd($exception);

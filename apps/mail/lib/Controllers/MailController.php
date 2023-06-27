@@ -88,8 +88,10 @@ class MailController extends Controller
 				new Server(
 					host: $imap['host'],
 					port: $imap['port'],
+					encryption: $imap['encryption'],
+					validateCert: true // TODO move to account creating
 				), $imap['user'], $imap['password'], OP_HALFOPEN);
-			if ($connection->check()) {
+			if ($connection->isConnected()) {
 				$account = Account::create([
 					'user' => $this->user->username,
 					'email' => $imap['user'],
@@ -134,7 +136,7 @@ class MailController extends Controller
 		try {
 			$this->synchronizer->getAllFolders(function (Folder $imapFolder, $index) {
 				$this->synchronizer->syncFolder($imapFolder, $index);
-			}, true);
+			}, false);
 			$this->synchronizer->deleteIfMailBoxNotExists();
 		} catch (
 		ImapErrorException|

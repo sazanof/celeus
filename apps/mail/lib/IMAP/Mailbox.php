@@ -66,6 +66,14 @@ class Mailbox
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function isConnected()
+	{
+		return Imap::isConnected();
+	}
+
+	/**
 	 * @throws ImapErrorException
 	 */
 	public function ping(): bool

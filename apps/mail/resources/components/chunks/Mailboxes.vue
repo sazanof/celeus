@@ -44,8 +44,12 @@
             mailboxes() {
                 return this.$store.getters.getAccountMailboxes(this.id)
             },
-            mailboxesTree() {
-
+        },
+        watch: {
+            async isActive() {
+                if (this.isActive) {
+                    await this.$store.dispatch('getMailboxes', this.id)
+                }
             }
         },
         created() {

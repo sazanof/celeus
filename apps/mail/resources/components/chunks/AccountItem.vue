@@ -1,5 +1,7 @@
 <template>
-    <div class="account">
+    <div
+        class="account"
+        :class="{active: active}">
         <div class="account-label">
             <div
                 class="dot"

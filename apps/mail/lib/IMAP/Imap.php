@@ -37,7 +37,6 @@ class Imap
 	 * @param string $username
 	 * @param string $password
 	 * @return void
-	 * @throws AuthFailedException
 	 * @throws ConnectionFailedException
 	 * @throws ImapBadRequestException
 	 * @throws ImapServerErrorException
@@ -54,7 +53,7 @@ class Imap
 		self::$clientManager = new ClientManager([
 			'flags' => null,
 			'fetch' => FT_PEEK,
-			'options' => [
+			/*'options' => [
 				'common_folders' => [
 					"root" => "INBOX",
 					"junk" => "INBOX/Junk",
@@ -62,9 +61,9 @@ class Imap
 					"sent" => "INBOX/Sent",
 					"trash" => "INBOX/Trash",
 				],
-			]
+			]*/
 		]);
-		$client = self::$clientManager->make([
+		$accountParams = [
 			'host' => $server->getHost(),
 			'port' => $server->getPort(),
 			'encryption' => $server->getEncryption(),
@@ -72,7 +71,8 @@ class Imap
 			'username' => $username,
 			'password' => $password,
 			'protocol' => 'imap'
-		]);
+		];
+		$client = self::$clientManager->make($accountParams);
 		$client->connect();
 		self::$client = $client;
 	}
@@ -104,7 +104,6 @@ class Imap
 	}
 
 	/**
-	 * @param IMAPConnection|null $connection
 	 * @return bool
 	 * @throws AuthFailedException
 	 * @throws ConnectionFailedException
@@ -116,6 +115,14 @@ class Imap
 	public static function ping(): bool
 	{
 		return self::$client->checkConnection();
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function isConnected(): bool
+	{
+		return self::$client->isConnected();
 	}
 
 	/**
