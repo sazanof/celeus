@@ -1,5 +1,6 @@
 <template>
-    <div class="mailboxes">
+    <div
+        class="mailboxes">
         {{ mailboxesTree }}
         <MailboxItem
             v-for="mailbox in mailboxes"
@@ -23,16 +24,7 @@
             }
         },
         data() {
-            return {
-                tree: [
-                    'A',
-                    'A|A-A',
-                    'A|A-A|A-A-A',
-                    'B',
-                    'B|B-B',
-                    'B|B-B|B-B-B',
-                ]
-            }
+
         },
         computed: {
             id() {
@@ -45,17 +37,8 @@
                 return this.$store.getters.getAccountMailboxes(this.id)
             },
         },
-        watch: {
-            async isActive() {
-                if (this.isActive) {
-                    await this.$store.dispatch('getMailboxes', this.id)
-                }
-            }
-        },
         created() {
-            if (this.isActive) {
-                this.getMailboxes()
-            }
+            this.getMailboxes()
         },
         methods: {
             async getMailboxes() {

@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Vorkfork\Apps\Mail\IMAP\DTO\MailboxImapDTO;
 use Vorkfork\Serializer\JsonSerializer;
 
-class MailboxDTO extends MailboxImapDTO
+class MailboxDTO
 {
 	public int $id;
 
@@ -19,6 +19,8 @@ class MailboxDTO extends MailboxImapDTO
 	public string $path;
 
 	public string $name;
+
+	public array $attributes;
 
 	/**
 	 * @param mixed $children

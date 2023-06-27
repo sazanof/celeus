@@ -59,13 +59,16 @@
 
 <style lang="scss" scoped>
 .account {
+  padding-right: 12px;
+
   .account-label {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-	padding: 12px 16px;
+	padding: 12px 24px;
 	background: var(--color-primary-opacity20);
 	position: relative;
+	margin-right: -12px;
 
 	.dot {
 	  width: 12px;
@@ -78,8 +81,9 @@
 
 	.actions {
 	  display: flex;
+	  opacity: 0;
 	  position: absolute;
-	  right: 6px;
+	  right: 14px;
 	  top: 12px;
 
 	  & > div {

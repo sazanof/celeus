@@ -1,3 +1,4 @@
+import '../sass/variables.css.scss'
 import { createApp } from 'vue'
 import { registerTranslationObject, getLocale, translate } from '../../../../resources/js/l10n'
 import store from './store/store'

@@ -30,7 +30,7 @@ class Imap
 	protected static mixed $connection = null;
 	protected static ?string $connectionString = null;
 	protected static ClientManager $clientManager;
-	protected static Client $client;
+	protected static \Vorkfork\Apps\Mail\IMAP\Client $client;
 
 	/**
 	 * @param Server $server
@@ -53,7 +53,6 @@ class Imap
 		self::$clientManager = new ClientManager([
 			'flags' => null,
 			'options' => [
-				'debug' => true,
 				'fetch_flags' => true,
 				'fetch' => FT_PEEK,
 				'common_folders' => [

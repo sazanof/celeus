@@ -26,7 +26,6 @@ use Webklex\PHPIMAP\Exceptions\ImapBadRequestException;
 use Webklex\PHPIMAP\Exceptions\ImapServerErrorException;
 use Webklex\PHPIMAP\Exceptions\ResponseException;
 use Webklex\PHPIMAP\Exceptions\RuntimeException;
-use Webklex\PHPIMAP\Folder;
 use Webklex\PHPIMAP\Message;
 use Vorkfork\Apps\Mail\Models\Message as MessageModel;
 
@@ -167,7 +166,7 @@ final class MailboxSynchronizer
 	public function getAllFolders(\Closure $closure = null, bool $hierarchical = false): void
 	{
 		$imapFolders = $this->getMailbox()->getMailboxes($hierarchical);
-		/** @var \Vorkfork\Apps\Mail\IMAP\Folder $imapFolder */
+		/** @var Folder $imapFolder */
 		$i = 0;
 		foreach ($imapFolders as $imapFolder) {
 			if (is_callable($closure)) {
@@ -208,7 +207,9 @@ final class MailboxSynchronizer
 		}
 		$this->folder = $folder;
 		$this->mailbox->ping();
+		//todo - attributes
 		$data = [
+			'attributes' => $folder->getAttributes(),
 			'name' => $folder->name,
 			'path' => $folder->full_name,
 			'delimiter' => $folder->delimiter,

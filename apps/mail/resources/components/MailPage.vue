@@ -2,12 +2,16 @@
     <div class="mail-initialized">
         <div class="mail-menu">
             <NewMessageHeader />
-            <AccountItem
-                @click="setAccountActive(account)"
-                v-for="account in accounts"
-                :key="account.id"
-                :active="activeAccount.id === account.id"
-                :account="account" />
+            <div
+                class="accounts"
+                data-simplebar>
+                <AccountItem
+                    @click="setAccountActive(account)"
+                    v-for="account in accounts"
+                    :key="account.id"
+                    :active="activeAccount.id === account.id"
+                    :account="account" />
+            </div>
         </div>
         <div class="mail-list">
             <SearchMessages />
@@ -83,6 +87,10 @@
 
   .mail-content {
 	width: calc(100% - 750px);
+  }
+
+  .accounts {
+	height: calc(100vh - var(--header-height) - var(--new-message-height));
   }
 }
 

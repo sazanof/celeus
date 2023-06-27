@@ -42,6 +42,7 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: var(--border-width) solid var(--border-color);
+  height: var(--search-height);
 
   .input {
 	width: 100%;

@@ -50,5 +50,6 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--padding-box);
+  height: var(--new-message-height);
 }
 </style>

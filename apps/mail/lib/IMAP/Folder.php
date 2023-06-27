@@ -13,19 +13,29 @@ class Folder extends \Webklex\PHPIMAP\Folder
 	protected bool $isJunk;
 	protected bool $isSpam;
 
-	const TRASH = '\trash';
-	const SENT = '\sent';
-	const DRAFT = '\draft';
-	const JUNK = '\junk';
-	const SPAM = '\spam';
+	const SPECIAL_ATTRIBUTES = [
+		'haschildren' => ['\haschildren'],
+		'hasnochildren' => ['\hasnochildren'],
+		'template' => ['\template', '\templates'],
+		'inbox' => ['\inbox'],
+		'sent' => ['\sent'],
+		'drafts' => ['\draft', '\drafts'],
+		'archive' => ['\archive', '\archives'],
+		'trash' => ['\trash'],
+		'junk' => ['\junk', '\spam'],
+	];
 
 	public function __construct(Client $client, string $folder_name, string $delimiter, array $attributes)
 	{
 		parent::__construct($client, $folder_name, $delimiter, $attributes);
-		$this->attributes = new ArrayCollection($attributes);
-		$this->attributes = $this->attributes->map(function ($el) {
-			return strtolower($el);
-		});
+		$this->attributes = new ArrayCollection();
+		array_map(function ($el) {
+			foreach (self::SPECIAL_ATTRIBUTES as $key => $attribute) {
+				if (in_array(strtolower($el), $attribute)) {
+					$this->attributes->add($key);
+				}
+			}
+		}, $attributes);
 	}
 
 	/**

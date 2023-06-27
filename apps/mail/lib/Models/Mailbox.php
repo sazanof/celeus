@@ -55,6 +55,9 @@ class Mailbox extends Entity
 	#[ORM\Column(type: Types::INTEGER, nullable: true)]
 	protected int $position;
 
+	#[ORM\Column(type: Types::STRING, nullable: true)]
+	protected string $attributes;
+
 	#[ORM\Column(name: 'sync_token', type: Types::STRING, nullable: true)]
 	protected string $syncToken;
 
@@ -71,6 +74,7 @@ class Mailbox extends Entity
 
 
 	protected array $fillable = [
+		'attributes',
 		'name',
 		'delimiter',
 		'total',
@@ -325,5 +329,21 @@ class Mailbox extends Entity
 			$this->children->removeElement($mailbox);
 		}
 		return $this;
+	}
+
+	/**
+	 * @return ArrayCollection
+	 */
+	public function getAttributes(): ArrayCollection
+	{
+		return new ArrayCollection(explode(',', $this->attributes));
+	}
+
+	/**
+	 * @param ArrayCollection $attributes
+	 */
+	public function setAttributes(ArrayCollection $attributes): void
+	{
+		$this->attributes = implode(',', $attributes->toArray());
 	}
 }

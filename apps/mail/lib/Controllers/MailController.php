@@ -3,13 +3,11 @@
 namespace Vorkfork\Apps\Mail\Controllers;
 
 use Defuse\Crypto\Exception\EnvironmentIsBrokenException;
-use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\TransactionRequiredException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportException;
-use Vorkfork\Application\Session;
 use Vorkfork\Apps\Mail\ACL\AccountAcl;
 use Vorkfork\Apps\Mail\Collections\AccountCollection;
 use Vorkfork\Apps\Mail\DTO\AccountDto;
@@ -17,6 +15,7 @@ use Vorkfork\Apps\Mail\DTO\MailboxDTO;
 use Vorkfork\Apps\Mail\Encryption\MailPassword;
 use Vorkfork\Apps\Mail\Exceptions\AccountAlreadyExistsException;
 use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
+use Vorkfork\Apps\Mail\IMAP\Folder;
 use Vorkfork\Apps\Mail\IMAP\Mailbox;
 use Vorkfork\Apps\Mail\IMAP\MailboxSynchronizer;
 use Vorkfork\Apps\Mail\IMAP\Server;
@@ -33,7 +32,6 @@ use Webklex\PHPIMAP\Exceptions\ImapBadRequestException;
 use Webklex\PHPIMAP\Exceptions\ImapServerErrorException;
 use Webklex\PHPIMAP\Exceptions\ResponseException;
 use Webklex\PHPIMAP\Exceptions\RuntimeException;
-use Webklex\PHPIMAP\Folder;
 
 class MailController extends Controller
 {
@@ -131,7 +129,9 @@ class MailController extends Controller
 
 	public function syncMailboxes(int $id): mixed
 	{
-		$this->synchronizer = MailboxSynchronizer::register(Account::find($id));
+		$this->synchronizer = MailboxSynchronizer::register(
+			Account::find($id)
+		);
 		$this->synchronizer->updateSyncToken();
 		try {
 			$this->synchronizer->getAllFolders(function (Folder $imapFolder, $index) {
