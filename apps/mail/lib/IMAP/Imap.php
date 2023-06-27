@@ -52,16 +52,18 @@ class Imap
 		// TODO move config to file, generate tags list
 		self::$clientManager = new ClientManager([
 			'flags' => null,
-			'fetch' => FT_PEEK,
-			/*'options' => [
+			'options' => [
+				'debug' => true,
+				'fetch_flags' => true,
+				'fetch' => FT_PEEK,
 				'common_folders' => [
 					"root" => "INBOX",
-					"junk" => "INBOX/Junk",
-					"draft" => "INBOX/Drafts",
-					"sent" => "INBOX/Sent",
-					"trash" => "INBOX/Trash",
+					"junk" => "Junk",
+					"draft" => "Drafts",
+					"sent" => "Sent",
+					"trash" => "Trash",
 				],
-			]*/
+			]
 		]);
 		$accountParams = [
 			'host' => $server->getHost(),
@@ -72,7 +74,7 @@ class Imap
 			'password' => $password,
 			'protocol' => 'imap'
 		];
-		$client = self::$clientManager->make($accountParams);
+		$client = new \Vorkfork\Apps\Mail\IMAP\Client($accountParams);
 		$client->connect();
 		self::$client = $client;
 	}

@@ -17,7 +17,6 @@ use Vorkfork\Apps\Mail\Encryption\MailPassword;
 use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
 use Vorkfork\Apps\Mail\Models\Account;
 use Vorkfork\Apps\Mail\Models\Recipient;
-use Vorkfork\Security\Str;
 use Webklex\PHPIMAP\Address;
 use Webklex\PHPIMAP\Attribute;
 use Webklex\PHPIMAP\Exceptions\AuthFailedException;
@@ -168,7 +167,7 @@ final class MailboxSynchronizer
 	public function getAllFolders(\Closure $closure = null, bool $hierarchical = false): void
 	{
 		$imapFolders = $this->getMailbox()->getMailboxes($hierarchical);
-		/** @var Folder $imapFolder */
+		/** @var \Vorkfork\Apps\Mail\IMAP\Folder $imapFolder */
 		$i = 0;
 		foreach ($imapFolders as $imapFolder) {
 			if (is_callable($closure)) {
