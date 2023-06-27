@@ -2,10 +2,14 @@
 
 namespace Vorkfork\Apps\Mail\IMAP;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception\SyntaxErrorException;
 use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Vorkfork\Application\Session;
+use Vorkfork\Apps\Mail\Exceptions\MailboxAlreadyExists;
 use Vorkfork\Apps\Mail\IMAP\DTO\MailboxImapDTO;
 use Vorkfork\Apps\Mail\Models\Mailbox as MailboxModel;
 use Defuse\Crypto\Exception\EnvironmentIsBrokenException;
@@ -38,6 +42,8 @@ final class MailboxSynchronizer
 	protected Folder $folder;
 	protected MailboxImapDTO $mailboxDTO;
 	protected ?LengthAwarePaginator $paginator = null;
+	protected string $syncToken;
+	protected ArrayCollection $syncedFolders;
 
 
 	/**
@@ -68,8 +74,49 @@ final class MailboxSynchronizer
 			password: MailPassword::decrypt($account->getImapPassword()),
 		);
 		$this->account = $account;
+		$this->syncedFolders = new ArrayCollection();
 		self::$instance = $this;
 		return $this;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getSyncToken(): mixed
+	{
+		if (!Session::has('syncToken')) {
+			Session::set('syncToken', $this->generateSyncToken());
+		}
+		$this->syncToken = Session::get('syncToken');
+		return $this->syncToken;
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function generateSyncToken(): string
+	{
+		return uniqid();
+	}
+
+	/**
+	 * @return void
+	 */
+	public function removeSyncToken(): void
+	{
+		if (Session::has('syncToken')) {
+			Session::delete('syncToken');
+		}
+	}
+
+	/**
+	 * @return string
+	 */
+	public function updateSyncToken(): string
+	{
+		Session::set('syncToken', $this->generateSyncToken());
+		$this->syncToken = Session::get('syncToken');
+		return $this->syncToken;
 	}
 
 	/**
@@ -120,7 +167,6 @@ final class MailboxSynchronizer
 	 */
 	public function getAllFolders(\Closure $closure = null, bool $hierarchical = false): void
 	{
-		$names = [];
 		$imapFolders = $this->getMailbox()->getMailboxes($hierarchical);
 		/** @var Folder $imapFolder */
 		$i = 0;
@@ -128,10 +174,8 @@ final class MailboxSynchronizer
 			if (is_callable($closure)) {
 				$closure($imapFolder, $i);
 			}
-			$names[] = $imapFolder->full_name;
 			$i++;
 		}
-		//$this->deleteIfMailBoxNotExists($names);
 	}
 
 	/**
@@ -153,24 +197,25 @@ final class MailboxSynchronizer
 			'unseen' => $folder->status['unseen'] ?? 0,
 			'uidValidity' => $folder->status['uidvalidity'],
 			'lastSync' => new \DateTime(),
+			'syncToken' => $this->syncToken
 		];
 		$data['position'] = $position;
 		/** @var MailboxModel $mbox */
 		$mbox = MailboxModel::repository()
 			->findOneBy([
 				'account' => $this->account,
-				'name' => $folder->full_name
+				'path' => $folder->full_name,
 			]);
 		try {
 			if (!is_null($mbox)) {
-				$target = $mbox
-					->update($data, function (MailboxModel $mailbox) use ($parent) {
-						$mailbox->setAccount($this->account);
-						if ($parent instanceof MailboxModel) {
-							$mailbox->setParent($parent);
-							$parent->addChild($mailbox);
-						}
-					});
+				$mbox->update($data, function (MailboxModel $mailbox) use ($parent) {
+					$mailbox->setAccount($this->account);
+					if ($parent instanceof MailboxModel) {
+						$mailbox->setParent($parent);
+						$parent->addChild($mailbox);
+					}
+				});
+				$target = $mbox;
 			} else {
 				$target = MailboxModel
 					::create($data, function (MailboxModel $mailbox) use ($parent) {
@@ -181,6 +226,9 @@ final class MailboxSynchronizer
 						}
 					});
 			}
+
+			$this->syncedFolders->add($target->getPath());
+
 			if ($folder->hasChildren()) {
 				$i = 0;
 				foreach ($folder->getChildren() as $child) {
@@ -189,9 +237,20 @@ final class MailboxSynchronizer
 				}
 			}
 		} catch (\Exception $exception) {
-			//dd($exception);
-			// todo log
+			if (!$exception instanceof MailboxAlreadyExists) {
+				dd($exception);
+				// todo log
+			}
+
 		}
+	}
+
+	/**
+	 * @return ArrayCollection
+	 */
+	public function getSyncedFolders(): ArrayCollection
+	{
+		return $this->syncedFolders;
 	}
 
 
@@ -362,11 +421,16 @@ final class MailboxSynchronizer
 		return MailboxModel::repository()->findBy(['accountId' => $this->account->getId()]);
 	}
 
-	public function deleteIfMailBoxNotExists(array $names)
+	public function deleteIfMailBoxNotExists()
 	{
 		// переписать на орм
-		$this->account->removeUnusedMailboxes($names);
-		$this->account->save();
+		try {
+			$this->account->removeUnusedMailboxes($this->getSyncedFolders());
+		} catch (MissingMappingDriverImplementation|ORMException $e) {
+			dd($e);
+		}
+
+		//$this->account->save();
 
 	}
 }

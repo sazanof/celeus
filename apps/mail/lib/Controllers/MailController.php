@@ -9,6 +9,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\TransactionRequiredException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportException;
+use Vorkfork\Application\Session;
 use Vorkfork\Apps\Mail\ACL\AccountAcl;
 use Vorkfork\Apps\Mail\Collections\AccountCollection;
 use Vorkfork\Apps\Mail\DTO\AccountDto;
@@ -25,6 +26,13 @@ use Vorkfork\Apps\Mail\SMTP\SmtpConfig;
 use Vorkfork\Core\Controllers\Controller;
 use Vorkfork\Core\Exceptions\ErrorResponse;
 use Vorkfork\Serializer\JsonSerializer;
+use Webklex\PHPIMAP\Exceptions\AuthFailedException;
+use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
+use Webklex\PHPIMAP\Exceptions\FolderFetchingException;
+use Webklex\PHPIMAP\Exceptions\ImapBadRequestException;
+use Webklex\PHPIMAP\Exceptions\ImapServerErrorException;
+use Webklex\PHPIMAP\Exceptions\ResponseException;
+use Webklex\PHPIMAP\Exceptions\RuntimeException;
 use Webklex\PHPIMAP\Folder;
 
 class MailController extends Controller
@@ -34,16 +42,23 @@ class MailController extends Controller
 
 	/**
 	 * Load user accounts list as Dto collection
-	 * @return mixed
+	 * @return AccountDto[]
 	 */
-	public function loadAccounts()
+	public function loadAccounts(): array
 	{
 		return AccountCollection::getUserAccounts($this->user->username);
 	}
 
 	/**
 	 * Check and add user email account
-	 * @throws AccountAlreadyExistsException
+	 * @param Request $request
+	 * @return array|false|void|ErrorResponse
+	 * @throws EnvironmentIsBrokenException
+	 * @throws ImapErrorException
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 * @throws TransactionRequiredException
+	 * @throws \Doctrine\Persistence\Mapping\MappingException
 	 */
 	public function addAccount(Request $request)
 	{
@@ -111,43 +126,30 @@ class MailController extends Controller
 		}
 	}
 
-	/**
-	 * @param int $id
-	 * @return mixed
-	 * @throws EnvironmentIsBrokenException
-	 * @throws ImapErrorException
-	 * @throws ORMException
-	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException
-	 * @throws WrongKeyOrModifiedCiphertextException
-	 * @throws \Webklex\PHPIMAP\Exceptions\AuthFailedException
-	 * @throws \Webklex\PHPIMAP\Exceptions\ConnectionFailedException
-	 * @throws \Webklex\PHPIMAP\Exceptions\FolderFetchingException
-	 * @throws \Webklex\PHPIMAP\Exceptions\ImapBadRequestException
-	 * @throws \Webklex\PHPIMAP\Exceptions\ImapServerErrorException
-	 * @throws \Webklex\PHPIMAP\Exceptions\ResponseException
-	 * @throws \Webklex\PHPIMAP\Exceptions\RuntimeException
-	 */
+
 	public function syncMailboxes(int $id): mixed
 	{
-
-		dd(
-			JsonSerializer::deserializeArrayStatic(
-				Account::find($id)->getMailboxes(function (\Vorkfork\Apps\Mail\Models\Mailbox $mailbox) {
-					return $mailbox->getParent() === null;
-				}),
-				MailboxDTO::class
-			)
-		);
 		$this->synchronizer = MailboxSynchronizer::register(Account::find($id));
-		$this->synchronizer->getAllFolders(function (Folder $imapFolder, $index) {
-			$this->synchronizer->syncFolder($imapFolder, $index);
-		}, true);
-		//dd(Account::find($id)->getMailboxes())
+		$this->synchronizer->updateSyncToken();
+		try {
+			$this->synchronizer->getAllFolders(function (Folder $imapFolder, $index) {
+				$this->synchronizer->syncFolder($imapFolder, $index);
+			}, true);
+			$this->synchronizer->deleteIfMailBoxNotExists();
+		} catch (
+		ImapErrorException|
+		RuntimeException|
+		AuthFailedException|
+		ConnectionFailedException|
+		FolderFetchingException|
+		ImapBadRequestException|
+		ImapServerErrorException|
+		ResponseException $e) {
+			$this->synchronizer->removeSyncToken();
+		}
+
 		return JsonSerializer::deserializeArrayStatic(
-			Account::find($id)->getMailboxes(function (\Vorkfork\Apps\Mail\Models\Mailbox $mailbox) {
-				return $mailbox->getParent() === null;
-			}),
+			Account::find($id)->getMailboxes(),
 			MailboxDTO::class
 		);
 	}

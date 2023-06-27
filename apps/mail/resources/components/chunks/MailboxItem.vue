@@ -1,6 +1,14 @@
 <template>
     <div class="mailbox">
         {{ mailbox.name }}
+        <div
+            v-if="mailbox.children.length > 0"
+            class="children">
+            <MailboxItem
+                v-for="mbox in mailbox.children"
+                :key="mbox.id"
+                :mailbox="mbox" />
+        </div>
     </div>
 </template>
 

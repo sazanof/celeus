@@ -19,7 +19,7 @@ use Vorkfork\Apps\Mail\Repositories\MailboxRepository;
  */
 #[ORM\Entity(repositoryClass: MailboxRepository::class)]
 #[ORM\Index(columns: ['id'], name: 'id')]
-#[ORM\UniqueConstraint(name: 'name_validity', columns: ['name', 'uidvalidity'])]
+#[ORM\UniqueConstraint(name: 'path_validity', columns: ['path', 'uidvalidity'])]
 #[ORM\Table(name: '`mail_mailboxes`')]
 #[ORM\HasLifecycleCallbacks]
 class Mailbox extends Entity
@@ -55,13 +55,16 @@ class Mailbox extends Entity
 	#[ORM\Column(type: Types::INTEGER, nullable: true)]
 	protected int $position;
 
+	#[ORM\Column(name: 'sync_token', type: Types::STRING, nullable: true)]
+	protected string $syncToken;
+
 	/** Many mailboxes have one account. This is the owning side. */
-	#[ORM\ManyToOne(targetEntity: Account::class, inversedBy: 'mailboxes')]
-	#[ORM\JoinColumn(name: 'account_id', referencedColumnName: 'id')]
+	#[ORM\ManyToOne(targetEntity: Account::class, cascade: ['persist'], inversedBy: 'mailboxes')]
+	#[ORM\JoinColumn(name: 'account_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
 	private Account|null $account = null;
 
-	#[ORM\ManyToOne(targetEntity: Mailbox::class, inversedBy: 'children')]
-	private ?Mailbox $parent;
+	#[ORM\ManyToOne(targetEntity: Mailbox::class, cascade: ['persist'], inversedBy: 'children')]
+	private ?Mailbox $parent = null;
 
 	#[ORM\OneToMany(mappedBy: 'parent', targetEntity: Mailbox::class)]
 	private ?Collection $children;
@@ -72,6 +75,7 @@ class Mailbox extends Entity
 		'delimiter',
 		'total',
 		'lastSync',
+		'syncToken',
 		'unseen',
 		'uidValidity',
 		'position',
@@ -92,9 +96,9 @@ class Mailbox extends Entity
 	#[ORM\PrePersist]
 	public function checkMailboxOnDuplicate(PrePersistEventArgs $args): void
 	{
-		$count = ($this->repository->count(['name' => $this->name, 'uidValidity' => $this->uidValidity]));
+		$count = ($this->repository->count(['path' => $this->name, 'uidValidity' => $this->uidValidity]));
 		if ($count > 0) {
-			throw new MailboxAlreadyExists($this->name);
+			throw new MailboxAlreadyExists($this->path);
 		}
 	}
 
@@ -251,6 +255,22 @@ class Mailbox extends Entity
 	}
 
 	/**
+	 * @param string $syncToken
+	 */
+	public function setSyncToken(string $syncToken): void
+	{
+		$this->syncToken = $syncToken;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSyncToken(): string
+	{
+		return $this->syncToken;
+	}
+
+	/**
 	 * @param Mailbox|null $parent
 	 */
 	public function setParent(?Mailbox $parent): void
@@ -267,6 +287,7 @@ class Mailbox extends Entity
 	}
 
 	/**
+	 * Get Child Mailboxes Collection
 	 * @return Collection|null
 	 */
 	public function getChildren(): ?Collection
@@ -274,16 +295,35 @@ class Mailbox extends Entity
 		return $this->children;
 	}
 
-	public function addChild(?Mailbox $mailbox)
+	/**
+	 * Add child mailbox to Collection
+	 * @param Mailbox|null $mailbox
+	 * @return Mailbox
+	 */
+	public function addChild(?Mailbox $mailbox): static
 	{
 		if (!is_null($mailbox)) {
 			$ind = $this->children->indexOf($mailbox);
-
 			if ($ind === false) {
 				$this->children->add($mailbox);
 			} else {
-				$this->children[$ind] = $mailbox;
+
+				$this->children->set($ind, $mailbox);
 			}
 		}
+		return $this;
+	}
+
+	/**
+	 * Remove child mailbox to Collection
+	 * @param Mailbox|null $mailbox
+	 * @return Mailbox
+	 */
+	public function removeChild(?Mailbox $mailbox): static
+	{
+		if ($this->children->contains($mailbox)) {
+			$this->children->removeElement($mailbox);
+		}
+		return $this;
 	}
 }

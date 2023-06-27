@@ -54,6 +54,15 @@ class Imap
 		self::$clientManager = new ClientManager([
 			'flags' => null,
 			'fetch' => FT_PEEK,
+			'options' => [
+				'common_folders' => [
+					"root" => "INBOX",
+					"junk" => "INBOX/Junk",
+					"draft" => "INBOX/Drafts",
+					"sent" => "INBOX/Sent",
+					"trash" => "INBOX/Trash",
+				],
+			]
 		]);
 		$client = self::$clientManager->make([
 			'host' => $server->getHost(),

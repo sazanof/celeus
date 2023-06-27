@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\PersistentCollection;
 use Vorkfork\Apps\Mail\Repositories\MailAccountsRepository;
 use Vorkfork\Database\Entity;
 use Vorkfork\Database\Trait\Timestamps;
@@ -363,12 +364,13 @@ class Account extends Entity
 	 */
 	public function getMailboxes(\Closure $filter = null): Collection
 	{
-		if (is_callable($filter)) {
-			return $this->mailboxes->filter(function (Mailbox $element) use ($filter) {
+		return $this->mailboxes->filter(function (Mailbox $element) use ($filter) {
+			if (is_callable($filter)) {
 				return $filter($element);
-			});
-		}
-		return $this->mailboxes;
+			} else {
+				return $element->getParent() === null;
+			}
+		});
 	}
 
 	/**
@@ -387,12 +389,11 @@ class Account extends Entity
 	{
 
 		$ind = $this->mailboxes->indexOf($mailbox);
-		if (!$this->mailboxes->contains($mailbox)) {
+		if ($ind === false) {
 			$this->mailboxes->add($mailbox);
 		} else {
-			$this->mailboxes[$ind] = $mailbox;
+			$this->mailboxes->set($ind, $mailbox);
 		}
-
 		return $this;
 	}
 
@@ -407,15 +408,18 @@ class Account extends Entity
 	 * @throws MissingMappingDriverImplementation
 	 * @throws ORMException
 	 */
-	public function removeUnusedMailboxes(array $existingMailboxesNames)
+	public function removeUnusedMailboxes(array|ArrayCollection $existingMailboxesNames, ArrayCollection|PersistentCollection $mailboxes = null)
 	{
-		/** @var Mailbox $mailbox */
-		foreach ($this->getMailboxes() as $mailbox) {
-			if (!in_array($mailbox->getName(), $existingMailboxesNames)) {
-				$this->removeMailbox($mailbox);
-				$mailbox->remove();
+		$mailboxes = is_null($mailboxes) ? $this->mailboxes : $mailboxes;
+		$mailboxes->map(function (Mailbox $el) use ($existingMailboxesNames) {
+			if ($existingMailboxesNames->indexOf($el->getPath()) === false) {
+				$el->em()->remove($el);
 			}
-		}
+			if ($el->getChildren()->count() > 0) {
+				$this->removeUnusedMailboxes($existingMailboxesNames, $el->getChildren());
+			}
+		});
+		$this->em()->flush();
 		return $this;
 	}
 }

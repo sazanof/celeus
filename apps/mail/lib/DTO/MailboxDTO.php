@@ -20,8 +20,6 @@ class MailboxDTO extends MailboxImapDTO
 
 	public string $name;
 
-	private $children;
-
 	/**
 	 * @param mixed $children
 	 */

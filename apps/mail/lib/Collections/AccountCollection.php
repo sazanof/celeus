@@ -11,7 +11,12 @@ class AccountCollection
 {
 	protected const DTO_CLASS = AccountDto::class;
 
-	public static function getUserAccounts(string $username)
+	/**
+	 * Get User accounts with mailboxes as DTO
+	 * @param string $username
+	 * @return AccountDto[]
+	 */
+	public static function getUserAccounts(string $username): array
 	{
 		return JsonSerializer::deserializeArrayStatic(
 			Account::repository()->getAccountsByUsername($username), self::DTO_CLASS

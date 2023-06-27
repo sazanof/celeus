@@ -4,6 +4,7 @@ namespace Vorkfork\Database;
 
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
+use Doctrine\ORM\Exception\NotSupported;
 use Sabre\DAV\Exception;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validation;
@@ -45,6 +46,7 @@ abstract class Entity implements IEntity
 	/**
 	 * @throws \Doctrine\ORM\Exception\MissingMappingDriverImplementation
 	 * @throws \Doctrine\DBAL\Exception
+	 * @throws NotSupported
 	 */
 	public function __construct()
 	{
@@ -257,12 +259,12 @@ abstract class Entity implements IEntity
 	public function update(array $arguments, \Closure $closure = null): static
 	{
 		$this->className = get_class($this);
-		$this->fromArray($arguments, $this->fillable);
+		$entity = $this->fromArray($arguments, $this->fillable);
 		if (is_callable($closure)) {
-			$closure($this);
+			$closure($entity);
 		}
-		$this->em()->persist($this);
-		$this->em()->flush($this);
+		$entity->em()->persist($entity);
+		$entity->em()->flush($entity);
 		return $this;
 	}
 

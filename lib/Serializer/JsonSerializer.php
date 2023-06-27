@@ -20,12 +20,17 @@ class JsonSerializer implements ISerializer
 		$this->serializer = new Serializer($normalizers, $encoders);
 	}
 
+	/**
+	 * @param mixed $data
+	 * @param $format
+	 * @return string
+	 */
 	public function serialize(mixed $data, $format = 'json'): string
 	{
 		return $this->serializer->serialize($data, $format,
 			[
 				'circular_reference_handler' => function ($object) {
-					return $object->getId();
+					return $object->getId(); // ошибка появляется здесь
 				}]);
 	}
 
