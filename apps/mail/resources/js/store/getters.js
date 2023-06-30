@@ -10,5 +10,11 @@ export default {
     },
     getAccountMailboxes: (state) => (accountId) => {
         return state.accounts.find(acc => acc.id === accountId).mailboxes
+    },
+    getMailbox: (state) => (mailboxId) => {
+        return state.mailboxes.find(m => m.id === mailboxId)
+    },
+    getActiveMailbox(state) {
+        return state.activeMailbox
     }
 }

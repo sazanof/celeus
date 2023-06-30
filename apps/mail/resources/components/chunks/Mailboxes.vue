@@ -1,7 +1,6 @@
 <template>
     <div
         class="mailboxes">
-        {{ mailboxesTree }}
         <MailboxItem
             v-for="mailbox in mailboxes"
             :key="mailbox.id"
@@ -23,9 +22,6 @@
                 required: true
             }
         },
-        data() {
-
-        },
         computed: {
             id() {
                 return this.account.id
@@ -36,15 +32,23 @@
             mailboxes() {
                 return this.$store.getters.getAccountMailboxes(this.id)
             },
+            activeMailbox() {
+                return this.$store.getters['getActiveMailbox']
+            }
         },
-        created() {
-            this.getMailboxes()
+        async created() {
+            if (this.isActive && Object.keys(this.mailboxes).length) {
+                this.$store.commit('setActiveMailbox', this.mailboxes[0])
+                if (this.$route.params.id === undefined) {
+                    this.$router.push(`/mbox/${this.activeMailbox.id}`)
+                }
+            }
+            await this.getMailboxes()
         },
         methods: {
             async getMailboxes() {
                 await this.$store.dispatch('getMailboxes', this.id)
             },
-
         }
     }
 </script>

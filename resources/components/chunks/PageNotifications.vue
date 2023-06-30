@@ -6,7 +6,7 @@
             <VfButton
                 :only-icon="true">
                 <template #icon>
-                    <Bell :size="20" />
+                    <BellOutline :size="20" />
                 </template>
             </VfButton>
             <template #content>
@@ -19,13 +19,13 @@
 <script>
     import VfButton from '../elements/VfButton.vue'
     import Popper from 'vue3-popper'
-    import Bell from 'vue-material-design-icons/Bell.vue'
+    import BellOutline from 'vue-material-design-icons/BellOutline.vue'
 
     export default {
         name: 'PageNotifications',
         components: {
             VfButton,
-            Bell,
+            BellOutline,
             Popper
         },
         methods: {

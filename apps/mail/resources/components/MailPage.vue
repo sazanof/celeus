@@ -15,6 +15,7 @@
         </div>
         <div class="mail-list">
             <SearchMessages />
+            <router-view />
         </div>
         <div class="mail-content">
             envelope
@@ -43,19 +44,16 @@
             },
             activeAccount() {
                 return this.$store.getters['getActiveAccount']
-            }
+            },
+            activeMailbox() {
+                return this.$store.getters['getActiveMailbox']
+            },
+
         },
         created() {
             this.$store.commit('setActiveAccount', this.defaultAccount)
         },
-        mounted() {
-            //TODO trigger account sync
-            console.log('trigger sync')
-        },
         methods: {
-            syncAccount(id) {
-
-            },
             setAccountActive(account) {
                 this.$store.commit('setActiveAccount', account)
             }
@@ -73,6 +71,7 @@
   .mail-menu {
 	height: inherit;
 	width: 350px;
+	background: var(--color-primary-opacity5);
   }
 
   .mail-list {
@@ -81,7 +80,6 @@
   }
 
   .mail-list {
-	border-left: var(--border-width) solid var(--border-color);
 	border-right: var(--border-width) solid var(--border-color);
   }
 

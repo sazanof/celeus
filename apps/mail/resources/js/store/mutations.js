@@ -1,6 +1,21 @@
 export default {
     setAccounts(state, accounts) {
         state.accounts = accounts
+        this.commit('addAccountMailboxes')
+    },
+    addAccountMailboxes(state) {
+        state.accounts.map(acc => {
+            this.commit('mergeMailboxes', acc.mailboxes)
+        })
+    },
+    mergeMailboxes(state, mailboxes) {
+        Object.keys(mailboxes).map(el => {
+            if (mailboxes[el].children !== undefined && mailboxes[el].children.length > 0) {
+                this.commit('mergeMailboxes', mailboxes[el].children)
+                //delete mailboxes[el].children // delete?
+            }
+            state.mailboxes.push(mailboxes[el])
+        })
     },
     saveAccount(state, account) {
         if (state.accounts.length === 0) {
@@ -15,9 +30,6 @@ export default {
             })
         }
     },
-    setActiveAccount(state, account) {
-        state.activeAccount = state.accounts.find(a => a.id === account.id)
-    },
     setMailboxes(state, data) {
         //TODO check existing
         const accountId = data.accountId
@@ -28,5 +40,11 @@ export default {
             }
             return acc
         })
-    }
+    },
+    setActiveMailbox(state, mailbox) {
+        state.activeMailbox = mailbox
+    },
+    setActiveAccount(state, account) {
+        state.activeAccount = state.accounts.find(a => a.id === account.id)
+    },
 }

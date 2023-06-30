@@ -52,7 +52,7 @@
                     Math.floor(Math.random() * 255)
                 ]
                 return `rgb(${rgb.join(', ')})`
-            }
+            },
         }
     }
 </script>
@@ -85,6 +85,7 @@
 	  position: absolute;
 	  right: 14px;
 	  top: 12px;
+	  transition: var(--transition-duration);
 
 	  & > div {
 		margin-left: 4px;
@@ -95,6 +96,12 @@
 		&:hover {
 		  opacity: 1;
 		}
+	  }
+	}
+
+	&:hover {
+	  .actions {
+		opacity: 1;
 	  }
 	}
   }

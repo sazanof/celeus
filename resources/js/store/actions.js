@@ -44,5 +44,5 @@ export default {
                 commit('setAuthenticated', false)
             }
         })
-    }
+    },
 }

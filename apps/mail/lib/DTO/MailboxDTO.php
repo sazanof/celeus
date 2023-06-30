@@ -4,6 +4,7 @@ namespace Vorkfork\Apps\Mail\DTO;
 
 use Doctrine\Common\Collections\Collection;
 use Vorkfork\Apps\Mail\IMAP\DTO\MailboxImapDTO;
+use Vorkfork\Apps\Mail\Models\Account;
 use Vorkfork\Serializer\JsonSerializer;
 
 class MailboxDTO

@@ -4,5 +4,5 @@ export default {
     currentLocale: null,
     authenticated: null,
     user: null,
-    acl: null
+    acl: null,
 }

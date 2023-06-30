@@ -19,5 +19,6 @@ export default {
 
     setAcl(state, user) {
         state.acl = user.acl
-    }
+    },
+
 }

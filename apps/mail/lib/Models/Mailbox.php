@@ -63,7 +63,7 @@ class Mailbox extends Entity
 
 	/** Many mailboxes have one account. This is the owning side. */
 	#[ORM\ManyToOne(targetEntity: Account::class, cascade: ['persist'], inversedBy: 'mailboxes')]
-	#[ORM\JoinColumn(name: 'account_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+	#[ORM\JoinColumn(name: 'account_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
 	private Account|null $account = null;
 
 	#[ORM\ManyToOne(targetEntity: Mailbox::class, cascade: ['persist'], inversedBy: 'children')]
@@ -328,6 +328,12 @@ class Mailbox extends Entity
 		if ($this->children->contains($mailbox)) {
 			$this->children->removeElement($mailbox);
 		}
+		return $this;
+	}
+
+	public function clearChildren(): static
+	{
+		$this->children->clear();
 		return $this;
 	}
 

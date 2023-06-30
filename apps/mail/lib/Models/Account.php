@@ -412,11 +412,13 @@ class Account extends Entity
 	{
 		$mailboxes = is_null($mailboxes) ? $this->mailboxes : $mailboxes;
 		$mailboxes->map(function (Mailbox $el) use ($existingMailboxesNames) {
-			if ($existingMailboxesNames->indexOf($el->getPath()) === false) {
-				$el->em()->remove($el);
-			}
 			if ($el->getChildren()->count() > 0) {
 				$this->removeUnusedMailboxes($existingMailboxesNames, $el->getChildren());
+			}
+			if ($existingMailboxesNames->indexOf($el->getPath()) === false) {
+				$el->setParent(null);
+				$el->clearChildren();
+				$el->remove();
 			}
 		});
 		$this->em()->flush();

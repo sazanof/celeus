@@ -59,5 +59,9 @@ export default {
                 mailboxes: res.data
             })
         })
+    },
+
+    setActiveMailbox({ commit }, mailbox) {
+        commit('setActiveMailbox', mailbox)
     }
 }
