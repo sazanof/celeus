@@ -19,7 +19,8 @@ export default createRouter({
         },
         {
             path: ACCOUNT_ADD,
-            component: AddAccount
+            component: AddAccount,
+            name: 'add_account'
         },
     ]
 })

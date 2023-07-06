@@ -1,13 +1,13 @@
 <template>
     <div
         id="mail-app"
-        v-if="accounts !== null">
+        v-if="accounts !== null && visible">
         <div
             class="account-add"
             v-if="accounts.length === 0 && $route.path !== url.account_add">
             <NoAccounts />
         </div>
-        <div v-else>
+        <div v-else-if="visible">
             <router-view />
         </div>
     </div>
@@ -24,6 +24,7 @@
         },
         data() {
             return {
+                visible: false,
                 url: {
                     account_add: ACCOUNT_ADD
                 }
@@ -34,8 +35,10 @@
                 return this.$store.getters['getAccounts']
             }
         },
-        async beforeCreate() {
-            await this.$store.dispatch('loadAccounts')
+        async created() {
+            await this.$store.dispatch('loadAccounts').finally(() => {
+                this.visible = true
+            })
         }
     }
 </script>

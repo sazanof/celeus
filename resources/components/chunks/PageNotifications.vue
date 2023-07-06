@@ -1,24 +1,16 @@
 <template>
     <div class="header-notifications">
-        <Popper
-            :arrow="true"
-            @open:popper="openNotificationsPanel">
-            <VfButton
-                :only-icon="true">
-                <template #icon>
-                    <BellOutline :size="20" />
-                </template>
-            </VfButton>
-            <template #content>
-                Notifications-content
+        <VfButton
+            :only-icon="true">
+            <template #icon>
+                <BellOutline :size="20" />
             </template>
-        </Popper>
+        </VfButton>
     </div>
 </template>
 
 <script>
     import VfButton from '../elements/VfButton.vue'
-    import Popper from 'vue3-popper'
     import BellOutline from 'vue-material-design-icons/BellOutline.vue'
 
     export default {
@@ -26,7 +18,6 @@
         components: {
             VfButton,
             BellOutline,
-            Popper
         },
         methods: {
             openNotificationsPanel() {

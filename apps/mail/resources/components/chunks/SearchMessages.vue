@@ -29,7 +29,7 @@
         },
         data() {
             return {
-                search: null
+                search: ''
             }
         }
     }

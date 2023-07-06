@@ -1,5 +1,5 @@
 <template>
-    <Popper :arrow="true">
+    <VfPopper>
         <div
             class="page-helper"
             @click="opened = !opened">
@@ -15,23 +15,23 @@
                     v-else />
             </div>
         </div>
-        <template #content>
-            This is long content of popper.
+        <template #popper>
+            123 erfe rfwe fw efwer fwe rf
         </template>
-    </Popper>
+    </VfPopper>
 </template>
 
 <script>
-    import Popper from 'vue3-popper'
+    import VfPopper from '../elements/VfPopper.vue'
     import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
     import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
     export default {
         name: 'PageCenterHelper',
         components: {
-            Popper,
             ChevronDown,
-            ChevronUp
+            ChevronUp,
+            VfPopper
         },
         data() {
             return {

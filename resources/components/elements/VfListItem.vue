@@ -1,5 +1,7 @@
 <template>
-    <div class="list-item">
+    <div
+        class="list-item"
+        :class="{header:header}">
         <slot name="icon" />
         <div class="list-item-text">
             <slot />
@@ -9,7 +11,13 @@
 
 <script>
     export default {
-        name: 'VfListItem'
+        name: 'VfListItem',
+        props: {
+            header: {
+                type: Boolean,
+                default: false
+            }
+        }
     }
 </script>
 
@@ -19,10 +27,16 @@
   align-items: center;
   padding: 12px;
   cursor: pointer;
-  border-radius: var(--border-radius);
 
   &:hover {
 	background: rgba(0, 0, 0, 0.1);
+  }
+
+  &.header {
+	justify-content: center;
+	font-weight: bold;
+	background: var(--color-background-light);
+	text-align: center;
   }
 
   ::v-deep(.material-design-icon) {

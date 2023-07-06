@@ -11,11 +11,26 @@
             </div>
             <div class="actions">
                 <div class="cog">
-                    <CogIcon :size="20" />
+                    <RefreshIcon :size="20" />
                 </div>
-                <div class="more">
-                    <DotsHorizontalIcon :size="20" />
-                </div>
+                <Dropdown>
+                    <div class="more">
+                        <DotsHorizontalIcon :size="20" />
+                    </div>
+                    <template #popper>
+                        <VfList>
+                            <VfListItem :header="true">
+                                {{ this.account.email }}
+                            </VfListItem>
+                            <VfListItem>
+                                {{ $t('mail', 'Account settings') }}
+                                <template #icon>
+                                    <CogIcon :size="20" />
+                                </template>
+                            </VfListItem>
+                        </VfList>
+                    </template>
+                </Dropdown>
             </div>
         </div>
         <Mailboxes :account="account" />
@@ -23,16 +38,24 @@
 </template>
 
 <script>
+    import { Dropdown } from 'floating-vue'
+    import VfList from '../../../../../resources/components/elements/VfList.vue'
+    import VfListItem from '../../../../../resources/components/elements/VfListItem.vue'
     import Mailboxes from './Mailboxes.vue'
     import CogIcon from 'vue-material-design-icons/Cog.vue'
+    import RefreshIcon from 'vue-material-design-icons/Refresh.vue'
     import DotsHorizontalIcon from 'vue-material-design-icons/DotsHorizontal.vue'
 
     export default {
         name: 'AccountItem',
         components: {
-            CogIcon,
+            RefreshIcon,
             DotsHorizontalIcon,
-            Mailboxes
+            Mailboxes,
+            VfListItem,
+            VfList,
+            Dropdown,
+            CogIcon
         },
         props: {
             account: {
@@ -81,7 +104,6 @@
 
 	.actions {
 	  display: flex;
-	  opacity: 0;
 	  position: absolute;
 	  right: 14px;
 	  top: 12px;
@@ -90,18 +112,10 @@
 	  & > div {
 		margin-left: 4px;
 		cursor: pointer;
-		opacity: 0.5;
 		transition: var(--transition-duration);
 
 		&:hover {
-		  opacity: 1;
 		}
-	  }
-	}
-
-	&:hover {
-	  .actions {
-		opacity: 1;
 	  }
 	}
   }

@@ -1,11 +1,14 @@
 <template>
     <div class="user-info">
-        <Popper :arrow="true">
+        <VfPopper>
+            <!-- This will be the popover reference (for the events and position) -->
             <img
                 ref="userAvatar"
                 class="user-avatar-header"
                 :src="`/user/${user.username}/avatar?size=48`">
-            <template #content>
+
+            <!-- This will be the content of the popover -->
+            <template #popper>
                 <VfList>
                     <VfListItem @click="openSettings">
                         <div class="fullname">
@@ -23,15 +26,15 @@
                     </VfListItem>
                 </VfList>
             </template>
-        </Popper>
+        </VfPopper>
     </div>
 </template>
 
 <script>
+    import VfPopper from '../elements/VfPopper.vue'
     import LogoutIcon from 'vue-material-design-icons/Logout.vue'
     import VfList from '../elements/VfList.vue'
     import VfListItem from '../elements/VfListItem.vue'
-    import Popper from 'vue3-popper'
 
     export default {
         name: 'PageUserInfo',
@@ -39,7 +42,7 @@
             LogoutIcon,
             VfList,
             VfListItem,
-            Popper,
+            VfPopper
         },
         computed: {
             user() {
@@ -80,14 +83,14 @@
 	  box-shadow: var(--box-shadow);
 	}
   }
+}
 
-  .fullname {
-	font-weight: bold;
-  }
+.fullname {
+  font-weight: bold;
+}
 
-  .small {
-	margin-top: 4px;
-	font-size: 12px;
-  }
+.small {
+  margin-top: 4px;
+  font-size: 12px;
 }
 </style>

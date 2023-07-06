@@ -179,3 +179,7 @@ div {
   }
 }
 
+.v-popper--theme-dropdown .v-popper__inner {
+  border-radius: var(--border-radius) !important;
+}
+
