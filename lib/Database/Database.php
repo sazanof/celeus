@@ -4,7 +4,8 @@ namespace Vorkfork\Database;
 
 use Vorkfork\Core\Config\Config;
 use Vorkfork\Core\Config\DatabaseConfig;
-use Vorkfork\Core\Events\TablePrefix;
+use Vorkfork\Core\Events\TableCollation;
+use Vorkfork\Core\Events\TableListener;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\DBAL\Connection;
@@ -59,8 +60,13 @@ class Database implements IDatabase
 		$this->configuration = $config;
 
 		$evm = new EventManager();
-		$tablePrefix = new TablePrefix($this->config->getConfigValue('prefix'));
-		$evm->addEventListener(Events::loadClassMetadata, $tablePrefix);
+		$tableListener = new TableListener(
+			prefix: $this->config->getConfigValue('prefix'),
+			charset: $this->config->getConfigValue('charset'),
+			options: $this->config->getConfigValue('options')
+		);
+		$evm->addEventListener(Events::loadClassMetadata, $tableListener);
+
 		try {
 			return DriverManager::getConnection($this->config->getConfig(), $config, $evm);
 		} catch (\Doctrine\DBAL\Exception $e) {

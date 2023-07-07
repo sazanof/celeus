@@ -5,7 +5,7 @@ const INC_MODE = true;
 use Vorkfork\Application\ApplicationUtilities;
 use Vorkfork\Core\Config\Config;
 use Vorkfork\Core\Console\Commands\UpgradeCommand;
-use Vorkfork\Core\Events\TablePrefix;
+use Vorkfork\Core\Events\TableListener;
 use Doctrine\Common\EventManager;
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
 use Doctrine\ORM\EntityManager;
@@ -80,7 +80,11 @@ try {
 	);
 
 	$evm = new EventManager;
-	$tablePrefix = new TablePrefix($config->getConfigValue('prefix'));
+	$tablePrefix = new TableListener(
+		prefix: $config->getConfigValue('prefix'),
+		charset: $config->getConfigValue('charset'),
+		options: $config->getConfigValue('options')
+	);
 	$evm->addEventListener(Events::loadClassMetadata, $tablePrefix);
 
 	try {
