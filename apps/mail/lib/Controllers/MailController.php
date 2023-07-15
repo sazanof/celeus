@@ -19,11 +19,13 @@ use Vorkfork\Apps\Mail\IMAP\Folder;
 use Vorkfork\Apps\Mail\IMAP\Mailbox;
 use Vorkfork\Apps\Mail\IMAP\MailboxSynchronizer;
 use Vorkfork\Apps\Mail\IMAP\Server;
+use Vorkfork\Apps\Mail\Jobs\MailboxSyncJob;
 use Vorkfork\Apps\Mail\Models\Account;
 use Vorkfork\Apps\Mail\SMTP\Smtp;
 use Vorkfork\Apps\Mail\SMTP\SmtpConfig;
 use Vorkfork\Core\Controllers\Controller;
 use Vorkfork\Core\Exceptions\ErrorResponse;
+use Vorkfork\Core\Jobs\Job;
 use Vorkfork\Serializer\JsonSerializer;
 use Webklex\PHPIMAP\Exceptions\AuthFailedException;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
@@ -132,7 +134,6 @@ class MailController extends Controller
 		$this->synchronizer = MailboxSynchronizer::register(
 			Account::find($id)
 		);
-		$this->synchronizer->updateSyncToken();
 		try {
 			$this->synchronizer->getAllFolders(function (Folder $imapFolder, $index) {
 				$this->synchronizer->syncFolder($imapFolder, $index);
@@ -154,6 +155,16 @@ class MailController extends Controller
 			Account::find($id)->getMailboxes(),
 			MailboxDTO::class
 		);
+	}
+
+	public function syncMailbox(int $id)
+	{
+		return Job::push(MailboxSyncJob::class, [
+			'mailboxId' => $id
+		]);
+		/*Job::dispatch(MailboxSyncJob::class, [
+			'mailboxId' => $id
+		]);*/
 	}
 
 }

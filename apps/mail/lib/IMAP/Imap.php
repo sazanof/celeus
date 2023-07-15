@@ -4,13 +4,10 @@ namespace Vorkfork\Apps\Mail\IMAP;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use IMAP\Connection as IMAPConnection;
-use Sabre\DAV\Exception;
 use Vorkfork\Apps\Mail\IMAP\DTO\MailboxImapDTO;
-use Vorkfork\Apps\Mail\IMAP\Exceptions\GetMailboxesException;
 use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
 use Vorkfork\Security\Str;
 use Vorkfork\Serializer\JsonSerializer;
-use Webklex\PHPIMAP\Client;
 use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\AuthFailedException;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
@@ -20,7 +17,6 @@ use Webklex\PHPIMAP\Exceptions\ImapBadRequestException;
 use Webklex\PHPIMAP\Exceptions\ImapServerErrorException;
 use Webklex\PHPIMAP\Exceptions\ResponseException;
 use Webklex\PHPIMAP\Exceptions\RuntimeException;
-use Webklex\PHPIMAP\Folder;
 use Webklex\PHPIMAP\Query\WhereQuery;
 use Webklex\PHPIMAP\Support\FolderCollection;
 use Webklex\PHPIMAP\Support\MessageCollection;
@@ -30,7 +26,7 @@ class Imap
 	protected static mixed $connection = null;
 	protected static ?string $connectionString = null;
 	protected static ClientManager $clientManager;
-	protected static \Vorkfork\Apps\Mail\IMAP\Client $client;
+	protected static Client $client;
 
 	/**
 	 * @param Server $server

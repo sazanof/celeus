@@ -7,7 +7,6 @@ use Doctrine\DBAL\Exception\SyntaxErrorException;
 use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Doctrine\ORM\Exception\ORMException;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Vorkfork\Application\Session;
 use Vorkfork\Apps\Mail\Exceptions\MailboxAlreadyExists;
 use Vorkfork\Apps\Mail\IMAP\DTO\MailboxImapDTO;
 use Vorkfork\Apps\Mail\Models\Mailbox as MailboxModel;
@@ -41,6 +40,7 @@ final class MailboxSynchronizer
 	protected MailboxImapDTO $mailboxDTO;
 	protected ?LengthAwarePaginator $paginator = null;
 	protected string $syncToken;
+	protected ?MailboxModel $mailboxModel = null;
 	protected ArrayCollection $syncedFolders;
 
 
@@ -75,46 +75,6 @@ final class MailboxSynchronizer
 		$this->syncedFolders = new ArrayCollection();
 		self::$instance = $this;
 		return $this;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getSyncToken(): mixed
-	{
-		if (!Session::has('syncToken')) {
-			Session::set('syncToken', $this->generateSyncToken());
-		}
-		$this->syncToken = Session::get('syncToken');
-		return $this->syncToken;
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function generateSyncToken(): string
-	{
-		return uniqid();
-	}
-
-	/**
-	 * @return void
-	 */
-	public function removeSyncToken(): void
-	{
-		if (Session::has('syncToken')) {
-			Session::delete('syncToken');
-		}
-	}
-
-	/**
-	 * @return string
-	 */
-	public function updateSyncToken(): string
-	{
-		Session::set('syncToken', $this->generateSyncToken());
-		$this->syncToken = Session::get('syncToken');
-		return $this->syncToken;
 	}
 
 	/**
@@ -216,8 +176,8 @@ final class MailboxSynchronizer
 			'total' => $folder->status['exists'],
 			'unseen' => $folder->status['unseen'] ?? 0,
 			'uidValidity' => $folder->status['uidvalidity'],
-			'lastSync' => new \DateTime(),
-			'syncToken' => $this->syncToken
+			//'lastSync' => new \DateTime(),
+			//'syncToken' => $this->syncToken
 		];
 		$data['position'] = $position;
 		/** @var MailboxModel $mbox */
@@ -248,16 +208,6 @@ final class MailboxSynchronizer
 			}
 
 			$this->syncedFolders->add($target->getPath());
-			//if ($folder->hasChildren()) {
-			//	$i = 0;
-
-			/** @var Folder $child */
-			//	foreach ($folder->getChildren() as $child) {
-			//		dump($child->full_name);
-			//		$this->syncFolder($child, $i, $target);
-			//		$i++;
-			//	}
-			//}
 		} catch (\Exception $exception) {
 			if (!$exception instanceof MailboxAlreadyExists) {
 				dd($exception);
@@ -285,10 +235,14 @@ final class MailboxSynchronizer
 	public function syncMessages(Folder $folder, int $page = 1, int $total = MESSAGES_PER_PAGE)
 	{
 		$this->mailbox->setFolder($folder);
+		$this->mailboxModel = MailboxModel::repository()->findOneBy(
+			[
+				'account' => $this->account,
+				'path' => $folder->full_name
+			]);
 		$this->paginator = $this->mailbox->getMessagesByPage($total, $page);
 		if ($this->paginator->count() > 0) {
 			/** @var Message $message */
-			echo 'Load page ' . $page . ' from ' . $this->paginator->lastPage() . PHP_EOL;
 			foreach ($this->paginator as $message) {
 				try {
 					$this->addMessageFromImapToDb($message);
@@ -307,12 +261,15 @@ final class MailboxSynchronizer
 	 * @param int $total
 	 * @return void
 	 */
-	public function syncAllMessagesInFolder(Folder $folder, int $page = 1, int $total = MESSAGES_PER_PAGE)
+	public function syncAllMessagesInFolder(Folder $folder, int $page = 1, int $total = MESSAGES_PER_PAGE, \Closure $closure = null)
 	{
 		/** @var LengthAwarePaginator $paginator */
 		$this->paginator = $this->mailbox->getMessagesByPage($total, $page);
 		do {
-			$this->syncMessages($folder, $page);
+			$this->syncMessages($folder, $page, $total);
+			if (is_callable($closure)) {
+				$closure($this->paginator);
+			}
 			$page++;
 		} while ($this->paginator->lastPage() >= $page);
 	}
@@ -367,7 +324,7 @@ final class MailboxSynchronizer
 
 		if (is_null($messageExisting)) {
 			$dbMessage = new MessageModel();
-			$dbMessage->setMailboxId($this->mailboxDTO->id);
+			$dbMessage->setMailboxId($this->mailboxModel->getId()); // mailboxModel  must not be null!!!!!!!!!!!!!!
 			$dbMessage->setMessageId($messageId);
 			$dbMessage->setSubject($subject);
 			$dbMessage->setBody($bodyHtml);
@@ -413,7 +370,7 @@ final class MailboxSynchronizer
 		} else {
 			$messageExisting->setBody($bodyHtml);
 			//$dbMessage->setPreview($preview);
-			$messageExisting->setMailboxId($this->mailboxDTO->id);
+			$messageExisting->setMailboxId($this->mailboxModel->getId());
 			$messageExisting->setMessageId($messageId);
 			$messageExisting->setSubject($subject);
 			$messageExisting->setInReplyTo($inReplyTo);

@@ -42,3 +42,4 @@ nbproject/
 /public/dist
 /public/css
 /resources/css/*.css
+.phpunit.cache

@@ -2,14 +2,7 @@
 
 namespace Vorkfork\Apps\Mail\IMAP;
 
-use IMAP\Connection as IMAPConnection;
-use Vorkfork\Apps\Mail\IMAP\DTO\MailboxHeadersImapDTO;
-use Vorkfork\Apps\Mail\IMAP\DTO\MailboxImapDTO;
-use Vorkfork\Apps\Mail\IMAP\DTO\MailboxStatusDTO;
-use Vorkfork\Apps\Mail\IMAP\Exceptions\GetMailboxesException;
 use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
-use Vorkfork\Security\Str;
-use Vorkfork\Serializer\JsonSerializer;
 use Webklex\PHPIMAP\Exceptions\AuthFailedException;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 use Webklex\PHPIMAP\Exceptions\FolderFetchingException;
@@ -18,7 +11,7 @@ use Webklex\PHPIMAP\Exceptions\ImapBadRequestException;
 use Webklex\PHPIMAP\Exceptions\ImapServerErrorException;
 use Webklex\PHPIMAP\Exceptions\ResponseException;
 use Webklex\PHPIMAP\Exceptions\RuntimeException;
-use Webklex\PHPIMAP\Folder;
+use Vorkfork\Apps\Mail\IMAP\Folder;
 use Webklex\PHPIMAP\Support\FolderCollection;
 use Webklex\PHPIMAP\Support\MessageCollection;
 

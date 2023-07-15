@@ -2,6 +2,7 @@
 
 namespace Vorkfork\Apps\Mail\Models;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\PrePersistEventArgs;
@@ -49,8 +50,8 @@ class Mailbox extends Entity
 	#[ORM\Column(name: 'uidvalidity', type: Types::BIGINT)]
 	protected int $uidValidity;
 
-	#[ORM\Column(name: 'last_sync', type: Types::DATETIME_MUTABLE)]
-	protected \DateTime $lastSync;
+	#[ORM\Column(name: 'last_sync', type: Types::DATETIME_MUTABLE, nullable: true)]
+	protected ?DateTime $lastSync = null;
 
 	#[ORM\Column(type: Types::INTEGER, nullable: true)]
 	protected int $position;
@@ -59,7 +60,7 @@ class Mailbox extends Entity
 	protected string $attributes;
 
 	#[ORM\Column(name: 'sync_token', type: Types::STRING, nullable: true)]
-	protected string $syncToken;
+	protected ?string $syncToken = null;
 
 	/** Many mailboxes have one account. This is the owning side. */
 	#[ORM\ManyToOne(targetEntity: Account::class, cascade: ['persist'], inversedBy: 'mailboxes')]
@@ -180,17 +181,17 @@ class Mailbox extends Entity
 	}
 
 	/**
-	 * @return \DateTime
+	 * @return ?DateTime
 	 */
-	public function getLastSync(): \DateTime
+	public function getLastSync(): ?DateTime
 	{
 		return $this->lastSync;
 	}
 
 	/**
-	 * @param \DateTime $lastSync
+	 * @param DateTime $lastSync
 	 */
-	public function setLastSync(\DateTime $lastSync): void
+	public function setLastSync(DateTime $lastSync): void
 	{
 		$this->lastSync = $lastSync;
 	}
@@ -267,9 +268,9 @@ class Mailbox extends Entity
 	}
 
 	/**
-	 * @return string
+	 * @return ?string
 	 */
-	public function getSyncToken(): string
+	public function getSyncToken(): ?string
 	{
 		return $this->syncToken;
 	}

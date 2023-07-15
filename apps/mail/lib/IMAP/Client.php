@@ -2,6 +2,7 @@
 
 namespace Vorkfork\Apps\Mail\IMAP;
 
+use Webklex\PHPIMAP\EncodingAliases;
 use Webklex\PHPIMAP\Exceptions\AuthFailedException;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 use Webklex\PHPIMAP\Exceptions\FolderFetchingException;
@@ -41,7 +42,7 @@ class Client extends \Webklex\PHPIMAP\Client
 
 		if (!empty($items)) {
 			foreach ($items as $folder_name => $item) {
-				$folder = new Folder($this, $folder_name, $item["delimiter"], $item["flags"]);
+				$folder = new \Vorkfork\Apps\Mail\IMAP\Folder($this, $folder_name, $item["delimiter"], $item["flags"]);
 
 				if ($hierarchical && $folder->hasChildren()) {
 					$pattern = $folder->full_name . $folder->delimiter . '%';
@@ -109,4 +110,9 @@ class Client extends \Webklex\PHPIMAP\Client
 		return $folders;
 	}
 
+	public function getFolderByPath($folder_path, bool $utf7 = false, bool $soft_fail = false): ?\Vorkfork\Apps\Mail\IMAP\Folder
+	{
+		if (!$utf7) $folder_path = EncodingAliases::convert($folder_path, "utf-8", "utf7-imap");
+		return $this->getFolders(false, null, $soft_fail)->where("path", $folder_path)->first();
+	}
 }

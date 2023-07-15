@@ -35,4 +35,11 @@ return MainRouter::group('/apps/mail/', [
 			'auth' => true
 		]
 	],
+	'mailboxes/{id}/sync' => [
+		'action' => [MailController::class, 'syncMailbox'],
+		'methods' => ['GET'],
+		'defaults' => [
+			'auth' => true
+		]
+	]
 ]);

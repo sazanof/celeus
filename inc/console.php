@@ -2,26 +2,29 @@
 
 const INC_MODE = true;
 
-use Vorkfork\Application\ApplicationUtilities;
-use Vorkfork\Core\Config\Config;
-use Vorkfork\Core\Console\Commands\UpgradeCommand;
-use Vorkfork\Core\Events\TableListener;
 use Doctrine\Common\EventManager;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\Migrations\Configuration\Configuration;
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
+use Doctrine\Migrations\Configuration\Migration\ExistingConfiguration;
+use Doctrine\Migrations\DependencyFactory;
+use Doctrine\Migrations\Metadata\Storage\TableMetadataStorageConfiguration;
+use Doctrine\Migrations\Tools\Console\Command as DoctrineCommand;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 use Dotenv\Dotenv;
-use Doctrine\DBAL\DriverManager;
-use Doctrine\Migrations\Configuration\Configuration;
-use Doctrine\Migrations\Configuration\Migration\ExistingConfiguration;
-use Doctrine\Migrations\DependencyFactory;
-use Doctrine\Migrations\Metadata\Storage\TableMetadataStorageConfiguration;
-use Doctrine\Migrations\Tools\Console\Command as DoctrineCommand;
 use Symfony\Component\Filesystem\Path;
+use Symfony\Component\Finder\Finder;
+use Vorkfork\Application\ApplicationUtilities;
+use Vorkfork\Commands\JobsCommand;
+use Vorkfork\Commands\UpgradeCommand;
+use Vorkfork\Core\Config\Config;
+use Vorkfork\Core\Events\TableListener;
 use Vorkfork\File\File;
+use Vorkfork\Security\Str;
 
 require_once realpath(dirname(__FILE__, 2)) . '/vendor/autoload.php';
 try {
@@ -50,7 +53,7 @@ try {
 	$storageConfiguration->setTableName($config->getConfigValue('prefix') . 'migrations');
 
 	$configuration->setMetadataStorageConfiguration($storageConfiguration);
-	/**@var \Symfony\Component\Finder\Finder $dirs */
+	/**@var Finder $dirs */
 	$pats = [];
 	$paths[] = realpath('./core/Models');
 // Get ORM Models from apps
@@ -63,9 +66,9 @@ try {
 			$paths[] = $pathToModels;
 		}
 		if (is_dir($pathToCommands)) {
-			$classes = \Symfony\Component\Finder\Finder::create()->in($pathToCommands)->name('*Command.php');
+			$classes = Finder::create()->in($pathToCommands)->name('*Command.php');
 			foreach ($classes as $file) {
-				$class = \Vorkfork\Security\Str::trimEnd($file->getFilename(), '.php');
+				$class = Str::trimEnd($file->getFilename(), '.php');
 				$autoload = dirname($file->getPath(), 2) . '/vendor/autoload.php';
 				require_once $autoload;
 				$_commands[] = new('\Vorkfork\\Apps\\' . \Vorkfork\Security\Str::ucfirst($dir->getBasename() . '\\Commands\\' . $class));
@@ -100,6 +103,7 @@ try {
 
 	$commands = [
 		new UpgradeCommand(),
+		new JobsCommand(),
 		new DoctrineCommand\CurrentCommand($dependencyFactory),
 		new DoctrineCommand\DiffCommand($dependencyFactory),
 		new DoctrineCommand\DumpSchemaCommand($dependencyFactory),

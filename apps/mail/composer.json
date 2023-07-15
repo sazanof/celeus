@@ -11,5 +11,8 @@
   "require": {
     "defuse/php-encryption": "^2.3",
     "webklex/php-imap": "^5.2"
+  },
+  "scripts": {
+    "tests": "../../vendor/bin/phpunit -c phpunit.xml"
   }
 }

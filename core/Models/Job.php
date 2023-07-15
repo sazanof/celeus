@@ -5,11 +5,15 @@ namespace Vorkfork\Core\Models;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 use Vorkfork\Core\Repositories\JobRepository;
+use Vorkfork\Database\Entity;
 
+/**
+ * @method static JobRepository repository()
+ */
 #[ORM\Entity(repositoryClass: JobRepository::class)]
 #[ORM\Table(name: '`jobs`')]
 #[ORM\HasLifecycleCallbacks]
-class Job
+class Job extends Entity
 {
 	#[ORM\Id]
 	#[ORM\Column(type: Types::BIGINT)]
@@ -24,14 +28,6 @@ class Job
 
 	#[ORM\Column(type: Types::INTEGER)]
 	private int $status;
-
-	const STATUS_NEW = 1;
-
-	const STATUS_RUNNING = 2;
-
-	const STATUS_FINISHED = 3;
-
-	const STATUS_FAILED = 4;
 
 	/**
 	 * @return int
@@ -66,10 +62,13 @@ class Job
 	}
 
 	/**
-	 * @param string $arguments
+	 * @param string|array $arguments
 	 */
-	public function setArguments(string $arguments): void
+	public function setArguments(string|array $arguments): void
 	{
+		if (is_array($arguments)) {
+			$arguments = json_encode($arguments, JSON_UNESCAPED_UNICODE);
+		}
 		$this->arguments = $arguments;
 	}
 
