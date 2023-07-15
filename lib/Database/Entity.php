@@ -304,10 +304,26 @@ abstract class Entity implements IEntity
 	 * @throws ORMException
 	 * @throws MissingMappingDriverImplementation
 	 */
-	public function save()
+	public function save($refresh = false)
 	{
 		$this->em()->persist($this);
 		$this->em()->flush();
+		if ($refresh) {
+			$this->refresh();
+		}
+		return $this;
+	}
+
+	/**
+	 * Refresh the model
+	 * @throws MissingMappingDriverImplementation
+	 * @throws ORMException
+	 * @throws \Doctrine\ORM\TransactionRequiredException
+	 */
+	public function refresh()
+	{
+		$this->em()->refresh($this);
+		return $this;
 	}
 
 	/**

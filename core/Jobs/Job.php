@@ -45,13 +45,7 @@ class Job
 
 	public static function getInstance(string $targetClass, array|string $arguments)
 	{
-		if (
-			is_null(self::$instance) || (
-				self::$instance->arguments !== $arguments &&
-				self::$instance->targetClass !== $targetClass)
-		) {
-			return new self($targetClass, $arguments);
-		}
+		return new self($targetClass, $arguments);
 	}
 
 	/**

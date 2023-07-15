@@ -174,10 +174,15 @@ class Imap
 	 * @throws ConnectionFailedException
 	 * @throws AuthFailedException
 	 */
-	public static function paginate(Folder $folder, int $limit, $page = 1, bool $fetchBody = true): ?LengthAwarePaginator
+	public static function paginate(Folder $folder, int $limit, $page = 1, bool $fetchBody = true, $order = 'DESC'): ?LengthAwarePaginator
 	{
 		try {
-			return self::query($folder)->setFetchBody($fetchBody)->all()->paginate($limit, $page);
+			return self::query($folder)
+				->setFetchBody($fetchBody)
+				->setFetchOrder($order)
+				->leaveUnread()
+				->all()
+				->paginate($limit, $page);
 
 		} catch (ImapServerErrorException $exception) {
 			return null;

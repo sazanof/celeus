@@ -16,6 +16,7 @@ use Vorkfork\Apps\Mail\Encryption\MailPassword;
 use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
 use Vorkfork\Apps\Mail\Models\Account;
 use Vorkfork\Apps\Mail\Models\Recipient;
+use Vorkfork\Security\Str;
 use Webklex\PHPIMAP\Address;
 use Webklex\PHPIMAP\Attribute;
 use Webklex\PHPIMAP\Exceptions\AuthFailedException;
@@ -75,6 +76,14 @@ final class MailboxSynchronizer
 		$this->syncedFolders = new ArrayCollection();
 		self::$instance = $this;
 		return $this;
+	}
+
+	/**
+	 * @return MailboxModel|null
+	 */
+	public function getMailboxModel(): ?MailboxModel
+	{
+		return $this->mailboxModel;
 	}
 
 	/**
@@ -268,7 +277,7 @@ final class MailboxSynchronizer
 		do {
 			$this->syncMessages($folder, $page, $total);
 			if (is_callable($closure)) {
-				$closure($this->paginator);
+				$closure($this->paginator, $folder);
 			}
 			$page++;
 		} while ($this->paginator->lastPage() >= $page);
@@ -312,9 +321,9 @@ final class MailboxSynchronizer
 		$seen = MessageFlags::isSeen($flags);
 
 		$messageId = $message->getMessageId()->first();
-		$subject = $message->getSubject()->first();
-		$bodyHtml = $message->getHTMLBody();
-		//$preview = '';  todo = check for better
+		$subject = trim($message->getSubject()->first());
+		$bodyHtml = htmlspecialchars($message->getHTMLBody());
+		$preview = Str::truncate(trim($message->getTextBody()), 200);
 		$inReplyTo = $message->getInReplyTo()->first();
 		$chain = $message->getReferences();
 		$sentAt = $message->date;
@@ -330,7 +339,7 @@ final class MailboxSynchronizer
 			$dbMessage->setBody($bodyHtml);
 			$dbMessage->setInReplyTo($inReplyTo);
 			$dbMessage->setChain($chain);
-			//$dbMessage->setPreview($preview);
+			$dbMessage->setPreview($preview);
 			$dbMessage->setSentAt($sentAt);
 			$dbMessage->setAnswered($answered);
 			$dbMessage->setAttachments($attachments);
@@ -364,12 +373,13 @@ final class MailboxSynchronizer
 			} catch (ORMException $e) {
 				dump($e->getMessage());
 			} catch (\Exception $exception) {
-				dump($subject);
+				// TODO logging & fixing
+				dump($subject, $exception->getMessage());
 				//dump($exception->getFile(), $exception->getLine(), $exception->getMessage());
 			}
 		} else {
 			$messageExisting->setBody($bodyHtml);
-			//$dbMessage->setPreview($preview);
+			$messageExisting->setPreview($preview);
 			$messageExisting->setMailboxId($this->mailboxModel->getId());
 			$messageExisting->setMessageId($messageId);
 			$messageExisting->setSubject($subject);

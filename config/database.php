@@ -9,6 +9,6 @@ return [
 	'password' => env('DB_PASSWORD'),
 	'charset' => env('DB_CHARSET', 'utf8mb4'),
 	'options' => [
-		'collation' => env('DB_COLLATION', 'utf8mb4_general_ci'),
+		'collation' => env('DB_COLLATION', 'utf8mb4_bin'),
 	]
 ];

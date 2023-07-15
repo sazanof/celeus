@@ -29,7 +29,7 @@ class TableListener
 			$classMetadata->setPrimaryTable([
 				'name' => $this->prefix . $classMetadata->getTableName(),
 				'charset' => $this->charset,
-				'options' => ['collation' => 'utf8mb4_general_ci']
+				'options' => ['collation' => $this->options['collation']]
 			]);
 		}
 

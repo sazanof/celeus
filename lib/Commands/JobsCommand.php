@@ -21,8 +21,8 @@ class JobsCommand extends Command
 		while (true) {
 			$job = $this->getLastOne(); // Get new job
 			if (!is_null($job)) {
-				$job->setStatus(\Vorkfork\Core\Jobs\Job::STATUS_RUNNING); // Update status to running
-				$job->save(); // save status to DB
+				//$job->setStatus(\Vorkfork\Core\Jobs\Job::STATUS_RUNNING); // Update status to running
+				//$job->save(); // save status to DB
 				$output->writeln('START ' . $job->getClass() . ' job');
 				\Vorkfork\Core\Jobs\Job::execute($job);
 				if ($job->getStatus() === \Vorkfork\Core\Jobs\Job::STATUS_FAILED) {

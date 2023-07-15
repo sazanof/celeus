@@ -29,6 +29,12 @@ class Job extends Entity
 	#[ORM\Column(type: Types::INTEGER)]
 	private int $status;
 
+	protected array $fillable = [
+		'class',
+		'arguments',
+		'status'
+	];
+
 	/**
 	 * @return int
 	 */
