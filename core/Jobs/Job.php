@@ -28,6 +28,8 @@ class Job
 
 	protected static Job|null $instance = null;
 
+	protected ?JobModel $jobModel = null;
+
 	/**
 	 * @param string $targetClass
 	 * @param array|string $arguments
@@ -39,13 +41,20 @@ class Job
 		}
 		$this->arguments = $arguments;
 		$this->targetClass = $targetClass;
-		/*$this->create();
-		$this->run();*/
+		$this->jobModel = JobModel::repository()->findJobByClass($this->targetClass, $this->arguments);
 	}
 
 	public static function getInstance(string $targetClass, array|string $arguments)
 	{
-		return new self($targetClass, $arguments);
+		if (
+			is_null(self::$instance) || (
+				self::$instance->arguments !== $arguments &&
+				self::$instance->targetClass !== $targetClass)
+		) {
+			return new self($targetClass, $arguments);
+		} else {
+			return self::$instance;
+		}
 	}
 
 	/**
@@ -59,11 +68,22 @@ class Job
 	}
 
 	/**
-	 * @return mixed
+	 * @param \Closure $closure
 	 */
-	public function run(): mixed
+	public function run(\Closure $closure)
 	{
-		return $this->jobInstance->newInstanceArgs($this->arguments);
+		try {
+			$this->jobInstance->newInstanceArgs($this->arguments);
+			if (is_callable($closure)) {
+				$closure($this->jobModel, true);
+			}
+		} catch (\Exception $e) {
+			dump(__FILE__ . ': ' . __LINE__);
+			dump($e->getMessage());
+			if (is_callable($closure)) {
+				$closure($this->jobModel, false);
+			}
+		}
 	}
 
 	/**
@@ -71,11 +91,12 @@ class Job
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	public static function execute(JobModel $job)
+	public static function execute(JobModel $job, \Closure $closure = null)
 	{
 		$instance = self::getInstance($job->getClass(), $job->getArguments());
+		$instance->jobModel = $job;
 		$instance->create();
-		$instance->run();
+		$instance->run($closure);
 	}
 
 	/**

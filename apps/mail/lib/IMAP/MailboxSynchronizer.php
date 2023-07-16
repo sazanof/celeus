@@ -328,7 +328,6 @@ final class MailboxSynchronizer
 		$chain = $message->getReferences();
 		$sentAt = $message->date;
 		$attachments = $message->hasAttachments();
-
 		$messageExisting = MessageModel::repository()->findOneByMessageId($messageId);
 
 		if (is_null($messageExisting)) {
@@ -365,6 +364,7 @@ final class MailboxSynchronizer
 					$dbMessage->em()->persist($recipient);
 				}
 			}
+
 			try {
 				$dbMessage->em()->persist($dbMessage);
 				$dbMessage->em()->flush();
@@ -374,7 +374,8 @@ final class MailboxSynchronizer
 				dump($e->getMessage());
 			} catch (\Exception $exception) {
 				// TODO logging & fixing
-				dump($subject, $exception->getMessage());
+
+				dump($subject);
 				//dump($exception->getFile(), $exception->getLine(), $exception->getMessage());
 			}
 		} else {
@@ -397,9 +398,9 @@ final class MailboxSynchronizer
 			$messageExisting->setAttachments($attachments);
 
 			try {
-				$messageExisting->em()->persist($messageExisting);
+				//$messageExisting->em()->persist($messageExisting);
 				$messageExisting->em()->flush();
-			} catch (\Exception $e) {
+			} catch (\Exception|ORMException|\TypeError|SyntaxErrorException $e) {
 				dump($e->getMessage());
 			}
 		}

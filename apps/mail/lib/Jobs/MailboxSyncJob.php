@@ -2,10 +2,12 @@
 
 namespace Vorkfork\Apps\Mail\Jobs;
 
+use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\TransactionRequiredException;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
 use Vorkfork\Apps\Mail\IMAP\Folder;
 use Vorkfork\Apps\Mail\IMAP\MailboxSynchronizer;
 use Vorkfork\Apps\Mail\IMAP\MailboxSyncToken;
@@ -26,32 +28,15 @@ class MailboxSyncJob
 
 	/**
 	 * @param int $mailboxId
+	 * @throws ImapErrorException
 	 * @throws ORMException
 	 * @throws OptimisticLockException
-	 * @throws TransactionRequiredException|JobNotFoundException
+	 * @throws MissingMappingDriverImplementation
 	 */
 	public function __construct(int $mailboxId)
 	{
 		$this->id = $mailboxId;
-		$this->job = Job::repository()->findJobByClass(self::class, ['mailboxId' => $mailboxId]);
-
-		if (!is_null($this->job)) {
-			// if job exists in db, continue
-			try {
-				$this->register();
-				$this->execute();
-				$this->job->setStatus(\Vorkfork\Core\Jobs\Job::STATUS_FINISHED);
-				$this->job->save();
-			} catch (\TypeError|\Exception $exception) {
-				// update JOB failed, mailbox is null
-				dump($exception);
-				$this->job->setStatus(\Vorkfork\Core\Jobs\Job::STATUS_FAILED);
-				$this->job->save();
-			}
-		} else {
-			throw new JobNotFoundException();
-		}
-
+		$this->execute();
 	}
 
 	public function register(): void
@@ -68,11 +53,11 @@ class MailboxSyncJob
 	 * @return void
 	 * @throws ORMException
 	 * @throws OptimisticLockException
-	 * @throws \Doctrine\ORM\Exception\MissingMappingDriverImplementation
-	 * @throws \Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException
+	 * @throws MissingMappingDriverImplementation
 	 */
 	public function execute(): void
 	{
+		$this->register();
 		$mailboxSyncToken = new MailboxSyncToken();
 		$token = $this->mailbox->getSyncToken();
 		if (!is_null($token)) {

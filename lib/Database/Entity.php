@@ -244,7 +244,7 @@ abstract class Entity implements IEntity
 				return $class;
 			} catch (EntityAlreadyExistsException $e) {
 				$class->em->detach($class);
-				$class->em->clear();
+				//$class->em->clear();
 				//return false;
 			} catch (ORMException|OptimisticLockException $e) {
 				//return false;
@@ -264,7 +264,7 @@ abstract class Entity implements IEntity
 			$closure($entity);
 		}
 		$entity->em()->persist($entity);
-		$entity->em()->flush($entity);
+		$entity->em()->flush();
 		return $this;
 	}
 
@@ -291,11 +291,11 @@ abstract class Entity implements IEntity
 			$class->em->persist($class);
 			if (($i % $batchSize) === 0) {
 				$em->flush();
-				$em->clear(); // Detaches all objects from Doctrine!
+				//$em->clear(); // Detaches all objects from Doctrine!
 			}
 		}
 		$em->flush(); // Persist objects that did not make up an entire batch
-		$em->clear();
+		//$em->clear();
 	}
 
 	/**
