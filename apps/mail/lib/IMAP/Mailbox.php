@@ -2,101 +2,90 @@
 
 namespace Vorkfork\Apps\Mail\IMAP;
 
-use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
-use Webklex\PHPIMAP\Exceptions\AuthFailedException;
-use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
-use Webklex\PHPIMAP\Exceptions\FolderFetchingException;
-use Webklex\PHPIMAP\Exceptions\GetMessagesFailedException;
-use Webklex\PHPIMAP\Exceptions\ImapBadRequestException;
-use Webklex\PHPIMAP\Exceptions\ImapServerErrorException;
-use Webklex\PHPIMAP\Exceptions\ResponseException;
-use Webklex\PHPIMAP\Exceptions\RuntimeException;
-use Vorkfork\Apps\Mail\IMAP\Folder;
-use Webklex\PHPIMAP\Support\FolderCollection;
-use Webklex\PHPIMAP\Support\MessageCollection;
+use ReflectionException;
+use Sazanof\PhpImapSockets\Collections\MailboxCollection;
+use Sazanof\PhpImapSockets\Connection;
+use Sazanof\PhpImapSockets\Exceptions\ConnectionException;
+use Sazanof\PhpImapSockets\Exceptions\LoginFailedException;
 
-class Mailbox
-{
-	const LATT_NOINFERIORS = 1; // It is not possible for any child levels of hierarchy to exist under this name; no child levels exist now and none can be created in the future
-	const LATT_NOSELECT = 2; // This is only a container, not a mailbox - you cannot open it.
-	const LATT_MARKED = 4; // This mailbox is marked. This means that it may contain new messages since the last time it was checked. Not provided by all IMAP servers.
-	const LATT_UNMARKED = 8; // This mailbox is not marked, does not contain new messages. If either MARKED or UNMARKED is provided, you can assume the IMAP server supports this feature for this mailbox.
-	const LATT_REFERRAL = 16; // This mailbox is a link to another remote mailbox (http://www.ietf.org/rfc/rfc2193.txt)
-	const LATT_HASCHILDREN = 32; // This mailbox contains children.
-	const LATT_HASNOCHILDREN = 64; // This mailbox not contain any children.
-
+class Mailbox {
 	protected ?Server $server = null;
+	protected Connection $connection;
 	protected string $username;
 	protected string $password;
 	protected int $flags;
 	protected array $options;
-	protected ?object $connection = null;
 	protected Folder $folder;
 
 	/**
-	 * @throws ImapErrorException
+	 * @param Server $server
+	 * @param string $username
+	 * @param string $password
+	 * @throws LoginFailedException
+	 * @throws ConnectionException
 	 */
-	public function __construct(Server $server,
-	                            string $username,
-	                            string $password
-	)
-	{
+	public function __construct(
+		Server $server,
+		string $username,
+		string $password
+	) {
 		$this->setServer($server);
-		$this->open($username, $password);
+		$connection = Connection::create($server->getHost(), $server->getPort());
+		$this->setConnection($connection);
+		$this->login($username, $password);
 	}
 
 	/**
-	 * @throws ImapErrorException
+	 * @param string $username
+	 * @param string $password
+	 * @return $this|null
+	 * @throws LoginFailedException
 	 */
-	public function open(string $username, string $password): ?static
-	{
-		Imap::open(
-			$this->server,
-			$username,
-			$password,
-		);
+	public function login(string $username, string $password): ?static {
+		$this->connection->login($username, $password);
 		return $this;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isConnected()
-	{
-		return Imap::isConnected();
+	public function isConnected(): bool {
+		return $this->connection->isOpen();
 	}
 
 	/**
-	 * @throws ImapErrorException
+	 * @return bool
+	 * @throws ReflectionException
 	 */
-	public function ping(): bool
-	{
-		return Imap::ping();
+	public function ping(): bool {
+		return $this->connection->noop();
 	}
 
 
 	/**
-	 * @param bool $hierarchical
-	 * @return FolderCollection
-	 * @throws AuthFailedException
-	 * @throws ConnectionFailedException
-	 * @throws FolderFetchingException
-	 * @throws ImapBadRequestException
-	 * @throws ImapServerErrorException
-	 * @throws ResponseException
-	 * @throws RuntimeException
+	 * @param string $startPath
+	 * @return MailboxCollection
+	 * @throws ConnectionException
+	 * @throws ReflectionException
 	 */
-	public function getMailboxes(bool $hierarchical = false): FolderCollection
-	{
-		return Imap::getMailboxes($hierarchical);
+	public function getMailboxes(string $startPath = ''): MailboxCollection {
+		return $this->connection->listMailboxes($startPath);
+	}
+
+	/**
+	 * @param string $startPath
+	 * @return MailboxCollection
+	 * @throws ReflectionException
+	 */
+	public function getMailboxesTree(string $startPath = ''): MailboxCollection {
+		return $this->connection->listMailboxesTree($startPath);
 	}
 
 	/**
 	 * @param string $name
 	 * @return Folder
 	 */
-	public function getFolderByPath(string $name): Folder
-	{
+	public function getFolderByPath(string $name): Folder {
 		return Imap::getFolderByPath($name);
 	}
 
@@ -111,13 +100,11 @@ class Mailbox
 	 * @throws ResponseException
 	 * @throws RuntimeException
 	 */
-	public function getAllMessages(): ?MessageCollection
-	{
+	public function getAllMessages(): ?MessageCollection {
 		return Imap::findAll($this->folder);
 	}
 
-	public function getMessagesByPage(int $limit = 50, int $page = 1): ?\Illuminate\Pagination\LengthAwarePaginator
-	{
+	public function getMessagesByPage(int $limit = 50, int $page = 1): ?\Illuminate\Pagination\LengthAwarePaginator {
 		return Imap::paginate($this->folder, $limit, $page);
 	}
 
@@ -131,8 +118,7 @@ class Mailbox
 	 * @throws ResponseException
 	 * @throws RuntimeException
 	 */
-	public function getRecentMessages(): MessageCollection
-	{
+	public function getRecentMessages(): MessageCollection {
 		return Imap::query($this->folder)->recent()->get();
 	}
 
@@ -146,88 +132,91 @@ class Mailbox
 	 * @throws ResponseException
 	 * @throws RuntimeException
 	 */
-	public function getUnseen(): MessageCollection
-	{
+	public function getUnseen(): MessageCollection {
 		return Imap::query($this->folder)->unseen()->get();
 	}
 
 	/**
 	 * @param Server $server
 	 */
-	public function setServer(Server $server): void
-	{
+	public function setServer(Server $server): void {
 		$this->server = $server;
+	}
+
+	/**
+	 * @param Connection $connection
+	 */
+	public function setConnection(Connection $connection): void {
+		$this->connection = $connection;
+	}
+
+	/**
+	 * @return Connection
+	 */
+	public function getConnection(): Connection {
+		return $this->connection;
 	}
 
 	/**
 	 * @return Server
 	 */
-	public function getServer(): Server
-	{
+	public function getServer(): Server {
 		return $this->server;
 	}
 
 	/**
 	 * @param string $password
 	 */
-	public function setPassword(string $password): void
-	{
+	public function setPassword(string $password): void {
 		$this->password = $password;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getPassword(): string
-	{
+	public function getPassword(): string {
 		return $this->password;
 	}
 
 	/**
 	 * @param string $username
 	 */
-	public function setUsername(string $username): void
-	{
+	public function setUsername(string $username): void {
 		$this->username = $username;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getUsername(): string
-	{
+	public function getUsername(): string {
 		return $this->username;
 	}
 
 	/**
 	 * @param int $flags
 	 */
-	public function setFlags(int $flags): void
-	{
+	public function setFlags(int $flags): void {
 		$this->flags = $flags;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getFlags(): int
-	{
+	public function getFlags(): int {
 		return $this->flags;
 	}
 
 	/**
 	 * @param Folder $folder
 	 */
-	public function setFolder(Folder $folder): void
-	{
+	public function setFolder(Folder $folder): void {
 		$this->folder = $folder;
 	}
 
 	/**
 	 * @return Folder
 	 */
-	public function getFolder(): Folder
-	{
+	public function getFolder(): Folder {
 		return $this->folder;
 	}
 

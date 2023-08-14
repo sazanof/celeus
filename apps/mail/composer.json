@@ -10,7 +10,7 @@
   },
   "require": {
     "defuse/php-encryption": "^2.3",
-    "webklex/php-imap": "^5.2"
+    "sazanof/php-imap-sockets": "^1.1"
   },
   "scripts": {
     "tests": "../../vendor/bin/phpunit -c phpunit.xml"

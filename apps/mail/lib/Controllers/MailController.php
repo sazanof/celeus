@@ -3,9 +3,12 @@
 namespace Vorkfork\Apps\Mail\Controllers;
 
 use Defuse\Crypto\Exception\EnvironmentIsBrokenException;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
+use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\TransactionRequiredException;
+use Sazanof\PhpImapSockets\Exceptions\ConnectionException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Vorkfork\Apps\Mail\ACL\AccountAcl;
@@ -15,28 +18,21 @@ use Vorkfork\Apps\Mail\DTO\MailboxDTO;
 use Vorkfork\Apps\Mail\Encryption\MailPassword;
 use Vorkfork\Apps\Mail\Exceptions\AccountAlreadyExistsException;
 use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
-use Vorkfork\Apps\Mail\IMAP\Folder;
 use Vorkfork\Apps\Mail\IMAP\Mailbox;
 use Vorkfork\Apps\Mail\IMAP\MailboxSynchronizer;
 use Vorkfork\Apps\Mail\IMAP\Server;
-use Vorkfork\Apps\Mail\Jobs\MailboxSyncJob;
 use Vorkfork\Apps\Mail\Models\Account;
 use Vorkfork\Apps\Mail\SMTP\Smtp;
 use Vorkfork\Apps\Mail\SMTP\SmtpConfig;
+use Vorkfork\Auth\Auth;
 use Vorkfork\Core\Controllers\Controller;
 use Vorkfork\Core\Exceptions\ErrorResponse;
-use Vorkfork\Core\Jobs\Job;
+use Vorkfork\Core\Models\User;
+use Vorkfork\DTO\BaseDto;
 use Vorkfork\Serializer\JsonSerializer;
-use Webklex\PHPIMAP\Exceptions\AuthFailedException;
-use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
-use Webklex\PHPIMAP\Exceptions\FolderFetchingException;
-use Webklex\PHPIMAP\Exceptions\ImapBadRequestException;
-use Webklex\PHPIMAP\Exceptions\ImapServerErrorException;
-use Webklex\PHPIMAP\Exceptions\ResponseException;
-use Webklex\PHPIMAP\Exceptions\RuntimeException;
+use Vorkfork\Apps\Mail\Models\Mailbox as MailboxModel;
 
-class MailController extends Controller
-{
+class MailController extends Controller {
 
 	protected ?MailboxSynchronizer $synchronizer = null;
 
@@ -44,8 +40,7 @@ class MailController extends Controller
 	 * Load user accounts list as Dto collection
 	 * @return AccountDto[]
 	 */
-	public function loadAccounts(): array
-	{
+	public function loadAccounts(): array {
 		return AccountCollection::getUserAccounts($this->user->username);
 	}
 
@@ -60,9 +55,8 @@ class MailController extends Controller
 	 * @throws TransactionRequiredException
 	 * @throws \Doctrine\Persistence\Mapping\MappingException
 	 */
-	public function addAccount(Request $request)
-	{
-		if (!$request->headers->get(X_AJAX_CALL)) {
+	public function addAccount(Request $request) {
+		if(!$request->headers->get(X_AJAX_CALL)){
 			die;
 		}
 		$ar = $request->toArray();
@@ -72,7 +66,7 @@ class MailController extends Controller
 		try {
 			// Checking if account already exists in user's account list
 			$existing = Account::repository()->getUserAccountByEmail($imap['user'], $this->user->username);
-			if (count($existing) > 0) {
+			if(count($existing) > 0){
 				return new ErrorResponse((new AccountAlreadyExistsException())->getMessage(), 409);
 			}
 			// Testing smtp connection
@@ -91,7 +85,7 @@ class MailController extends Controller
 					encryption: $imap['encryption'],
 					validateCert: true // TODO move to account creating
 				), $imap['user'], $imap['password'], OP_HALFOPEN);
-			if ($connection->isConnected()) {
+			if($connection->isConnected()){
 				$account = Account::create([
 					'user' => $this->user->username,
 					'email' => $imap['user'],
@@ -114,41 +108,50 @@ class MailController extends Controller
 				];
 			}
 
-		} catch (TransportException $e) {
+		} catch(TransportException $e) {
 			return new ErrorResponse($e->getMessage());
 		}
 		return false;
 	}
 
-	public function saveAccount(int $id, Request $request)
-	{
+	/**
+	 * @param int $id
+	 * @param Request $request
+	 * @return BaseDto|null
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 * @throws TransactionRequiredException
+	 * @throws MissingMappingDriverImplementation
+	 */
+	public function saveAccount(int $id, Request $request) {
 		$account = Account::find($id);
-		if (!is_null($account) && AccountAcl::belongsToAuthenticatedUser($account)) {
+		if(!is_null($account) && AccountAcl::belongsToAuthenticatedUser($account)){
 			return $account->update($request->toArray())->toDto(AccountDto::class);
 		}
+		return null;
 	}
 
-
-	public function syncMailboxes(int $id): mixed
-	{
+	/**
+	 * @param int $id
+	 * @return mixed
+	 * @throws EnvironmentIsBrokenException
+	 * @throws ImapErrorException
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 * @throws TransactionRequiredException
+	 * @throws WrongKeyOrModifiedCiphertextException
+	 * @throws ConnectionException
+	 */
+	public function syncMailboxes(int $id): mixed {
 		$this->synchronizer = MailboxSynchronizer::register(
 			Account::find($id)
 		);
 		try {
-			$this->synchronizer->getAllFolders(function (Folder $imapFolder, $index) {
+			$this->synchronizer->getAllFolders(function(\Sazanof\PhpImapSockets\Models\Mailbox $imapFolder, $index) {
 				$this->synchronizer->syncFolder($imapFolder, $index);
 			}, false);
 			$this->synchronizer->deleteIfMailBoxNotExists();
-		} catch (
-		ImapErrorException|
-		RuntimeException|
-		AuthFailedException|
-		ConnectionFailedException|
-		FolderFetchingException|
-		ImapBadRequestException|
-		ImapServerErrorException|
-		ResponseException $e) {
-			$this->synchronizer->removeSyncToken();
+		} catch(\ReflectionException $e) {
 		}
 
 		return JsonSerializer::deserializeArrayStatic(
@@ -157,14 +160,19 @@ class MailController extends Controller
 		);
 	}
 
-	public function syncMailbox(int $id)
-	{
-		return Job::push(MailboxSyncJob::class, [
-			'mailboxId' => $id
-		]);
-		/*Job::dispatch(MailboxSyncJob::class, [
-			'mailboxId' => $id
-		]);*/
+	public function syncMailbox(int $id) {
+		$mailbox = MailboxModel::find($id);
+		$user = User::repository()->findByUsername($mailbox->getAccount()->getUser());
+		if($mailbox instanceof MailboxModel && $user instanceof User){
+			if(Auth::getLoginUserID() === $user->getId()){
+				$this->synchronizer = MailboxSynchronizer::register(
+					$mailbox->getAccount()
+				);
+				dd($this->synchronizer->getMailbox());
+			}
+		}
+
+
 	}
 
 }

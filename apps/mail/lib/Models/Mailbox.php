@@ -23,8 +23,7 @@ use Vorkfork\Apps\Mail\Repositories\MailboxRepository;
 #[ORM\UniqueConstraint(name: 'path_validity', columns: ['path', 'uidvalidity'])]
 #[ORM\Table(name: '`mail_mailboxes`')]
 #[ORM\HasLifecycleCallbacks]
-class Mailbox extends Entity
-{
+class Mailbox extends Entity {
 	use Timestamps;
 
 	#[ORM\Id]
@@ -87,8 +86,7 @@ class Mailbox extends Entity
 		'path'
 	];
 
-	public function __construct()
-	{
+	public function __construct() {
 		$this->children = new ArrayCollection();
 		parent::__construct();
 	}
@@ -99,10 +97,9 @@ class Mailbox extends Entity
 	 * @throws MailboxAlreadyExists
 	 */
 	#[ORM\PrePersist]
-	public function checkMailboxOnDuplicate(PrePersistEventArgs $args): void
-	{
+	public function checkMailboxOnDuplicate(PrePersistEventArgs $args): void {
 		$count = ($this->repository->count(['path' => $this->name, 'uidValidity' => $this->uidValidity]));
-		if ($count > 0) {
+		if($count > 0){
 			throw new MailboxAlreadyExists($this->path);
 		}
 	}
@@ -110,40 +107,35 @@ class Mailbox extends Entity
 	/**
 	 * @return int
 	 */
-	public function getId(): int
-	{
+	public function getId(): int {
 		return $this->id;
 	}
 
 	/**
 	 * @param string $name
 	 */
-	public function setName(string $name): void
-	{
+	public function setName(string $name): void {
 		$this->name = $name;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getName(): string
-	{
+	public function getName(): string {
 		return $this->name;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getDelimiter(): string
-	{
+	public function getDelimiter(): string {
 		return $this->delimiter;
 	}
 
 	/**
 	 * @param string $delimiter
 	 */
-	public function setDelimiter(string $delimiter): void
-	{
+	public function setDelimiter(string $delimiter): void {
 		$this->delimiter = $delimiter;
 	}
 
@@ -151,77 +143,67 @@ class Mailbox extends Entity
 	/**
 	 * @return string
 	 */
-	public function getTotal(): string
-	{
+	public function getTotal(): string {
 		return $this->total;
 	}
 
 	/**
 	 * @param string $total
 	 */
-	public function setTotal(string $total): void
-	{
+	public function setTotal(string $total): void {
 		$this->total = $total;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getUnseen(): string
-	{
+	public function getUnseen(): string {
 		return $this->unseen;
 	}
 
 	/**
 	 * @param ?int $unseen
 	 */
-	public function setUnseen(?int $unseen): void
-	{
+	public function setUnseen(?int $unseen): void {
 		$this->unseen = intval($unseen);
 	}
 
 	/**
 	 * @return ?DateTime
 	 */
-	public function getLastSync(): ?DateTime
-	{
+	public function getLastSync(): ?DateTime {
 		return $this->lastSync;
 	}
 
 	/**
 	 * @param DateTime $lastSync
 	 */
-	public function setLastSync(DateTime $lastSync): void
-	{
+	public function setLastSync(DateTime $lastSync): void {
 		$this->lastSync = $lastSync;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getUidValidity(): int
-	{
+	public function getUidValidity(): int {
 		return $this->uidValidity;
 	}
 
 	/**
 	 * @param int $uidValidity
 	 */
-	public function setUidValidity(int $uidValidity): void
-	{
+	public function setUidValidity(int $uidValidity): void {
 		$this->uidValidity = $uidValidity;
 	}
 
 	/**
 	 * @return Account|null
 	 */
-	public function getAccount(): ?Account
-	{
+	public function getAccount(): ?Account {
 		return $this->account;
 	}
 
-	public function setAccount(?Account $account)
-	{
+	public function setAccount(?Account $account) {
 		$this->account = $account;
 		$account->addMailbox($this);
 		return $this;
@@ -230,64 +212,56 @@ class Mailbox extends Entity
 	/**
 	 * @return int
 	 */
-	public function getPosition(): int
-	{
+	public function getPosition(): int {
 		return $this->position;
 	}
 
 	/**
 	 * @param int $position
 	 */
-	public function setPosition(int $position): void
-	{
+	public function setPosition(int $position): void {
 		$this->position = $position;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getPath(): string
-	{
+	public function getPath(): string {
 		return $this->path;
 	}
 
 	/**
 	 * @param string $path
 	 */
-	public function setPath(string $path): void
-	{
+	public function setPath(string $path): void {
 		$this->path = $path;
 	}
 
 	/**
 	 * @param string $syncToken
 	 */
-	public function setSyncToken(string $syncToken): void
-	{
+	public function setSyncToken(string $syncToken): void {
 		$this->syncToken = $syncToken;
 	}
 
 	/**
 	 * @return ?string
 	 */
-	public function getSyncToken(): ?string
-	{
+	public function getSyncToken(): ?string {
 		return $this->syncToken;
 	}
 
 	/**
 	 * @param Mailbox|null $parent
 	 */
-	public function setParent(?Mailbox $parent): void
-	{
+	public function setParent(?Mailbox $parent): void {
 		$this->parent = $parent;
 	}
 
 	/**
 	 * @return Mailbox|null
 	 */
-	public function getParent(): ?Mailbox
-	{
+	public function getParent(): ?Mailbox {
 		return $this->parent;
 	}
 
@@ -295,8 +269,7 @@ class Mailbox extends Entity
 	 * Get Child Mailboxes Collection
 	 * @return Collection|null
 	 */
-	public function getChildren(): ?Collection
-	{
+	public function getChildren(): ?Collection {
 		return $this->children;
 	}
 
@@ -305,13 +278,12 @@ class Mailbox extends Entity
 	 * @param Mailbox|null $mailbox
 	 * @return Mailbox
 	 */
-	public function addChild(?Mailbox $mailbox): static
-	{
-		if (!is_null($mailbox)) {
+	public function addChild(?Mailbox $mailbox): static {
+		if(!is_null($mailbox)){
 			$ind = $this->children->indexOf($mailbox);
-			if ($ind === false) {
+			if($ind === false){
 				$this->children->add($mailbox);
-			} else {
+			} else{
 
 				$this->children->set($ind, $mailbox);
 			}
@@ -324,16 +296,14 @@ class Mailbox extends Entity
 	 * @param Mailbox|null $mailbox
 	 * @return Mailbox
 	 */
-	public function removeChild(?Mailbox $mailbox): static
-	{
-		if ($this->children->contains($mailbox)) {
+	public function removeChild(?Mailbox $mailbox): static {
+		if($this->children->contains($mailbox)){
 			$this->children->removeElement($mailbox);
 		}
 		return $this;
 	}
 
-	public function clearChildren(): static
-	{
+	public function clearChildren(): static {
 		$this->children->clear();
 		return $this;
 	}
@@ -341,16 +311,15 @@ class Mailbox extends Entity
 	/**
 	 * @return ArrayCollection
 	 */
-	public function getAttributes(): ArrayCollection
-	{
+	public function getAttributes(): ArrayCollection {
 		return new ArrayCollection(explode(',', $this->attributes));
 	}
 
 	/**
-	 * @param ArrayCollection $attributes
+	 * @param array $attributes
+	 * @return void
 	 */
-	public function setAttributes(ArrayCollection $attributes): void
-	{
-		$this->attributes = implode(',', $attributes->toArray());
+	public function setAttributes(array $attributes): void {
+		$this->attributes = implode(',', $attributes);
 	}
 }
