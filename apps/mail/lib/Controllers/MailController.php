@@ -8,7 +8,10 @@ use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\TransactionRequiredException;
+use Sabre\DAV\Auth\Backend\IMAP;
 use Sazanof\PhpImapSockets\Exceptions\ConnectionException;
+use Sazanof\PhpImapSockets\Exceptions\LoginFailedException;
+use Sazanof\PhpImapSockets\Query\FetchQuery;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Vorkfork\Apps\Mail\ACL\AccountAcl;
@@ -31,6 +34,7 @@ use Vorkfork\Core\Models\User;
 use Vorkfork\DTO\BaseDto;
 use Vorkfork\Serializer\JsonSerializer;
 use Vorkfork\Apps\Mail\Models\Mailbox as MailboxModel;
+use const Vorkfork\Apps\Mail\IMAP\MESSAGES_PER_PAGE;
 
 class MailController extends Controller {
 
@@ -160,19 +164,36 @@ class MailController extends Controller {
 		);
 	}
 
-	public function syncMailbox(int $id) {
+	/**
+	 * @param int $id
+	 * @param Request $request
+	 * @return array|void
+	 * @throws EnvironmentIsBrokenException
+	 * @throws LoginFailedException
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 * @throws TransactionRequiredException
+	 * @throws WrongKeyOrModifiedCiphertextException
+	 * @throws \ReflectionException
+	 * @throws \Sazanof\PhpImapSockets\Exceptions\NoResultsException
+	 */
+	public function syncMailbox(int $id, Request $request) {
+		// todo if POST ids - sync only them
+		$r = [];
+		$page = $r['page'] ?? 1;
+		$limit = $r['limit'] ?? 20;
+		$direction = $r['direction'] ?? 'DESC';
 		$mailbox = MailboxModel::find($id);
 		$user = User::repository()->findByUsername($mailbox->getAccount()->getUser());
 		if($mailbox instanceof MailboxModel && $user instanceof User){
 			if(Auth::getLoginUserID() === $user->getId()){
 				$this->synchronizer = MailboxSynchronizer::register(
-					$mailbox->getAccount()
+					account: $mailbox->getAccount(),
+					mailbox: $mailbox->getPath()
 				);
-				dd($this->synchronizer->getMailbox());
+				return $this->synchronizer->syncMessages($page, $limit, $direction);
 			}
 		}
-
-
 	}
 
 }

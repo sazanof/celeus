@@ -2,10 +2,9 @@
 
 namespace Vorkfork\Apps\Mail\IMAP;
 
-use Webklex\PHPIMAP\Support\FlagCollection;
+use Doctrine\Common\Collections\ArrayCollection;
 
-class MessageFlags
-{
+class MessageFlags {
 	public const FLAGGED = 'flagged';
 	public const IMPORTANT = 'important';
 	public const RECENT = 'recent';
@@ -15,186 +14,163 @@ class MessageFlags
 	public const ANSWERED = 'answered';
 	public const SPAM = 'spam';
 	public const NOT_SPAM = 'notspam';
+	protected ArrayCollection $flags;
+
+	public function __construct(array $flags) {
+		$f = array_map(function($flag) {
+			return ltrim($flag, '\&');
+		}, $flags);
+		$this->flags = new ArrayCollection($f);
+	}
 
 	/**
-	 * @param FlagCollection $flagCollection
+	 * @param array $array
 	 * @return \Closure|mixed|string|null
 	 */
-	public static function important(FlagCollection $flagCollection): mixed
-	{
-		return self::get(self::IMPORTANT, $flagCollection);
+	public function important(array $array): mixed {
+		return $this->get(self::IMPORTANT, $array);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
-	 * @return \Closure|mixed|string|null
+	 * @return mixed
 	 */
-	public static function flagged(FlagCollection $flagCollection): mixed
-	{
-		return self::get(self::FLAGGED, $flagCollection);
+	public function flagged(): mixed {
+		return $this->get(self::FLAGGED);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
-	 * @return \Closure|mixed|string|null
+	 * @param array $array
+	 * @return mixed
 	 */
-	public static function recent(FlagCollection $flagCollection): mixed
-	{
-		return self::get(self::RECENT, $flagCollection);
+	public function recent(array $array): mixed {
+		return $this->get(self::RECENT, $array);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
-	 * @return \Closure|mixed|string|null
+	 * @param array $array
+	 * @return mixed
 	 */
-	public static function draft(FlagCollection $flagCollection): mixed
-	{
-		return self::get(self::DRAFT, $flagCollection);
+	public function draft(array $array): mixed {
+		return $this->get(self::DRAFT, $array);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
-	 * @return \Closure|mixed|string|null
+	 * @param array $array
+	 * @return mixed
 	 */
-	public static function deleted(FlagCollection $flagCollection): mixed
-	{
-		return self::get(self::DELETED, $flagCollection);
+	public function deleted(array $array): mixed {
+		return $this->get(self::DELETED, $array);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
-	 * @return \Closure|mixed|string|null
+	 * @param array $array
+	 * @return mixed
 	 */
-	public static function seen(FlagCollection $flagCollection): mixed
-	{
-		return self::get(self::SEEN, $flagCollection);
+	public function seen(array $array): mixed {
+		return $this->get(self::SEEN, $array);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
-	 * @return \Closure|mixed|string|null
+	 * @return mixed
 	 */
-	public static function answered(FlagCollection $flagCollection): mixed
-	{
-		return self::get(self::ANSWERED, $flagCollection);
+	public function answered(): mixed {
+		return $this->get(self::ANSWERED);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
-	 * @return \Closure|mixed|string|null
+	 * @param array $array
+	 * @return mixed
 	 */
-	public static function spam(FlagCollection $flagCollection): mixed
-	{
-		return self::get(self::SPAM, $flagCollection);
+	public function spam(array $array): mixed {
+		return $this->get(self::SPAM);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
-	 * @return \Closure|mixed|string|null
+	 * @return mixed
 	 */
-	public static function notSpam(FlagCollection $flagCollection): mixed
-	{
-		return self::get(self::NOT_SPAM, $flagCollection);
+	public function notSpam(): mixed {
+		return $this->get(self::NOT_SPAM);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
 	 * @return bool
 	 */
-	public static function isImportant(FlagCollection $flagCollection): bool
-	{
-		return self::is(self::IMPORTANT, $flagCollection);
+	public function isImportant(): bool {
+		return $this->is(self::IMPORTANT);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
 	 * @return bool
 	 */
-	public static function isFlagged(FlagCollection $flagCollection): bool
-	{
-		return self::is(self::FLAGGED, $flagCollection);
+	public function isFlagged(): bool {
+		return $this->is(self::FLAGGED);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
 	 * @return bool
 	 */
-	public static function isRecent(FlagCollection $flagCollection): bool
-	{
-		return self::is(self::RECENT, $flagCollection);
+	public function isRecent(): bool {
+		return $this->is(self::RECENT);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
 	 * @return bool
 	 */
-	public static function isDraft(FlagCollection $flagCollection): bool
-	{
-		return self::is(self::DRAFT, $flagCollection);
+	public function isDraft(): bool {
+		return $this->is(self::DRAFT);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
 	 * @return bool
 	 */
-	public static function isDeleted(FlagCollection $flagCollection): bool
-	{
-		return self::is(self::DELETED, $flagCollection);
+	public function isDeleted(): bool {
+		return $this->is(self::DELETED);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
 	 * @return bool
 	 */
-	public static function isSeen(FlagCollection $flagCollection): bool
-	{
-		return self::is(self::SEEN, $flagCollection);
+	public function isSeen(): bool {
+		return $this->is(self::SEEN);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
 	 * @return bool
 	 */
-	public static function isAnswered(FlagCollection $flagCollection): bool
-	{
-		return self::is(self::ANSWERED, $flagCollection);
+	public function isAnswered(): bool {
+		return $this->is(self::ANSWERED);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
 	 * @return bool
 	 */
-	public static function isSpam(FlagCollection $flagCollection): bool
-	{
-		return self::is(self::SPAM, $flagCollection);
+	public function isSpam(): bool {
+		return $this->is(self::SPAM);
 	}
 
 	/**
-	 * @param FlagCollection $flagCollection
+	 * @param array $array
 	 * @return bool
 	 */
-	public static function isNotSpam(FlagCollection $flagCollection): bool
-	{
-		return self::is(self::NOT_SPAM, $flagCollection);
+	public function isNotSpam(): bool {
+		return $this->is(self::NOT_SPAM);
 	}
 
 	/**
 	 * @param string $key
-	 * @param FlagCollection $flagCollection
+	 * @param array $array
 	 * @return \Closure|mixed|string|null
 	 */
-	public static function get(string $key, FlagCollection $flagCollection): mixed
-	{
-		return $flagCollection->get($key);
+	public function get(string $key): mixed {
+		return $this->flags->get($key);
 	}
 
 	/**
 	 * @param string $key
-	 * @param FlagCollection $flagCollection
+	 * @param array $array
 	 * @return bool
 	 */
-	public static function is(string $key, FlagCollection $flagCollection): bool
-	{
-		return $flagCollection->has($key);
+	public function is(string $key): bool {
+		return $this->flags->contains($key);
 	}
 }

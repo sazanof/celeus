@@ -10,7 +10,6 @@ use Vorkfork\Database\Entity;
 use Vorkfork\Database\Trait\Timestamps;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Webklex\PHPIMAP\Attribute;
 
 /**
  * @method static MessageRepository repository()
@@ -20,8 +19,7 @@ use Webklex\PHPIMAP\Attribute;
 #[ORM\Index(columns: ['message_id'], name: 'message_id')]
 #[ORM\Table(name: '`mail_messages`')]
 #[ORM\HasLifecycleCallbacks]
-class Message extends Entity
-{
+class Message extends Entity {
 	use Timestamps;
 
 	#[ORM\Id]
@@ -37,13 +35,13 @@ class Message extends Entity
 	#[ORM\GeneratedValue]
 	private string $messageId;
 
-	#[ORM\Column(name: 'in_reply_to', type: Types::STRING)]
+	#[ORM\Column(name: 'in_reply_to', type: Types::STRING, nullable: true)]
 	#[ORM\GeneratedValue]
-	private string $inReplyTo;
+	private ?string $inReplyTo;
 
 	#[ORM\Column(type: Types::TEXT, nullable: true)]
 	#[ORM\GeneratedValue]
-	private string $chain;
+	private ?string $chain;
 
 	#[ORM\Column(name: 'subject', type: Types::STRING, nullable: true)]
 	#[ORM\GeneratedValue]
@@ -131,8 +129,7 @@ class Message extends Entity
 		'localMessage'
 	];
 
-	public function __construct()
-	{
+	public function __construct() {
 		$this->recipients = new ArrayCollection();
 		parent::__construct();
 	}
@@ -140,8 +137,7 @@ class Message extends Entity
 	/**
 	 * @return Collection
 	 */
-	public function getRecipients(): Collection
-	{
+	public function getRecipients(): Collection {
 		return $this->recipients;
 	}
 
@@ -149,9 +145,8 @@ class Message extends Entity
 	 * @param Recipient $recipient
 	 * @return $this
 	 */
-	public function addRecipient(Recipient $recipient): static
-	{
-		if (!$this->recipients->contains($recipient)) {
+	public function addRecipient(Recipient $recipient): static {
+		if(!$this->recipients->contains($recipient)){
 			$this->recipients[] = $recipient;
 			$recipient->setMessage($this);
 		}
@@ -163,12 +158,11 @@ class Message extends Entity
 	 * @param Recipient $recipient
 	 * @return $this
 	 */
-	public function removeRecipient(Recipient $recipient): static
-	{
-		if ($this->recipients->contains($recipient)) {
+	public function removeRecipient(Recipient $recipient): static {
+		if($this->recipients->contains($recipient)){
 			$this->recipients->removeElement($recipient);
 			// set the owning side to null (unless already changed)
-			if ($recipient->getMessage() === $this) {
+			if($recipient->getMessage() === $this){
 				$recipient->setMessage(null);
 			}
 		}
@@ -178,320 +172,276 @@ class Message extends Entity
 	/**
 	 * @return int
 	 */
-	public function getId(): int
-	{
+	public function getId(): int {
 		return $this->id;
 	}
 
 	/**
 	 * @return DateTime
 	 */
-	public function getSentAt(): DateTime
-	{
+	public function getSentAt(): DateTime {
 		return $this->sentAt;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getMailboxId(): int
-	{
+	public function getMailboxId(): int {
 		return $this->mailboxId;
 	}
 
 	/**
-	 * @return string
+	 * @return ?string
 	 */
-	public function getInReplyTo(): string
-	{
+	public function getInReplyTo(): ?string {
 		return $this->inReplyTo;
 	}
 
 	/**
-	 * @return string
+	 * @return ?string
 	 */
-	public function getChain(): string
-	{
+	public function getChain(): ?string {
 		return $this->chain;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getPreview(): string
-	{
+	public function getPreview(): string {
 		return $this->preview;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getSubject(): string
-	{
+	public function getSubject(): string {
 		return $this->subject;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getBody(): string
-	{
+	public function getBody(): string {
 		return $this->body;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getMessageId(): string
-	{
+	public function getMessageId(): string {
 		return $this->messageId;
 	}
 
 	/**
 	 * @param int $mailboxId
 	 */
-	public function setMailboxId(int $mailboxId): void
-	{
+	public function setMailboxId(int $mailboxId): void {
 		$this->mailboxId = $mailboxId;
 	}
 
 	/**
 	 * @param string $subject
 	 */
-	public function setSubject(string $subject): void
-	{
+	public function setSubject(string $subject): void {
 		$this->subject = $subject;
 	}
 
 	/**
-	 * @param Attribute $chain
+	 * @param ?string $chain
 	 */
-	public function setChain(Attribute $chain): void
-	{
-		$chain = array_filter($chain->toArray(), function ($el) {
-			return !is_null($el) && filter_var($el, FILTER_VALIDATE_EMAIL) && $el !== 'null';
-		});
-		$this->chain = implode(',', $chain);
+	public function setChain(?string $chain): void {
+
+		$this->chain = $chain;
 	}
 
 	/**
 	 * @param string $body
 	 */
-	public function setBody(string $body): void
-	{
+	public function setBody(string $body): void {
 		$this->body = $body;
 	}
 
 	/**
 	 * @param string $preview
 	 */
-	public function setPreview(string $preview): void
-	{
+	public function setPreview(string $preview): void {
 		$this->preview = $preview;
 	}
 
 	/**
 	 * @param bool $deleted
 	 */
-	public function setDeleted(bool $deleted): void
-	{
+	public function setDeleted(bool $deleted): void {
 		$this->deleted = $deleted;
 	}
 
 	/**
 	 * @param bool $answered
 	 */
-	public function setAnswered(bool $answered): void
-	{
+	public function setAnswered(bool $answered): void {
 		$this->answered = $answered;
 	}
 
 	/**
 	 * @param bool $flagged
 	 */
-	public function setFlagged(bool $flagged): void
-	{
+	public function setFlagged(bool $flagged): void {
 		$this->flagged = $flagged;
 	}
 
 	/**
 	 * @param bool $recent
 	 */
-	public function setRecent(bool $recent): void
-	{
+	public function setRecent(bool $recent): void {
 		$this->recent = $recent;
 	}
 
 	/**
 	 * @param bool $attachments
 	 */
-	public function setAttachments(bool $attachments): void
-	{
+	public function setAttachments(bool $attachments): void {
 		$this->attachments = $attachments;
 	}
 
 	/**
 	 * @param bool $draft
 	 */
-	public function setDraft(bool $draft): void
-	{
+	public function setDraft(bool $draft): void {
 		$this->draft = $draft;
 	}
 
 	/**
 	 * @param bool $important
 	 */
-	public function setImportant(bool $important): void
-	{
+	public function setImportant(bool $important): void {
 		$this->important = $important;
 	}
 
 	/**
-	 * @param string $inReplyTo
+	 * @param ?string $inReplyTo
 	 */
-	public function setInReplyTo(string $inReplyTo): void
-	{
+	public function setInReplyTo(?string $inReplyTo): void {
 		$this->inReplyTo = $inReplyTo;
 	}
 
 	/**
 	 * @param bool $local
 	 */
-	public function setLocalMessage(bool $local): void
-	{
+	public function setLocalMessage(bool $local): void {
 		$this->localMessage = $local;
 	}
 
 	/**
 	 * @param string $messageId
 	 */
-	public function setMessageId(string $messageId): void
-	{
+	public function setMessageId(string $messageId): void {
 		$this->messageId = $messageId;
 	}
 
 	/**
 	 * @param bool $spam
 	 */
-	public function setSpam(bool $spam): void
-	{
+	public function setSpam(bool $spam): void {
 		$this->spam = $spam;
 	}
 
 	/**
 	 * @param bool $notSpam
 	 */
-	public function setNotSpam(bool $notSpam): void
-	{
+	public function setNotSpam(bool $notSpam): void {
 		$this->notSpam = $notSpam;
 	}
 
 	/**
 	 * @param bool $seen
 	 */
-	public function setSeen(bool $seen): void
-	{
+	public function setSeen(bool $seen): void {
 		$this->seen = $seen;
 	}
 
 	/**
-	 * @param Attribute|string $sentAt
+	 * @param DateTime $sentAt
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function setSentAt(Attribute|string $sentAt): void
-	{
-		if ($sentAt instanceof Attribute) {
-			$sentAt = $sentAt->toString();
-		}
-		$this->sentAt = new DateTime($sentAt);
+	public function setSentAt(DateTime $sentAt): void {
+		$this->sentAt = $sentAt;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isAnswered(): bool
-	{
+	public function isAnswered(): bool {
 		return $this->answered;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isAttachments(): bool
-	{
+	public function isAttachments(): bool {
 		return $this->attachments;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isDeleted(): bool
-	{
+	public function isDeleted(): bool {
 		return $this->deleted;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isDraft(): bool
-	{
+	public function isDraft(): bool {
 		return $this->draft;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isFlagged(): bool
-	{
+	public function isFlagged(): bool {
 		return $this->flagged;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isImportant(): bool
-	{
+	public function isImportant(): bool {
 		return $this->important;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isLocalMessage(): bool
-	{
+	public function isLocalMessage(): bool {
 		return $this->localMessage;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isNotSpam(): bool
-	{
+	public function isNotSpam(): bool {
 		return $this->notSpam;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isRecent(): bool
-	{
+	public function isRecent(): bool {
 		return $this->recent;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isSeen(): bool
-	{
+	public function isSeen(): bool {
 		return $this->seen;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isSpam(): bool
-	{
+	public function isSpam(): bool {
 		return $this->spam;
 	}
 

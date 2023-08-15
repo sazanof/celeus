@@ -12,8 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['message_id'], name: 'message_id')]
 #[ORM\Table(name: '`mail_recipients`')]
 #[ORM\HasLifecycleCallbacks]
-class Recipient extends Entity
-{
+class Recipient extends Entity {
 	public const TYPE_FROM = 0;
 	public const TYPE_TO = 1;
 	public const TYPE_CC = 1;
@@ -30,9 +29,9 @@ class Recipient extends Entity
 	#[ORM\GeneratedValue]
 	private int $messageId;
 
-	#[ORM\Column(type: Types::STRING)]
+	#[ORM\Column(type: Types::STRING, nullable: true)]
 	#[ORM\GeneratedValue]
-	private string $name;
+	private ?string $name;
 
 	#[ORM\Column(type: Types::STRING)]
 	#[ORM\GeneratedValue]
@@ -52,13 +51,11 @@ class Recipient extends Entity
 		'type'
 	];
 
-	public function getMessage(): ?Message
-	{
+	public function getMessage(): ?Message {
 		return $this->message;
 	}
 
-	public function setMessage(?Message $category): self
-	{
+	public function setMessage(?Message $category): self {
 		$this->message = $category;
 
 		return $this;
@@ -67,79 +64,69 @@ class Recipient extends Entity
 	/**
 	 * @return int
 	 */
-	public function getId(): int
-	{
+	public function getId(): int {
 		return $this->id;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getMessageId(): int
-	{
+	public function getMessageId(): int {
 		return $this->messageId;
 	}
 
 	/**
 	 * @param int $messageId
 	 */
-	public function setMessageId(int $messageId): void
-	{
+	public function setMessageId(int $messageId): void {
 		$this->messageId = $messageId;
 	}
 
 	/**
-	 * @return string
+	 * @return ?string
 	 */
-	public function getName(): string
-	{
+	public function getName(): ?string {
 		return $this->name;
 	}
 
 	/**
-	 * @param string $name
+	 * @param ?string $name
 	 */
-	public function setName(string $name): void
-	{
+	public function setName(?string $name): void {
 		$this->name = $name;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getAddress(): string
-	{
+	public function getAddress(): string {
 		return $this->address;
 	}
 
 	/**
 	 * @param string $address
 	 */
-	public function setAddress(string $address): void
-	{
+	public function setAddress(string $address): void {
 		$this->address = $address;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getType(): int
-	{
+	public function getType(): int {
 		return $this->type;
 	}
 
 	/**
 	 * @param int $type
 	 */
-	public function setType(int $type): void
-	{
+	public function setType(int $type): void {
 		$this->type = $type;
 	}
 
-	public function setTypeByString(string $type)
-	{
+	public function setTypeByString(string $type) {
 		$t = null;
-		switch ($type) {
+		switch($type) {
 			case 'to':
 				$t = self::TYPE_TO;
 				break;
@@ -153,7 +140,7 @@ class Recipient extends Entity
 				$t = self::TYPE_BCC;
 				break;
 		}
-		if (!is_null($t)) {
+		if(!is_null($t)){
 			$this->setType($t);
 		}
 	}

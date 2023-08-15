@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b91216d4d3fc956d69f36a0f3507a986",
+    "content-hash": "3e9f2a307a1fd85155080bef06916ad6",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -671,16 +671,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.3.1",
+            "version": "10.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "d442ce7c4104d5683c12e67e4dcb5058159e9804"
+                "reference": "0dafb1175c366dd274eaa9a625e914451506bcd1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d442ce7c4104d5683c12e67e4dcb5058159e9804",
-                "reference": "d442ce7c4104d5683c12e67e4dcb5058159e9804",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/0dafb1175c366dd274eaa9a625e914451506bcd1",
+                "reference": "0dafb1175c366dd274eaa9a625e914451506bcd1",
                 "shasum": ""
             },
             "require": {
@@ -752,7 +752,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.3.1"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.3.2"
             },
             "funding": [
                 {
@@ -768,20 +768,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-04T06:48:08+00:00"
+            "time": "2023-08-15T05:34:23+00:00"
         },
         {
             "name": "sazanof/php-imap-sockets",
-            "version": "1.1",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sazanof/php-imap-sockets.git",
-                "reference": "dda69ef3b7e24e9207c03f35fd41ffde3eedafab"
+                "reference": "790d7a9a07c3984c0250a823d461475955326dce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sazanof/php-imap-sockets/zipball/dda69ef3b7e24e9207c03f35fd41ffde3eedafab",
-                "reference": "dda69ef3b7e24e9207c03f35fd41ffde3eedafab",
+                "url": "https://api.github.com/repos/sazanof/php-imap-sockets/zipball/790d7a9a07c3984c0250a823d461475955326dce",
+                "reference": "790d7a9a07c3984c0250a823d461475955326dce",
                 "shasum": ""
             },
             "require": {
@@ -790,6 +790,7 @@
                 "phpunit/phpunit": "^10.2",
                 "symfony/var-dumper": "^6.3"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -809,9 +810,9 @@
             "description": "PHP IMAP Library, based on sockets",
             "support": {
                 "issues": "https://github.com/sazanof/php-imap-sockets/issues",
-                "source": "https://github.com/sazanof/php-imap-sockets/tree/1.1"
+                "source": "https://github.com/sazanof/php-imap-sockets/tree/main"
             },
-            "time": "2023-08-11T08:23:03+00:00"
+            "time": "2023-08-15T16:08:39+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -2013,7 +2014,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "sazanof/php-imap-sockets": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

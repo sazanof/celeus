@@ -4,25 +4,33 @@ namespace Vorkfork\Apps\Mail\IMAP;
 
 use ReflectionException;
 use Sazanof\PhpImapSockets\Collections\MailboxCollection;
+use Sazanof\PhpImapSockets\Collections\MessageCollection;
 use Sazanof\PhpImapSockets\Connection;
 use Sazanof\PhpImapSockets\Exceptions\ConnectionException;
 use Sazanof\PhpImapSockets\Exceptions\LoginFailedException;
+use Sazanof\PhpImapSockets\Exceptions\NoResultsException;
+use Sazanof\PhpImapSockets\Models\Paginator;
+use Sazanof\PhpImapSockets\Query\FetchQuery;
+use Sazanof\PhpImapSockets\Models\Mailbox as PISMailbox;
+use Sazanof\PhpImapSockets\Query\SearchQuery;
 
 class Mailbox {
 	protected ?Server $server = null;
 	protected Connection $connection;
 	protected string $username;
 	protected string $password;
-	protected int $flags;
 	protected array $options;
-	protected Folder $folder;
+	protected PISMailbox $folder;
+	protected FetchQuery $fetchQuery;
+	protected SearchQuery $searchQuery;
+	protected ?Paginator $paginator = null;
 
 	/**
 	 * @param Server $server
 	 * @param string $username
 	 * @param string $password
 	 * @throws LoginFailedException
-	 * @throws ConnectionException
+	 * @throws ReflectionException
 	 */
 	public function __construct(
 		Server $server,
@@ -33,6 +41,13 @@ class Mailbox {
 		$connection = Connection::create($server->getHost(), $server->getPort());
 		$this->setConnection($connection);
 		$this->login($username, $password);
+		$this->setFolder(
+			$this->getConnection()->getMailboxByPath(
+				$this->getServer()->getMailbox()
+			)
+		);
+		$this->fetchQuery = new FetchQuery();
+		$this->searchQuery = new SearchQuery();
 	}
 
 	/**
@@ -83,29 +98,29 @@ class Mailbox {
 
 	/**
 	 * @param string $name
-	 * @return Folder
+	 * @return PISMailbox|null
+	 * @throws ReflectionException
 	 */
-	public function getFolderByPath(string $name): Folder {
-		return Imap::getFolderByPath($name);
+	public function getFolderByPath(string $name) {
+		return $this->getConnection()->getMailboxByPath($name);
 	}
-
 
 	/**
-	 * @param Folder $folder
-	 * @return MessageCollection|null
-	 * @throws AuthFailedException
-	 * @throws ConnectionFailedException
-	 * @throws GetMessagesFailedException
-	 * @throws ImapBadRequestException
-	 * @throws ResponseException
-	 * @throws RuntimeException
+	 * @param int $limit
+	 * @param int $page
+	 * @param string $order
+	 * @return Paginator
+	 * @throws ReflectionException
+	 * @throws NoResultsException
+	 * @throws \Exception
 	 */
-	public function getAllMessages(): ?MessageCollection {
-		return Imap::findAll($this->folder);
-	}
-
-	public function getMessagesByPage(int $limit = 50, int $page = 1): ?\Illuminate\Pagination\LengthAwarePaginator {
-		return Imap::paginate($this->folder, $limit, $page);
+	public function getMessagesByPage(int $limit = 50, int $page = 1, string $order = 'DESC'): Paginator {
+		$nums = $this
+			->getFolder()
+			->search($this->searchQuery->all())
+			->setOrderDirection($order)
+			->msgNums();
+		return new Paginator($nums, $this->folder, $page, $limit);
 	}
 
 	/**
@@ -193,30 +208,16 @@ class Mailbox {
 	}
 
 	/**
-	 * @param int $flags
+	 * @param PISMailbox $folder
 	 */
-	public function setFlags(int $flags): void {
-		$this->flags = $flags;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getFlags(): int {
-		return $this->flags;
-	}
-
-	/**
-	 * @param Folder $folder
-	 */
-	public function setFolder(Folder $folder): void {
+	public function setFolder(PISMailbox $folder): void {
 		$this->folder = $folder;
 	}
 
 	/**
-	 * @return Folder
+	 * @return PISMailbox
 	 */
-	public function getFolder(): Folder {
+	public function getFolder(): PISMailbox {
 		return $this->folder;
 	}
 
