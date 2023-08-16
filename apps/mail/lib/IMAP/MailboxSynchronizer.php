@@ -300,13 +300,6 @@ final class MailboxSynchronizer {
 	public function addMessageFromImapToDb(Message $message): ?int {
 
 		$struct = $message->getBodyStructure();
-		$textParts = $struct->getTextParts();
-		foreach($textParts as $textPart) {
-			if($textPart->getMimeType() === 'text/plain'){
-				dump($message->getBody($textPart));
-			}
-		}
-		dd(123);
 		$flags = new MessageFlags($message->getFlags());
 		$to = $message->getTo();
 		$from = $message->getFrom();
@@ -325,8 +318,8 @@ final class MailboxSynchronizer {
 
 		$messageId = $message->getMessageId();
 		$subject = trim($message->getSubject());
-		$bodyHtml = 'here is body';
-		$preview = Str::truncate(trim('here is preview'), 200);
+		$bodyHtml = $message->getHtmlText();
+		$preview = $message->getPlainText(100);
 		$inReplyTo = $message->getInReplyTo();
 		$chain = $message->getReferences();
 		$sentAt = $message->getDate();
@@ -416,7 +409,7 @@ final class MailboxSynchronizer {
 				$messageExisting->em()->flush();
 				return $messageExisting->getId();
 			} catch(\Exception|ORMException|\TypeError|SyntaxErrorException $e) {
-				dump($e->getMessage());
+				dump($e->getMessage(), $messageExisting);
 			}
 		}
 		return null;

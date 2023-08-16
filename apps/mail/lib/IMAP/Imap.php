@@ -8,6 +8,9 @@ use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
 use Vorkfork\Security\Str;
 use Vorkfork\Serializer\JsonSerializer;
 
+/**
+ * @deprecated
+ */
 class Imap {
 	protected static ?string $connectionString = null;
 	protected static Connection $connection;

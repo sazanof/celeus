@@ -49,11 +49,11 @@ class Message extends Entity {
 
 	#[ORM\Column(name: 'body', type: Types::TEXT, nullable: true)]
 	#[ORM\GeneratedValue]
-	private string $body;
+	private ?string $body;
 
 	#[ORM\Column(name: 'preview', type: Types::STRING, nullable: true)]
 	#[ORM\GeneratedValue]
-	private string $preview;
+	private ?string $preview;
 
 	#[ORM\Column(name: 'sent_at', type: Types::DATETIME_MUTABLE, nullable: true)]
 	#[ORM\GeneratedValue]
@@ -205,9 +205,9 @@ class Message extends Entity {
 	}
 
 	/**
-	 * @return string
+	 * @return ?string
 	 */
-	public function getPreview(): string {
+	public function getPreview(): ?string {
 		return $this->preview;
 	}
 
@@ -219,9 +219,9 @@ class Message extends Entity {
 	}
 
 	/**
-	 * @return string
+	 * @return ?string
 	 */
-	public function getBody(): string {
+	public function getBody(): ?string {
 		return $this->body;
 	}
 
@@ -255,16 +255,16 @@ class Message extends Entity {
 	}
 
 	/**
-	 * @param string $body
+	 * @param ?string $body
 	 */
-	public function setBody(string $body): void {
+	public function setBody(?string $body): void {
 		$this->body = $body;
 	}
 
 	/**
-	 * @param string $preview
+	 * @param ?string $preview
 	 */
-	public function setPreview(string $preview): void {
+	public function setPreview(?string $preview): void {
 		$this->preview = $preview;
 	}
 
