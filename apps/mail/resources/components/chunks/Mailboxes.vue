@@ -39,6 +39,11 @@
         async created() {
             if (this.isActive && Object.keys(this.mailboxes).length) {
                 this.$store.commit('setActiveMailbox', this.mailboxes[0])
+                await this.$store.dispatch('getMessages', {
+                    id: this.activeMailbox.id,
+                    page: this.$store.state.page,
+                    limit: this.$store.state.limit
+                })
                 if (this.$route.params.id === undefined) {
                     this.$router.push(`/mbox/${this.activeMailbox.id}`)
                 }

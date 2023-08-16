@@ -33,6 +33,9 @@
         computed: {
             accounts() {
                 return this.$store.getters['getAccounts']
+            },
+            activeMailbox() {
+                return this.$store.getters['getActiveMailbox']
             }
         },
         async created() {

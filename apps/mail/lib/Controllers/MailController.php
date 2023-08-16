@@ -199,7 +199,7 @@ class MailController extends Controller {
 	public function getMessages(int $id) {
 		$mailbox = MailboxModel::find($id);
 		if(AccountAcl::mailboxBelongsToAuthenticatedUser($mailbox)){
-			return Message::repository()->getMessages(1, 50);
+			return Message::repository()->getMessages($mailbox->getId(), 1, 50);
 		}
 	}
 

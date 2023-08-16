@@ -44,7 +44,7 @@ return MainRouter::group('/apps/mail/', [
 	],
 	'mailboxes/{id}/messages' => [
 		'action' => [MailController::class, 'getMessages'],
-		'methods' => ['GET'],
+		'methods' => ['POST'],
 		'defaults' => [
 			'auth' => true
 		]

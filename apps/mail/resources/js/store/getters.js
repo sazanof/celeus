@@ -16,5 +16,8 @@ export default {
     },
     getActiveMailbox(state) {
         return state.activeMailbox
+    },
+    getMessages(state) {
+        return state.messages
     }
 }

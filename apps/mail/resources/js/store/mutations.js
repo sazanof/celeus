@@ -47,4 +47,7 @@ export default {
     setActiveAccount(state, account) {
         state.activeAccount = state.accounts.find(a => a.id === account.id)
     },
+    setMessages(state, messages) {
+        state.messages = messages
+    }
 }

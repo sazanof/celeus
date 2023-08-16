@@ -22,8 +22,15 @@ class MessageDTO extends BaseDto {
 	/** @var RecipientDTO[] $bcc */
 	public array $bcc;
 
+	public bool $answered;
+	public bool $draft;
+	public bool $flagged;
 	public bool $attachments;
 	public bool $important;
+	public bool $recent;
+	public bool $seen;
+	public bool $spam;
+	public bool $notSpam;
 
 	protected \DateTime $sentAt;
 

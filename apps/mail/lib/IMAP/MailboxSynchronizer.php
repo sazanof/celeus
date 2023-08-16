@@ -23,7 +23,6 @@ use Vorkfork\Apps\Mail\Encryption\MailPassword;
 use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
 use Vorkfork\Apps\Mail\Models\Account;
 use Vorkfork\Apps\Mail\Models\Recipient;
-use Vorkfork\Security\Str;
 use Vorkfork\Apps\Mail\Models\Message as MessageModel;
 use Sazanof\PhpImapSockets\Models\Mailbox as PISMailbox;
 
@@ -299,8 +298,9 @@ final class MailboxSynchronizer {
 	 */
 	public function addMessageFromImapToDb(Message $message): ?int {
 
-		$struct = $message->getBodyStructure();
-		$flags = new MessageFlags($message->getFlags());
+		$flags = new MessageFlags($message->getFlags());// TODO custom flags save
+		$uid = $message->getUid();
+		$num = $message->getNum();
 		$to = $message->getTo();
 		$from = $message->getFrom();
 		$cc = $message->getCc();
@@ -318,7 +318,6 @@ final class MailboxSynchronizer {
 
 		$messageId = $message->getMessageId();
 		$subject = trim($message->getSubject());
-		$bodyHtml = $message->getHtmlText();
 		$preview = $message->getPlainText(100);
 		$inReplyTo = $message->getInReplyTo();
 		$chain = $message->getReferences();
@@ -328,10 +327,11 @@ final class MailboxSynchronizer {
 
 		if(is_null($messageExisting)){
 			$dbMessage = new MessageModel();
+			$dbMessage->setUid($uid);
+			$dbMessage->setNum($num);
 			$dbMessage->setMailboxId($this->mailboxModel->getId()); // mailboxModel  must not be null!!!!!!!!!!!!!!
 			$dbMessage->setMessageId($messageId);
 			$dbMessage->setSubject($subject);
-			$dbMessage->setBody($bodyHtml);
 			$dbMessage->setInReplyTo($inReplyTo);
 			$dbMessage->setChain($chain);
 			$dbMessage->setPreview($preview);
@@ -386,7 +386,8 @@ final class MailboxSynchronizer {
 				//dump($exception->getFile(), $exception->getLine(), $exception->getMessage());
 			}
 		} else{
-			$messageExisting->setBody($bodyHtml);
+			$messageExisting->setUid($uid);
+			$messageExisting->setNum($num);
 			$messageExisting->setPreview($preview);
 			$messageExisting->setMailboxId($this->mailboxModel->getId());
 			$messageExisting->setMessageId($messageId);

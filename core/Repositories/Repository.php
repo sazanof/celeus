@@ -113,9 +113,7 @@ class Repository extends EntityRepository {
 	 * @return $this
 	 */
 	public function start(int $start): static {
-		if(!empty($values)){
-			$this->_qb->setFirstResult($start);
-		}
+		$this->_qb->setFirstResult($start);
 		return $this;
 	}
 
@@ -124,9 +122,12 @@ class Repository extends EntityRepository {
 	 * @return $this
 	 */
 	public function limit(int $limit): static {
-		if(!empty($values)){
-			$this->_qb->setMaxResults($limit);
-		}
+		$this->_qb->setMaxResults($limit);
+		return $this;
+	}
+
+	public function orderBy(string $field, string $direction = 'DESC') {
+		$this->_qb->orderBy($this->as.'.'.$field, $direction);
 		return $this;
 	}
 

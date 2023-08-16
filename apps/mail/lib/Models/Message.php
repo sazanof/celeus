@@ -28,79 +28,63 @@ class Message extends Entity {
 	private int $id;
 
 	#[ORM\Column(name: 'mailbox_id', type: Types::INTEGER)]
-	#[ORM\GeneratedValue]
 	private int $mailboxId;
 
+	#[ORM\Column(name: 'uid', type: Types::INTEGER)]
+	private int $uid;
+
+	#[ORM\Column(name: 'num', type: Types::INTEGER)]
+	private int $num;
+
 	#[ORM\Column(name: 'message_id', type: Types::STRING)]
-	#[ORM\GeneratedValue]
 	private string $messageId;
 
 	#[ORM\Column(name: 'in_reply_to', type: Types::STRING, nullable: true)]
-	#[ORM\GeneratedValue]
 	private ?string $inReplyTo;
 
 	#[ORM\Column(type: Types::TEXT, nullable: true)]
-	#[ORM\GeneratedValue]
 	private ?string $chain;
 
 	#[ORM\Column(name: 'subject', type: Types::STRING, nullable: true)]
-	#[ORM\GeneratedValue]
 	private string $subject;
 
-	#[ORM\Column(name: 'body', type: Types::TEXT, nullable: true)]
-	#[ORM\GeneratedValue]
-	private ?string $body;
-
 	#[ORM\Column(name: 'preview', type: Types::STRING, nullable: true)]
-	#[ORM\GeneratedValue]
 	private ?string $preview;
 
 	#[ORM\Column(name: 'sent_at', type: Types::DATETIME_MUTABLE, nullable: true)]
-	#[ORM\GeneratedValue]
 	private DateTime $sentAt;
 
 	#[ORM\Column(type: Types::BOOLEAN, nullable: true)]
-	#[ORM\GeneratedValue]
 	private bool $attachments;
 
 	#[ORM\Column(type: Types::BOOLEAN, nullable: true)]
-	#[ORM\GeneratedValue]
 	private bool $important;
 
 	#[ORM\Column(type: Types::BOOLEAN, nullable: true)]
-	#[ORM\GeneratedValue]
 	private bool $deleted;
 
 	#[ORM\Column(type: Types::BOOLEAN, nullable: true)]
-	#[ORM\GeneratedValue]
 	private bool $recent;
 
 	#[ORM\Column(type: Types::BOOLEAN, nullable: true)]
-	#[ORM\GeneratedValue]
 	private bool $seen;
 
 	#[ORM\Column(type: Types::BOOLEAN, nullable: true)]
-	#[ORM\GeneratedValue]
 	private bool $answered;
 
 	#[ORM\Column(type: Types::BOOLEAN, nullable: true)]
-	#[ORM\GeneratedValue]
 	private bool $draft;
 
 	#[ORM\Column(type: Types::BOOLEAN, nullable: true)]
-	#[ORM\GeneratedValue]
 	private bool $flagged;
 
 	#[ORM\Column(type: Types::BOOLEAN, nullable: true)]
-	#[ORM\GeneratedValue]
 	private bool $spam;
 
 	#[ORM\Column(name: 'not_spam', type: Types::BOOLEAN, nullable: true)]
-	#[ORM\GeneratedValue]
 	private bool $notSpam;
 
 	#[ORM\Column(name: 'local_message', type: Types::BOOLEAN, nullable: true)]
-	#[ORM\GeneratedValue]
 	private bool $localMessage;
 
 	#[ORM\OneToMany(mappedBy: 'message', targetEntity: Recipient::class, orphanRemoval: true)]
@@ -108,12 +92,13 @@ class Message extends Entity {
 
 	protected array $fillable = [
 		'id',
+		'uid',
+		'num',
 		'mailboxId',
 		'messageId',
 		'inReplyIo',
 		'chain',
 		'subject',
-		'body',
 		'preview',
 		'sentAt',
 		'attachments',
@@ -139,6 +124,34 @@ class Message extends Entity {
 	 */
 	public function getRecipients(): Collection {
 		return $this->recipients;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getNum(): int {
+		return $this->num;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getUid(): int {
+		return $this->uid;
+	}
+
+	/**
+	 * @param int $num
+	 */
+	public function setNum(int $num): void {
+		$this->num = $num;
+	}
+
+	/**
+	 * @param int $uid
+	 */
+	public function setUid(int $uid): void {
+		$this->uid = $uid;
 	}
 
 	/**
@@ -219,13 +232,6 @@ class Message extends Entity {
 	}
 
 	/**
-	 * @return ?string
-	 */
-	public function getBody(): ?string {
-		return $this->body;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getMessageId(): string {
@@ -252,13 +258,6 @@ class Message extends Entity {
 	public function setChain(?string $chain): void {
 
 		$this->chain = $chain;
-	}
-
-	/**
-	 * @param ?string $body
-	 */
-	public function setBody(?string $body): void {
-		$this->body = $body;
 	}
 
 	/**

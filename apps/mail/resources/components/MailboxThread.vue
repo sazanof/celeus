@@ -6,7 +6,7 @@
 
 <script>
     export default {
-        name: 'Mailbox',
+        name: 'MailboxThread',
         computed: {
             id() {
                 return parseInt(this.$route.params.id)
@@ -17,17 +17,27 @@
             mailbox() {
                 return this.$store.getters.getMailbox(this.id)
             },
+            messages() {
+                return this.$store.getters['getMessages']
+            }
         },
         watch: {
             id() {
                 this.$store.commit('setActiveMailbox', this.mailbox)
                 console.log(`trigger sync mailbox ${this.mailbox.id}`)
+                this.getMessages()
             }
         },
         mounted() {
             //TODO trigger account sync
             this.$store.commit('setActiveMailbox', this.mailbox)
-            console.log(`trigger sync mailbox ${this.mailbox.id}`)
+        },
+        methods: {
+            async getMessages() {
+                await this.$store.dispatch('getMessages', {
+                    id: this.id
+                })
+            }
         }
     }
 </script>
