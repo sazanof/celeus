@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Recipient extends Entity {
 	public const TYPE_FROM = 0;
 	public const TYPE_TO = 1;
-	public const TYPE_CC = 1;
+	public const TYPE_CC = 2;
 	public const TYPE_BCC = 3;
 
 	use Timestamps;

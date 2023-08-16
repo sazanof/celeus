@@ -27,6 +27,7 @@ use Vorkfork\Apps\Mail\IMAP\Mailbox;
 use Vorkfork\Apps\Mail\IMAP\MailboxSynchronizer;
 use Vorkfork\Apps\Mail\IMAP\Server;
 use Vorkfork\Apps\Mail\Models\Account;
+use Vorkfork\Apps\Mail\Models\Message;
 use Vorkfork\Apps\Mail\SMTP\Smtp;
 use Vorkfork\Apps\Mail\SMTP\SmtpConfig;
 use Vorkfork\Auth\Auth;
@@ -186,15 +187,19 @@ class MailController extends Controller {
 		$limit = $r['limit'] ?? 20;
 		$direction = $r['direction'] ?? 'DESC';
 		$mailbox = MailboxModel::find($id);
-		$user = User::repository()->findByUsername($mailbox->getAccount()->getUser());
-		if($mailbox instanceof MailboxModel && $user instanceof User){
-			if(Auth::getLoginUserID() === $user->getId()){
-				$this->synchronizer = MailboxSynchronizer::register(
-					account: $mailbox->getAccount(),
-					mailbox: $mailbox->getPath()
-				);
-				return $this->synchronizer->syncMessages($page, $limit, $direction);
-			}
+		if(AccountAcl::mailboxBelongsToAuthenticatedUser($mailbox)){
+			$this->synchronizer = MailboxSynchronizer::register(
+				account: $mailbox->getAccount(),
+				mailbox: $mailbox->getPath()
+			);
+			return $this->synchronizer->syncMessages($page, $limit, $direction);
+		}
+	}
+
+	public function getMessages(int $id) {
+		$mailbox = MailboxModel::find($id);
+		if(AccountAcl::mailboxBelongsToAuthenticatedUser($mailbox)){
+			return Message::repository()->getMessages(1, 50);
 		}
 	}
 

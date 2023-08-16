@@ -3,7 +3,7 @@
 use Vorkfork\Apps\Mail\Controllers\MailController;
 use Vorkfork\Core\Router\MainRouter;
 
-if (!defined('INC_MODE')) {
+if(!defined('INC_MODE')){
 	exit;
 }
 return MainRouter::group('/apps/mail/', [
@@ -37,6 +37,13 @@ return MainRouter::group('/apps/mail/', [
 	],
 	'mailboxes/{id}/sync' => [
 		'action' => [MailController::class, 'syncMailbox'],
+		'methods' => ['GET'],
+		'defaults' => [
+			'auth' => true
+		]
+	],
+	'mailboxes/{id}/messages' => [
+		'action' => [MailController::class, 'getMessages'],
 		'methods' => ['GET'],
 		'defaults' => [
 			'auth' => true
