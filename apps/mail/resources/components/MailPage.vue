@@ -76,7 +76,7 @@
 
   .mail-list {
 	height: inherit;
-	width: 400px;
+	width: 480px;
   }
 
   .mail-list {

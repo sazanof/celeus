@@ -1,12 +1,22 @@
 <template>
-    <div class="mailbox">
-        {{ mailbox }} {{ id }}
+    <div
+        class="mailbox-thread"
+        data-simplebar>
+        <Message
+            v-for="message in messages"
+            :key="message.id"
+            :message="message" />
     </div>
 </template>
 
 <script>
+    import Message from './Message.vue'
+
     export default {
         name: 'MailboxThread',
+        components: {
+            Message
+        },
         computed: {
             id() {
                 return parseInt(this.$route.params.id)
@@ -43,5 +53,7 @@
 </script>
 
 <style scoped>
-
+.mailbox-thread {
+	height: calc(100vh - var(--search-height));
+}
 </style>

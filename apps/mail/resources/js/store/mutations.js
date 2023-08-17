@@ -43,6 +43,7 @@ export default {
     },
     setActiveMailbox(state, mailbox) {
         state.activeMailbox = mailbox
+        localStorage.setItem('activeMailbox', JSON.stringify(mailbox))
     },
     setActiveAccount(state, account) {
         state.activeAccount = state.accounts.find(a => a.id === account.id)

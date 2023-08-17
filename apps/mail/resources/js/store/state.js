@@ -3,7 +3,7 @@ export default {
     accounts: [],
     mailboxes: [],
     messages: [],
-    activeMailbox: null,
+    activeMailbox: localStorage.getItem('activeMailbox') !== 'undefined' ? JSON.parse(localStorage.getItem('activeMailbox')) : null,
     page: 1,
     limit: 25,
 }
