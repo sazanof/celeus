@@ -18,6 +18,12 @@ class MessageRepository extends Repository {
 	}
 
 	public function getMessages(int $mailboxId, int $page, int $limit) {
-		return $this->select()->where('mailboxId', '=', $mailboxId)->limit($limit)->orderBy('sentAt', "DESC")->results(MessageDTO::class);
+		return $this
+			->select()
+			->where('mailboxId', '=', $mailboxId)
+			->start($page * $limit - $limit)
+			->limit($limit)
+			->orderBy('sentAt', "DESC")
+			->results(MessageDTO::class);
 	}
 }

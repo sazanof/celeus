@@ -65,6 +65,12 @@ export default {
         commit('setActiveMailbox', mailbox)
     },
 
+    async syncMessages({ commit }, data) {
+        return await axios.post(`${PREFIX}mailboxes/${data.id}/sync`, data).then(res => {
+
+        })
+    },
+
     async getMessages({ commit }, data) {
         return await axios.post(`${PREFIX}mailboxes/${data.id}/messages`, data).then(res => {
             commit('setMessages', res.data)

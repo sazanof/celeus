@@ -101,7 +101,6 @@
             return {
                 showChildren: false,
                 showArrows: false,
-
             }
         },
         computed: {
@@ -146,6 +145,9 @@
             },
             activeMailbox() {
                 return this.$store.getters['getActiveMailbox']
+            },
+            trimmedAttributes() {
+                return this.mailbox.attributes.map(attr => attr.replace('\\', ''))
             }
         },
         created() {
@@ -153,7 +155,7 @@
         },
         methods: {
             isSpecial(key) {
-                return Object.values(this.mailbox.attributes).indexOf(key) !== -1
+                return Object.values(this.trimmedAttributes).indexOf(key) !== -1
             },
             showToggleArrows(val) {
                 if (this.hasChildren) {

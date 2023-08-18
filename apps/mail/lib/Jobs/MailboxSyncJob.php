@@ -17,8 +17,7 @@ use Vorkfork\Core\Exceptions\JobNotFoundException;
 use Vorkfork\Core\Models\Job;
 use const Vorkfork\Apps\Mail\IMAP\MESSAGES_PER_PAGE;
 
-class MailboxSyncJob
-{
+class MailboxSyncJob {
 	protected Mailbox $mailbox;
 	protected Account $account;
 	protected MailboxSynchronizer $synchronizer;
@@ -33,17 +32,15 @@ class MailboxSyncJob
 	 * @throws OptimisticLockException
 	 * @throws MissingMappingDriverImplementation
 	 */
-	public function __construct(int $mailboxId)
-	{
+	public function __construct(int $mailboxId) {
 		$this->id = $mailboxId;
 		$this->execute();
 	}
 
-	public function register(): void
-	{
+	public function register(): void {
 		$this->mailbox = Mailbox::find($this->id);
 		$this->account = $this->mailbox->getAccount();
-		$this->synchronizer = MailboxSynchronizer::register($this->account);
+		$this->synchronizer = MailboxSynchronizer::register($this->mailbox);
 		$this->synchronizer->getMailbox()->ping();
 		$this->folder = $this->synchronizer->getMailbox()->getFolderByPath($this->mailbox->getPath());
 		$this->synchronizer->getMailbox()->setFolder($this->folder);
@@ -55,12 +52,11 @@ class MailboxSyncJob
 	 * @throws OptimisticLockException
 	 * @throws MissingMappingDriverImplementation
 	 */
-	public function execute(): void
-	{
+	public function execute(): void {
 		$this->register();
 		$mailboxSyncToken = new MailboxSyncToken();
 		$token = $this->mailbox->getSyncToken();
-		if (!is_null($token)) {
+		if(!is_null($token)){
 			$mailboxSyncToken->fromJson($token);
 		}
 
@@ -68,7 +64,7 @@ class MailboxSyncJob
 			$this->folder,
 			$mailboxSyncToken->getPage(),
 			MESSAGES_PER_PAGE,
-			function (LengthAwarePaginator $paginator, Folder $folder) use ($mailboxSyncToken) {
+			function(LengthAwarePaginator $paginator, Folder $folder) use ($mailboxSyncToken) {
 				//todo try catch and store sync token and save job status running
 				$this->mailbox = Mailbox::find($this->id);
 				$currentPage = $paginator->currentPage();

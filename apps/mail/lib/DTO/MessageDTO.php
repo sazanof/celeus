@@ -32,10 +32,10 @@ class MessageDTO extends BaseDto {
 	public bool $spam;
 	public bool $notSpam;
 
-	protected \DateTime $sentAt;
-
 	public function setSentAt($sentAt) {
-		$this->sentAt = (new \DateTime())->setTimestamp($sentAt['timestamp']);
+		$dt = new \DateTime();
+		$dt->setTimestamp($sentAt['timestamp']);
+		$this->sentAt = $dt;
 	}
 
 	public function setRecipients(array $recipients) {

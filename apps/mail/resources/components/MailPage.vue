@@ -84,7 +84,7 @@
   }
 
   .mail-content {
-	width: calc(100% - 750px);
+	width: calc(100% - 830px);
   }
 
   .accounts {

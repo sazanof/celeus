@@ -37,7 +37,7 @@ return MainRouter::group('/apps/mail/', [
 	],
 	'mailboxes/{id}/sync' => [
 		'action' => [MailController::class, 'syncMailbox'],
-		'methods' => ['GET'],
+		'methods' => ['POST', 'GET'],
 		'defaults' => [
 			'auth' => true
 		]

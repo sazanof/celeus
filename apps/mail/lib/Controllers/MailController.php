@@ -150,8 +150,9 @@ class MailController extends Controller {
 	 * @throws ConnectionException
 	 */
 	public function syncMailboxes(int $id): mixed {
+		$acc = Account::find($id);
 		$this->synchronizer = MailboxSynchronizer::register(
-			Account::find($id)
+			$acc->getMailboxes()[0]
 		);
 		try {
 			$this->synchronizer->getAllFolders(function(\Sazanof\PhpImapSockets\Models\Mailbox $imapFolder, $index) {
@@ -182,6 +183,7 @@ class MailController extends Controller {
 	 */
 	public function syncMailbox(int $id, Request $request) {
 		// todo if POST ids - sync only them
+		//if(!empty($request->getContent())){
 		$r = [];
 		$page = $r['page'] ?? 1;
 		$limit = $r['limit'] ?? 20;
@@ -189,17 +191,22 @@ class MailController extends Controller {
 		$mailbox = MailboxModel::find($id);
 		if(AccountAcl::mailboxBelongsToAuthenticatedUser($mailbox)){
 			$this->synchronizer = MailboxSynchronizer::register(
-				account: $mailbox->getAccount(),
-				mailbox: $mailbox->getPath()
+				mailbox: $mailbox
 			);
 			return $this->synchronizer->syncMessages($page, $limit, $direction);
 		}
+		//}
 	}
 
-	public function getMessages(int $id) {
-		$mailbox = MailboxModel::find($id);
-		if(AccountAcl::mailboxBelongsToAuthenticatedUser($mailbox)){
-			return Message::repository()->getMessages($mailbox->getId(), 1, 50);
+	public function getMessages(int $id, Request $request) {
+		if(!empty($request->getContent())){
+			$r = $request->toArray();
+			$page = $r['page'];
+			$limit = $r['limit'];
+			$mailbox = MailboxModel::find($id);
+			if(AccountAcl::mailboxBelongsToAuthenticatedUser($mailbox)){
+				return Message::repository()->getMessages($mailbox->getId(), $page, $limit);
+			}
 		}
 	}
 

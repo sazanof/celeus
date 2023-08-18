@@ -24,7 +24,7 @@
 
 <style scoped>
 .loading-icon {
-	display: inline;
+	display: inline-block;
 	animation-name: spin;
 	animation-duration: 1.5s;
 	animation-iteration-count: infinite;

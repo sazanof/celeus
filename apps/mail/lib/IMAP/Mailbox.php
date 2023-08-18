@@ -98,7 +98,8 @@ class Mailbox {
 
 	/**
 	 * @param string $name
-	 * @return PISMailbox|null
+	 * @return mixed|null
+	 * @throws ConnectionException
 	 * @throws ReflectionException
 	 */
 	public function getFolderByPath(string $name) {
@@ -115,8 +116,9 @@ class Mailbox {
 	 * @throws \Exception
 	 */
 	public function getMessagesByPage(int $limit = 50, int $page = 1, string $order = 'DESC'): Paginator {
-		$nums = $this
-			->getFolder()
+		$this->folder = $this
+			->getFolder();
+		$nums = $this->folder->select()
 			->search($this->searchQuery->all())
 			->setOrderDirection($order)
 			->msgNums();

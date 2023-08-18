@@ -38,34 +38,36 @@ final class MailboxSynchronizer {
 	protected ?MailboxModel $mailboxModel = null;
 	protected ArrayCollection $syncedFolders;
 	protected ?Paginator $paginator;
+	protected string $path;
 
 
 	/**
-	 * @param Account $account
-	 * @param string $mailbox
+	 * @param MailboxModel $mailbox
+	 * @throws ConnectionException
 	 * @throws EnvironmentIsBrokenException
+	 * @throws LoginFailedException
 	 * @throws WrongKeyOrModifiedCiphertextException
 	 * @throws \ReflectionException
-	 * @throws LoginFailedException
 	 */
-	public function __construct(
-		Account $account,
-		string  $mailbox = 'INBOX'
-	) {
+	public function __construct(MailboxModel $mailbox) {
+		$this->mailboxModel = $mailbox;
+		$this->account = $mailbox->getAccount();
+		$this->path = $mailbox->getPath();
 		$this->server = new Server(
-			host: $account->getImapServer(),
-			port: $account->getImapPort(),
-			mailbox: $mailbox,
-			encryption: $account->getImapEncryption(),
+			host: $this->account->getImapServer(),
+			port: $this->account->getImapPort(),
+			mailbox: $this->path,
+			encryption: $this->account->getImapEncryption(),
 			validateCert: true // TODO move to account creating
 		);
 		$this->mailbox = new Mailbox(
 			server: $this->server,
-			username: $account->getImapUser(),
-			password: MailPassword::decrypt($account->getImapPassword()),
+			username: $this->account->getImapUser(),
+			password: MailPassword::decrypt($this->account->getImapPassword()),
 		);
-		$this->account = $account;
 		$this->syncedFolders = new ArrayCollection();
+		//$this->mailbox->getConnection()->enableDebug();
+		$this->folder = $this->mailbox->getFolderByPath($this->path);
 		self::$instance = $this;
 		return $this;
 	}
@@ -78,19 +80,19 @@ final class MailboxSynchronizer {
 	}
 
 	/**
-	 * @param Account $account
-	 * @param string $mailbox
+	 * @param MailboxModel $mailbox
 	 * @param int $flags
 	 * @param int $retries
 	 * @return MailboxSynchronizer|null
+	 * @throws ConnectionException
 	 * @throws EnvironmentIsBrokenException
 	 * @throws LoginFailedException
 	 * @throws WrongKeyOrModifiedCiphertextException
 	 * @throws \ReflectionException
 	 */
-	public static function register(Account $account, string $mailbox = 'INBOX', int $flags = OP_HALFOPEN, int $retries = 3): ?MailboxSynchronizer {
+	public static function register(MailboxModel $mailbox, int $flags = OP_HALFOPEN, int $retries = 3): ?MailboxSynchronizer {
 		if(is_null(self::$instance)){
-			return new self(account: $account,
+			return new self(
 				mailbox: $mailbox
 			);
 		}
@@ -318,7 +320,11 @@ final class MailboxSynchronizer {
 
 		$messageId = $message->getMessageId();
 		$subject = trim($message->getSubject());
-		$preview = $message->getPlainText(100);
+		try {
+			$preview = $message->getPlainText(100);
+		} catch(\ReflectionException $e) {
+		}
+
 		$inReplyTo = $message->getInReplyTo();
 		$chain = $message->getReferences();
 		$sentAt = $message->getDate();
