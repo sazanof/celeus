@@ -183,19 +183,19 @@ class MailController extends Controller {
 	 */
 	public function syncMailbox(int $id, Request $request) {
 		// todo if POST ids - sync only them
-		//if(!empty($request->getContent())){
-		$r = [];
-		$page = $r['page'] ?? 1;
-		$limit = $r['limit'] ?? 20;
-		$direction = $r['direction'] ?? 'DESC';
-		$mailbox = MailboxModel::find($id);
-		if(AccountAcl::mailboxBelongsToAuthenticatedUser($mailbox)){
-			$this->synchronizer = MailboxSynchronizer::register(
-				mailbox: $mailbox
-			);
-			return $this->synchronizer->syncMessages($page, $limit, $direction);
+		if(!empty($request->getContent())){
+			$r = $request->toArray();
+			$page = $r['page'] ?? 1;
+			$limit = $r['limit'] ?? 20;
+			$direction = $r['direction'] ?? 'DESC';
+			$mailbox = MailboxModel::find($id);
+			if(AccountAcl::mailboxBelongsToAuthenticatedUser($mailbox)){
+				$this->synchronizer = MailboxSynchronizer::register(
+					mailbox: $mailbox
+				);
+				return $this->synchronizer->syncMessages($page, $limit, $direction);
+			}
 		}
-		//}
 	}
 
 	public function getMessages(int $id, Request $request) {

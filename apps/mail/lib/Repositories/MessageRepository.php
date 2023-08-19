@@ -21,7 +21,7 @@ class MessageRepository extends Repository {
 		return $this
 			->select()
 			->where('mailboxId', '=', $mailboxId)
-			->start($page * $limit - $limit)
+			->start($page * $limit - $limit + 1)
 			->limit($limit)
 			->orderBy('sentAt', "DESC")
 			->results(MessageDTO::class);

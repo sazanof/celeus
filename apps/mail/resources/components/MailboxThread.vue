@@ -70,6 +70,7 @@
                 this.$store.commit('clearMessages')
                 await this.syncMessages()
                 await this.getMessages()
+                this.page++
             }
         },
         async mounted() {
