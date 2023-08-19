@@ -776,12 +776,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sazanof/php-imap-sockets.git",
-                "reference": "be85eeb343f7f09c30e59c258d4605e603e1e8b2"
+                "reference": "604cd74ad59b1f180f3f021826b6d0df9026bed5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sazanof/php-imap-sockets/zipball/be85eeb343f7f09c30e59c258d4605e603e1e8b2",
-                "reference": "be85eeb343f7f09c30e59c258d4605e603e1e8b2",
+                "url": "https://api.github.com/repos/sazanof/php-imap-sockets/zipball/604cd74ad59b1f180f3f021826b6d0df9026bed5",
+                "reference": "604cd74ad59b1f180f3f021826b6d0df9026bed5",
                 "shasum": ""
             },
             "require": {
@@ -812,7 +812,7 @@
                 "issues": "https://github.com/sazanof/php-imap-sockets/issues",
                 "source": "https://github.com/sazanof/php-imap-sockets/tree/main"
             },
-            "time": "2023-08-19T07:03:20+00:00"
+            "time": "2023-08-19T16:51:55+00:00"
         },
         {
             "name": "sebastian/cli-parser",

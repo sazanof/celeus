@@ -75,6 +75,7 @@
         },
         async mounted() {
             //TODO trigger account sync
+            await this.syncMessages()
             this.$store.commit('setActiveMailbox', this.mailbox)
             this.$refs.scroll.scrollElement.addEventListener('scroll', async () => {
                 if (this.scrollFreeze) return false

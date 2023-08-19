@@ -183,6 +183,7 @@ class MailController extends Controller {
 	 */
 	public function syncMailbox(int $id, Request $request) {
 		// todo if POST ids - sync only them
+		// todo 2 - записвывать состояние синхронизации (последняя синхронизированная страница в syncToken и синхронизировать только новые страницы (если не переданы id))
 		if(!empty($request->getContent())){
 			$r = $request->toArray();
 			$page = $r['page'] ?? 1;
