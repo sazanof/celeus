@@ -17,6 +17,10 @@ class AccountDto extends BaseDto
 
 	public string $name;
 
+	public bool $isDefault;
+
+	public mixed $mailboxes;
+
 	public ?DateTime $lastSync = null;
 
 	/**

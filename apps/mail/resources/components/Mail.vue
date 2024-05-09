@@ -1,10 +1,10 @@
 <template>
     <div
-        id="mail-app"
-        v-if="accounts !== null && visible">
+        v-if="accounts !== null && visible"
+        id="mail-app">
         <div
-            class="account-add"
-            v-if="accounts.length === 0 && $route.path !== url.account_add">
+            v-if="accounts.length === 0 && $route.path !== url.account_add"
+            class="account-add">
             <NoAccounts />
         </div>
         <div v-else-if="visible">

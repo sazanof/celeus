@@ -12,6 +12,8 @@ class ACLDirectory extends Directory implements IACL
 
 	use ACLTrait;
 
+	public $owner;
+
 	function __construct($path, $owner)
 	{
 

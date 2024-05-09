@@ -11,11 +11,9 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
-use Vorkfork\Apps\Mail\IMAP\ImapSynchronizer;
 use Vorkfork\Apps\Mail\IMAP\MailboxSynchronizer;
 use Vorkfork\Apps\Mail\Models\Account;
 use Vorkfork\Apps\Mail\Models\Mailbox;
-use Webklex\PHPIMAP\Folder;
 
 #[AsCommand(
 	name: 'mail:account:sync',

@@ -1,7 +1,7 @@
 <template>
     <div class="logo">
         <a href="/">
-            <img src="../../images/vorkfork.svg">
+            <img src="/images/vorkfork.svg">
         </a>
     </div>
 </template>
@@ -14,13 +14,13 @@
 
 <style lang="scss" scoped>
 .logo {
-  width: var(--sidebar-width);
+    width: var(--sidebar-width);
 
-  img {
-	max-width: 60px;
-	width: 90%;
-	margin: 0 auto;
-	display: block;
-  }
+    img {
+        max-width: 50px;
+        width: 90%;
+        margin: 0 auto;
+        display: block;
+    }
 }
 </style>

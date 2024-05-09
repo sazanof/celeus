@@ -4,9 +4,12 @@ import 'simplebar/dist/simplebar.css'
 import 'vue-toastification/dist/index.css'
 import 'vue-advanced-cropper/dist/style.css'
 import 'floating-vue/dist/style.css'
+import '../css/sass/app.scss'
 import moment from 'moment'
 import Toast from 'vue-toastification'
 import store from './store'
+
+import Emitter from './emitter'
 import { createApp } from 'vue'
 import PageHeader from '../components/chunks/PageHeader.vue'
 import 'simplebar' // or "import SimpleBar from 'simplebar';" if you want to use it manually.
@@ -21,6 +24,7 @@ const translationObject = async () => {
     return await import(`../locales/${currentLocale}.json`)
 }
 
+ 
 translationObject().then(res => {
     registerTranslationObject('core', res.default)
     const app = createApp(PageHeader)

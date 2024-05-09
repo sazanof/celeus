@@ -116,7 +116,7 @@ class UserManager
 		$validator = Validation::createValidator();
 		$violations = $validator->validate($file, new File(
 			[
-				'maxSize' => '1024k',
+				'maxSize' => '2048k',
 				'mimeTypes' => [
 					'image/jpeg',
 					'image/png',

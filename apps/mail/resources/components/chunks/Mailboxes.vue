@@ -49,13 +49,13 @@
                 if (this.$route.params.id === undefined) {
                     this.$router.push(`/mbox/${this.activeMailbox.id}`)
                 }
+                await this.getMailboxes()
             }
-            await this.getMailboxes()
         },
         methods: {
             async getMailboxes() {
                 await this.$store.dispatch('getMailboxes', this.id)
-            },
+            }
         }
     }
 </script>

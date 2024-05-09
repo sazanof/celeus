@@ -69,44 +69,43 @@
   left: 10px;
 
   svg {
-	opacity: 0.7
+    opacity: 0.7
   }
 }
 
 .input-block {
   display: block;
 
-
   .input-inner {
-	position: relative;
-	z-index: 2;
+    position: relative;
+    z-index: 2;
   }
 
   .input {
-	padding: 8px 12px;
-	border: var(--border-width) solid var(--border-color);
-	border-radius: var(--border-radius-big);
-	box-sizing: border-box;
-	display: block;
-	width: 100%;
+    padding: 8px 12px;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
 
-	&:disabled {
-	  color: var(--color-light);
-	  cursor: not-allowed;
-	}
+    &:disabled {
+      color: var(--color-light);
+      cursor: not-allowed;
+    }
   }
 
   &.with-icon {
-	.input {
-	  padding-left: 32px;
+    .input {
+      padding-left: 32px;
 
-	}
+    }
   }
 
   .label {
-	display: block;
-	font-weight: bold;
-	margin-bottom: 6px;
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
   }
 }
 </style>

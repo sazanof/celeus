@@ -3,12 +3,12 @@
         class="login"
         @keyup.enter="logIn">
         <div class="login-form">
-            <img src="../../images/vorkfork3.svg">
+            <img src="/images/vorkfork3-w.svg">
             <div class="form-group">
                 <VfInput
                     type="text"
                     :icon="true"
-                    :placeholder="$t('Username')"
+                    :placeholder="$t('core','Username')"
                     :value="username"
                     @on-change="username = $event.target.value">
                     <template #icon>
@@ -20,7 +20,7 @@
                 <VfInput
                     type="password"
                     :icon="true"
-                    :placeholder="$t('Password')"
+                    :placeholder="$t('core','Password')"
                     :value="password"
                     @on-change="password = $event.target.value">
                     <template #icon>
@@ -30,16 +30,17 @@
             </div>
             <div class="form-group">
                 <VfButton
+                    type="primary-dark"
                     class="centered full"
                     @click="logIn">
-                    {{ $t('Log in') }}
+                    {{ $t('core', 'Log in') }}
                 </VfButton>
             </div>
         </div>
         <div class="forgot-password">
             <a
-                @click="forgotPassword"
-                href="#">{{ $t('Forgot password?') }}</a>
+                href="#"
+                @click="forgotPassword">{{ $t('core', 'Forgot password?') }}</a>
         </div>
     </div>
 </template>
@@ -88,45 +89,45 @@
 
 <style lang="scss" scoped>
 .login {
-  position: absolute;
-  z-index: 10;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--color-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  flex-direction: column;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-direction: column;
 
-  img {
-	width: 100%;
-	display: block;
-	margin: 0 auto 28px auto;
-  }
+    img {
+        width: 100%;
+        display: block;
+        margin: 0 auto 28px auto;
+    }
 
-  .login-form {
-	padding: calc(1.5 * var(--padding-box)) calc(2.5 * var(--padding-box));
-	background: var(--color-white);
-	border-radius: var(--border-radius-big);
-	max-width: 400px;
-	width: 100%;
-  }
+    .login-form {
+        padding: calc(1.5 * var(--padding-box)) calc(2.5 * var(--padding-box));
+        background: var(--color-primary-dark-opacity50);
+        border-radius: var(--border-radius);
+        max-width: 400px;
+        width: 100%;
+    }
 
-  .forgot-password {
-	margin-top: 16px;
+    .forgot-password {
+        margin-top: 16px;
 
-	a {
-	  color: var(--color-white-opacity50);
-	  text-decoration: none;
+        a {
+            color: var(--color-white-opacity50);
+            text-decoration: none;
 
-	  &:hover {
-		color: var(--color-white)
-	  }
-	}
-  }
+            &:hover {
+                color: var(--color-white)
+            }
+        }
+    }
 }
 
 

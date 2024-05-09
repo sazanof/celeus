@@ -61,6 +61,14 @@ export default {
         })
     },
 
+    async getAccountSettings({ commit }, id) {
+        return await axios.get(`${PREFIX}accounts/${id}`).then(res => res.data)
+    },
+
+    async saveAccountSettings({ commit }, id) {
+        return await axios.get(`${PREFIX}accounts/${id}/settings`)
+    },
+
     setActiveMailbox({ commit }, mailbox) {
         commit('setActiveMailbox', mailbox)
     },

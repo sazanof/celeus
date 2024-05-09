@@ -23,6 +23,8 @@ class MailboxDTO
 
 	public array $attributes;
 
+	public array $children;
+
 	/**
 	 * @param mixed $children
 	 */

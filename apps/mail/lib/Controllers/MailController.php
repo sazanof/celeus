@@ -22,6 +22,7 @@ use Vorkfork\Apps\Mail\DTO\AccountDto;
 use Vorkfork\Apps\Mail\DTO\MailboxDTO;
 use Vorkfork\Apps\Mail\Encryption\MailPassword;
 use Vorkfork\Apps\Mail\Exceptions\AccountAlreadyExistsException;
+use Vorkfork\Apps\Mail\Exceptions\MailboxAuthenticateException;
 use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
 use Vorkfork\Apps\Mail\IMAP\Mailbox;
 use Vorkfork\Apps\Mail\IMAP\MailboxSynchronizer;
@@ -39,7 +40,8 @@ use Vorkfork\Serializer\JsonSerializer;
 use Vorkfork\Apps\Mail\Models\Mailbox as MailboxModel;
 use const Vorkfork\Apps\Mail\IMAP\MESSAGES_PER_PAGE;
 
-class MailController extends Controller {
+class MailController extends Controller
+{
 
 	protected ?MailboxSynchronizer $synchronizer = null;
 
@@ -47,7 +49,8 @@ class MailController extends Controller {
 	 * Load user accounts list as Dto collection
 	 * @return AccountDto[]
 	 */
-	public function loadAccounts(): array {
+	public function loadAccounts(): array
+	{
 		return AccountCollection::getUserAccounts($this->user->username);
 	}
 
@@ -62,8 +65,9 @@ class MailController extends Controller {
 	 * @throws TransactionRequiredException
 	 * @throws \Doctrine\Persistence\Mapping\MappingException
 	 */
-	public function addAccount(Request $request) {
-		if(!$request->headers->get(X_AJAX_CALL)){
+	public function addAccount(Request $request)
+	{
+		if (!$request->headers->get(X_AJAX_CALL)) {
 			die;
 		}
 		$ar = $request->toArray();
@@ -73,7 +77,7 @@ class MailController extends Controller {
 		try {
 			// Checking if account already exists in user's account list
 			$existing = Account::repository()->getUserAccountByEmail($imap['user'], $this->user->username);
-			if(count($existing) > 0){
+			if (count($existing) > 0) {
 				return new ErrorResponse((new AccountAlreadyExistsException())->getMessage(), 409);
 			}
 			// Testing smtp connection
@@ -92,7 +96,7 @@ class MailController extends Controller {
 					encryption: $imap['encryption'],
 					validateCert: true // TODO move to account creating
 				), $imap['user'], $imap['password'], OP_HALFOPEN);
-			if($connection->isConnected()){
+			if ($connection->isConnected()) {
 				$account = Account::create([
 					'user' => $this->user->username,
 					'email' => $imap['user'],
@@ -115,10 +119,15 @@ class MailController extends Controller {
 				];
 			}
 
-		} catch(TransportException $e) {
+		} catch (TransportException $e) {
 			return new ErrorResponse($e->getMessage());
 		}
 		return false;
+	}
+
+	public function getAccount(int $id, Request $request)
+	{
+		dd($id);
 	}
 
 	/**
@@ -130,9 +139,10 @@ class MailController extends Controller {
 	 * @throws TransactionRequiredException
 	 * @throws MissingMappingDriverImplementation
 	 */
-	public function saveAccount(int $id, Request $request) {
+	public function saveAccount(int $id, Request $request)
+	{
 		$account = Account::find($id);
-		if(!is_null($account) && AccountAcl::belongsToAuthenticatedUser($account)){
+		if (!is_null($account) && AccountAcl::belongsToAuthenticatedUser($account)) {
 			return $account->update($request->toArray())->toDto(AccountDto::class);
 		}
 		return null;
@@ -141,31 +151,37 @@ class MailController extends Controller {
 	/**
 	 * @param int $id
 	 * @return mixed
+	 * @throws ConnectionException
 	 * @throws EnvironmentIsBrokenException
-	 * @throws ImapErrorException
+	 * @throws MailboxAuthenticateException
 	 * @throws ORMException
 	 * @throws OptimisticLockException
+	 * @throws ReflectionException
 	 * @throws TransactionRequiredException
 	 * @throws WrongKeyOrModifiedCiphertextException
-	 * @throws ConnectionException
 	 */
-	public function syncMailboxes(int $id): mixed {
+	public function syncMailboxes(int $id): mixed
+	{
 		$acc = Account::find($id);
-		$this->synchronizer = MailboxSynchronizer::register(
-			$acc->getMailboxes()[0]
-		);
 		try {
-			$this->synchronizer->getAllFolders(function(\Sazanof\PhpImapSockets\Models\Mailbox $imapFolder, $index) {
-				$this->synchronizer->syncFolder($imapFolder, $index);
-			}, false);
-			$this->synchronizer->deleteIfMailBoxNotExists();
-		} catch(ReflectionException $e) {
-		}
+			$this->synchronizer = MailboxSynchronizer::register(
+				$acc->getMailboxes()[0]
+			);
+			try {
+				$this->synchronizer->getAllFolders(function (\Sazanof\PhpImapSockets\Models\Mailbox $imapFolder, $index) {
+					$this->synchronizer->syncFolder($imapFolder, $index);
+				}, false);
+				$this->synchronizer->deleteIfMailBoxNotExists();
+			} catch (ReflectionException $e) {
+			}
 
-		return JsonSerializer::deserializeArrayStatic(
-			Account::find($id)->getMailboxes(),
-			MailboxDTO::class
-		);
+			return JsonSerializer::deserializeArrayStatic(
+				Account::find($id)->getMailboxes(),
+				MailboxDTO::class
+			);
+		} catch (LoginFailedException $exception) {
+			return new ErrorResponse($exception->getMessage());
+		}
 	}
 
 	/**
@@ -180,32 +196,41 @@ class MailController extends Controller {
 	 * @throws WrongKeyOrModifiedCiphertextException
 	 * @throws ReflectionException
 	 * @throws NoResultsException
+	 * @throws MailboxAuthenticateException
 	 */
-	public function syncMailbox(int $id, Request $request) {
+	public function syncMailbox(int $id, Request $request)
+	{
 		// todo if POST ids - sync only them
 		// todo 2 - записвывать состояние синхронизации (последняя синхронизированная страница в syncToken и синхронизировать только новые страницы (если не переданы id))
-		if(!empty($request->getContent())){
+		if (!empty($request->getContent())) {
 			$r = $request->toArray();
 			$page = $r['page'] ?? 1;
 			$limit = $r['limit'] ?? 20;
 			$direction = $r['direction'] ?? 'DESC';
 			$mailbox = MailboxModel::find($id);
-			if(AccountAcl::mailboxBelongsToAuthenticatedUser($mailbox)){
-				$this->synchronizer = MailboxSynchronizer::register(
-					mailbox: $mailbox
-				);
-				return $this->synchronizer->syncMessages($page, $limit, $direction);
+			if (AccountAcl::mailboxBelongsToAuthenticatedUser($mailbox)) {
+				try {
+					$this->synchronizer = MailboxSynchronizer::register(
+						mailbox: $mailbox
+					);
+					return $this->synchronizer->syncMessages($page, $limit, $direction);
+				} catch (\Exception $exception) {
+					throw new MailboxAuthenticateException($exception->getMessage());
+				}
+
 			}
 		}
+		//todo 3 - возвращать в ответе {new:...., updated: .... created: ...., deleted:....}
 	}
 
-	public function getMessages(int $id, Request $request) {
-		if(!empty($request->getContent())){
+	public function getMessages(int $id, Request $request)
+	{
+		if (!empty($request->getContent())) {
 			$r = $request->toArray();
 			$page = $r['page'];
 			$limit = $r['limit'];
 			$mailbox = MailboxModel::find($id);
-			if(AccountAcl::mailboxBelongsToAuthenticatedUser($mailbox)){
+			if (AccountAcl::mailboxBelongsToAuthenticatedUser($mailbox)) {
 				return Message::repository()->getMessages($mailbox->getId(), $page, $limit);
 			}
 		}

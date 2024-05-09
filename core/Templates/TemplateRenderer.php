@@ -51,6 +51,11 @@ class TemplateRenderer implements ITemplateRenderer
 		$this->template->addFunction(new TwigFunction('t', function (string $key, array $params = [], string $domain = null, string $locale = null) {
 			return Translate::t($key);
 		}));
+
+		$this->template->addFunction(new TwigFunction('vite', function (string $entry) {
+			return vite($entry);
+		}));
+
 		$nameWithExtension = "{$name}.twig";
 		return $this->template->render($nameWithExtension, $data);
 	}

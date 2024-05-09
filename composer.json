@@ -1,7 +1,7 @@
 {
   "name": "sazanof/vorkfork",
   "description": "Free Mail, Calendar, Conferences for your company!",
-  "type": "project",
+  "type": "module",
   "license": "GNU Affero General Public License v3.0",
   "scripts": {
     "cs:fix": "tools/php-cs-fixer/vendor/bin/php-cs-fixer --config=.php-cs-fixer.php fix"
@@ -36,7 +36,8 @@
     "symfony/validator": "^6.2",
     "symfony/mime": "^6.2",
     "gregwar/image": "^2.1",
-    "symfony/mailer": "^6.2"
+    "symfony/mailer": "^6.2",
+    "lasserafn/php-initial-avatar-generator": "^4.3"
   },
   "autoload": {
     "psr-4": {
@@ -44,7 +45,8 @@
       "Vorkfork\\Core\\": "core/"
     },
     "files": [
-      "inc/helpers.php"
+      "inc/helpers.php",
+      "inc/vite.php"
     ]
   },
   "tests": {

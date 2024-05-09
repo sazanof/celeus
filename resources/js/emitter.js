@@ -1,6 +1,6 @@
 import mitt from 'mitt'
 
-window.Emitter = new class {
+export default class Emitter {
     constructor() {
         this.emitter = mitt()
     }
@@ -17,3 +17,5 @@ window.Emitter = new class {
         this.emitter.off(event)
     }
 }
+
+window.Emitter = new Emitter()

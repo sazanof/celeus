@@ -33,9 +33,12 @@ class MainRouter implements IRouter
 
 	protected UrlMatcher $matcher;
 
+	protected string $prefix = '';
+
 	public function __construct()
 	{
 		$this->routes = new RouteCollection();
+		self::$instance = $this;
 	}
 
 	public function setDispatcher(EventDispatcher $dispatcher)
@@ -70,10 +73,7 @@ class MainRouter implements IRouter
 	public function addRoutesFromAppInc(string $path = null)
 	{
 		$path = is_null($path) ? realpath('../inc/routes.php') : $path;
-		$routes = require_once $path;
-		if (!empty($routes)) {
-			$this->registerRoutes($routes);
-		}
+		require_once $path;
 	}
 
 	public function setRoute(string $url, array $methods, array $action)
@@ -117,8 +117,8 @@ class MainRouter implements IRouter
 	public static function group(string $prefix, array $routes): array
 	{
 		$ar = [];
-		foreach ($routes as $key => $route) {
-			$ar[$prefix . $key] = $route;
+		foreach ($routes as $key => $routeArray) {
+			$ar[$prefix . $key] = $routeArray;
 		}
 		return $ar;
 	}
@@ -126,5 +126,109 @@ class MainRouter implements IRouter
 	public function getRoute(string $url)
 	{
 		// TODO: Implement getRoute() method.
+	}
+
+	public static function app(string $name, \Closure $closure)
+	{
+		self::$instance->prefix = '/apps/' . $name . '/';
+		if (is_callable($closure)) {
+			$closure(self::$instance, $name);
+		}
+		self::$instance->prefix = '';
+	}
+
+	public static function prefix(string $prefix, \Closure $closure)
+	{
+		$part = trim($prefix, '/\\') . '/';
+		self::$instance->prefix .= $part;
+		if (is_callable($closure)) {
+			$closure($prefix);
+		}
+		self::$instance->prefix = rtrim(self::$instance->prefix, $part) . '/';
+	}
+
+	public static function add(
+		string       $url,
+		array        $action,
+		string|array $method = 'GET',
+		string       $name = null,
+					 $defaults = [],
+					 $requirements = []
+	)
+	{
+		$name = is_null($name) ? uniqid('route_', true) : $name;
+		if (!empty(self::$instance->prefix)) {
+			$url = trim(self::$instance->prefix, '/\\') . ($url === '' ? '' : '/') . $url;
+			//dump(trim(self::$instance->prefix, '/\\'), $url);
+		}
+		$route = new Route(
+			$url,
+			[
+				'_controller' => $action,
+			]
+		);
+		$route->setMethods($method);
+		$route->addDefaults($defaults);
+		$route->addRequirements($requirements);
+		self::$instance->routes->add($name, $route);
+	}
+
+	public static function get(string $url, array $action, string $name = null, $defaults = [], $requirements = [])
+	{
+		self::add(
+			url: $url,
+			action: $action,
+			name: $name,
+			defaults: $defaults,
+			requirements: $requirements
+		);
+	}
+
+	public static function post(string $url, array $action, string $name = null, $defaults = [], $requirements = [])
+	{
+		self::add(
+			url: $url,
+			action: $action,
+			method: 'POST',
+			name: $name,
+			defaults: $defaults,
+			requirements: $requirements
+		);
+	}
+
+	public static function put(string $url, array $action, string $name = null, $defaults = [], $requirements = [])
+	{
+		self::add(
+			url: $url,
+			action: $action,
+			method: 'PUT',
+			name: $name,
+			defaults: $defaults,
+			requirements: $requirements
+		);
+	}
+
+	public static function delete(string $url, array $action, string $name = null, $defaults = [], $requirements = [])
+	{
+		self::add(
+			url: $url,
+			action: $action,
+			method: 'delete',
+			name: $name,
+			defaults: $defaults,
+			requirements: $requirements
+		);
+	}
+
+	public static function options(string $url, array $action, string $name = null, $defaults = [], $requirements = [])
+	{
+		self::add(
+			url: $url,
+			action: $action,
+			method: 'OPTIONS',
+			name: $name,
+			defaults: $defaults,
+			requirements: $requirements
+		);
 	}
 }

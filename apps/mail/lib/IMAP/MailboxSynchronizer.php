@@ -28,7 +28,8 @@ use Sazanof\PhpImapSockets\Models\Mailbox as PISMailbox;
 
 const MESSAGES_PER_PAGE = 50;
 
-final class MailboxSynchronizer {
+final class MailboxSynchronizer
+{
 	protected ?Mailbox $mailbox = null;
 	protected ?Server $server = null;
 	protected ?Account $account = null;
@@ -49,7 +50,8 @@ final class MailboxSynchronizer {
 	 * @throws WrongKeyOrModifiedCiphertextException
 	 * @throws \ReflectionException
 	 */
-	public function __construct(MailboxModel $mailbox) {
+	public function __construct(MailboxModel $mailbox)
+	{
 		$this->mailboxModel = $mailbox;
 		$this->account = $mailbox->getAccount();
 		$this->path = $mailbox->getPath();
@@ -75,7 +77,8 @@ final class MailboxSynchronizer {
 	/**
 	 * @return MailboxModel|null
 	 */
-	public function getMailboxModel(): ?MailboxModel {
+	public function getMailboxModel(): ?MailboxModel
+	{
 		return $this->mailboxModel;
 	}
 
@@ -90,8 +93,9 @@ final class MailboxSynchronizer {
 	 * @throws WrongKeyOrModifiedCiphertextException
 	 * @throws \ReflectionException
 	 */
-	public static function register(MailboxModel $mailbox, int $flags = OP_HALFOPEN, int $retries = 3): ?MailboxSynchronizer {
-		if(is_null(self::$instance)){
+	public static function register(MailboxModel $mailbox, int $flags = OP_HALFOPEN, int $retries = 3): ?MailboxSynchronizer
+	{
+		if (is_null(self::$instance)) {
 			return new self(
 				mailbox: $mailbox
 			);
@@ -102,14 +106,16 @@ final class MailboxSynchronizer {
 	/**
 	 * @return Mailbox|null
 	 */
-	public function getMailbox(): ?Mailbox {
+	public function getMailbox(): ?Mailbox
+	{
 		return $this->mailbox;
 	}
 
 	/**
 	 * @return Account|null
 	 */
-	public function getAccount(): ?Account {
+	public function getAccount(): ?Account
+	{
 		return $this->account;
 	}
 
@@ -120,12 +126,13 @@ final class MailboxSynchronizer {
 	 * @throws \ReflectionException
 	 * @throws ConnectionException
 	 */
-	public function getAllFolders(\Closure $closure = null, string $startPath = ''): void {
+	public function getAllFolders(\Closure $closure = null, string $startPath = ''): void
+	{
 		$imapFolders = $this->getMailbox()->getMailboxes($startPath);
 		/** @var PISMailbox $imapFolder */
 		$i = 0;
-		foreach($imapFolders->items() as $imapFolder) {
-			if(is_callable($closure)){
+		foreach ($imapFolders->items() as $imapFolder) {
+			if (is_callable($closure)) {
 				$closure($imapFolder, $i);
 			}
 			$i++;
@@ -136,7 +143,8 @@ final class MailboxSynchronizer {
 	 * @param PISMailbox $folder
 	 * @return string
 	 */
-	public function getParentPathFromFolder(PISMailbox $folder): string {
+	public function getParentPathFromFolder(PISMailbox $folder): string
+	{
 		$path = $folder->getOriginalPath();
 		$explode = explode($folder->getDelimiter(), $path);
 		unset($explode[array_key_last($explode)]);
@@ -150,11 +158,12 @@ final class MailboxSynchronizer {
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	public function syncFolder(PISMailbox $folder, int $position = 0): void {
+	public function syncFolder(PISMailbox $folder, int $position = 0): void
+	{
 		/** @var MailboxModel $parent */
 		$parent = null;
 		$parentPath = $this->getParentPathFromFolder($folder);
-		if(!empty($parentPath)){
+		if (!empty($parentPath)) {
 			$parent = MailboxModel::repository()->findOneBy(
 				[
 					'account' => $this->account,
@@ -182,20 +191,20 @@ final class MailboxSynchronizer {
 				'path' => $path,
 			]);
 		try {
-			if(!is_null($mbox)){
-				$mbox->update($data, function(MailboxModel $mailbox) use ($parent) {
+			if (!is_null($mbox)) {
+				$mbox->update($data, function (MailboxModel $mailbox) use ($parent) {
 					$mailbox->setAccount($this->account);
-					if($parent instanceof MailboxModel){
+					if ($parent instanceof MailboxModel) {
 						$mailbox->setParent($parent);
 						$parent->addChild($mailbox);
 					}
 				});
 				$target = $mbox;
-			} else{
+			} else {
 				$target = MailboxModel
-					::create($data, function(MailboxModel $mailbox) use ($parent) {
+					::create($data, function (MailboxModel $mailbox) use ($parent) {
 						$mailbox->setAccount($this->account);
-						if($parent instanceof MailboxModel){
+						if ($parent instanceof MailboxModel) {
 							$mailbox->setParent($parent);
 							$parent->addChild($mailbox);
 						}
@@ -203,8 +212,8 @@ final class MailboxSynchronizer {
 			}
 
 			$this->syncedFolders->add($target->getPath());
-		} catch(\Exception $exception) {
-			if(!$exception instanceof MailboxAlreadyExists){
+		} catch (\Exception $exception) {
+			if (!$exception instanceof MailboxAlreadyExists) {
 				dd($exception);
 				// todo log
 			}
@@ -215,7 +224,8 @@ final class MailboxSynchronizer {
 	/**
 	 * @return ArrayCollection
 	 */
-	public function getSyncedFolders(): ArrayCollection {
+	public function getSyncedFolders(): ArrayCollection
+	{
 		return $this->syncedFolders;
 	}
 
@@ -224,7 +234,8 @@ final class MailboxSynchronizer {
 	 * @return $this
 	 * @throws \ReflectionException
 	 */
-	public function switchFolder($name) {
+	public function switchFolder($name)
+	{
 		$this->getMailbox()->getFolderByPath($name);
 		return $this;
 	}
@@ -238,7 +249,8 @@ final class MailboxSynchronizer {
 	 * @throws NoResultsException
 	 * @throws \ReflectionException
 	 */
-	public function syncMessages(int $page = 1, int $total = MESSAGES_PER_PAGE, string $direction = 'DESC'): array {
+	public function syncMessages(int $page = 1, int $total = MESSAGES_PER_PAGE, string $direction = 'DESC'): array
+	{
 		$databaseIds = [];
 		$this->folder = $this->getMailbox()->getFolder();
 		$this->mailboxModel = MailboxModel::repository()->findOneBy(
@@ -247,13 +259,13 @@ final class MailboxSynchronizer {
 				'path' => $this->folder->getOriginalPath()
 			]);
 		$this->paginator = $this->mailbox->getMessagesByPage($total, $page, $direction);
-		if($this->paginator->getTotal() > 0){
-			foreach($this->paginator->messages() as $message) {
+		if ($this->paginator->getTotal() > 0) {
+			foreach ($this->paginator->messages() as $message) {
 				try {
 					//dump($message);
 					$databaseIds[] = $this->addMessageFromImapToDb($message);
-				} catch(MissingMappingDriverImplementation $e) {
-				} catch(ORMException $e) {
+				} catch (MissingMappingDriverImplementation $e) {
+				} catch (ORMException $e) {
 					dd($e);
 				}
 			}
@@ -268,16 +280,17 @@ final class MailboxSynchronizer {
 	 * @param int $total
 	 * @return void
 	 */
-	public function syncAllMessagesInFolder(Folder $folder, int $page = 1, int $total = MESSAGES_PER_PAGE, \Closure $closure = null) {
+	public function syncAllMessagesInFolder(Folder $folder, int $page = 1, int $total = MESSAGES_PER_PAGE, \Closure $closure = null)
+	{
 		/** @var LengthAwarePaginator $paginator */
 		$this->paginator = $this->mailbox->getMessagesByPage($total, $page);
 		do {
 			$this->syncMessages($folder, $page, $total);
-			if(is_callable($closure)){
+			if (is_callable($closure)) {
 				$closure($this->paginator, $folder);
 			}
 			$page++;
-		} while($this->paginator->lastPage() >= $page);
+		} while ($this->paginator->lastPage() >= $page);
 	}
 
 	/**
@@ -285,7 +298,8 @@ final class MailboxSynchronizer {
 	 * @return MailboxImapDTO|null
 	 * @throws ImapErrorException
 	 */
-	public function sync(Folder $folder): ?MailboxImapDTO {
+	public function sync(Folder $folder): ?MailboxImapDTO
+	{
 		$this->syncFolder($folder);
 		$this->syncAllMessagesInFolder($folder);
 		return null;
@@ -298,8 +312,8 @@ final class MailboxSynchronizer {
 	 * @throws MissingMappingDriverImplementation
 	 * @throws ORMException
 	 */
-	public function addMessageFromImapToDb(Message $message): ?int {
-
+	public function addMessageFromImapToDb(Message $message): ?int
+	{
 		$flags = new MessageFlags($message->getFlags());// TODO custom flags save
 		$uid = $message->getUid();
 		$num = $message->getNum();
@@ -319,10 +333,10 @@ final class MailboxSynchronizer {
 		$seen = $flags->isSeen();
 
 		$messageId = $message->getMessageId();
-		$subject = trim($message->getSubject());
+		$subject = $message->getSubject();
 		try {
 			$preview = $message->getPlainText(100);
-		} catch(\ReflectionException $e) {
+		} catch (\ReflectionException $e) {
 		}
 
 		$inReplyTo = $message->getInReplyTo();
@@ -331,7 +345,7 @@ final class MailboxSynchronizer {
 		$attachments = $message->isHasAttachments();
 		$messageExisting = MessageModel::repository()->findOneByMessageId($messageId);
 
-		if(is_null($messageExisting)){
+		if (is_null($messageExisting)) {
 			$dbMessage = new MessageModel();
 			$dbMessage->setUid($uid);
 			$dbMessage->setNum($num);
@@ -353,18 +367,18 @@ final class MailboxSynchronizer {
 			$dbMessage->setNotSpam($notSpam);
 			$dbMessage->setDeleted($deleted);
 			$dbMessage->setLocalMessage(false);
-			foreach($recipientsCompact as $type => $item) {
-				if(!is_null($item)){
-					if($item instanceof Address){
+			foreach ($recipientsCompact as $type => $item) {
+				if (!is_null($item)) {
+					if ($item instanceof Address) {
 						$recipient = new Recipient();
 						$recipient->setName($item->getName());
 						$recipient->setAddress($item->getEmail());
 						$recipient->setTypeByString($type);
 						$dbMessage->addRecipient($recipient);
 						$dbMessage->em()->persist($recipient);
-					} elseif($item instanceof AddressesCollection){
+					} elseif ($item instanceof AddressesCollection) {
 						/** @var Address $address */
-						foreach($item->items() as $address) {
+						foreach ($item->items() as $address) {
 							$recipient = new Recipient();
 							$recipient->setName($address->getName());
 							$recipient->setAddress($address->getEmail());
@@ -381,17 +395,17 @@ final class MailboxSynchronizer {
 				$dbMessage->em()->persist($dbMessage);
 				$dbMessage->em()->flush();
 				return $dbMessage->getId();
-			} catch(SyntaxErrorException $e) {
+			} catch (SyntaxErrorException $e) {
 				dump($e->getQuery()->getSQL());
-			} catch(ORMException $e) {
+			} catch (ORMException $e) {
 				dump($e->getMessage());
-			} catch(\Exception $exception) {
+			} catch (\Exception $exception) {
 				// TODO logging & fixing
 				dump($exception);
 				dump($subject);
 				//dump($exception->getFile(), $exception->getLine(), $exception->getMessage());
 			}
-		} else{
+		} else {
 			$messageExisting->setUid($uid);
 			$messageExisting->setNum($num);
 			$messageExisting->setPreview($preview);
@@ -415,22 +429,24 @@ final class MailboxSynchronizer {
 				//$messageExisting->em()->persist($messageExisting);
 				$messageExisting->em()->flush();
 				return $messageExisting->getId();
-			} catch(\Exception|ORMException|\TypeError|SyntaxErrorException $e) {
+			} catch (\Exception|ORMException|\TypeError|SyntaxErrorException $e) {
 				dump($e->getMessage(), $messageExisting);
 			}
 		}
 		return null;
 	}
 
-	public function getDatabaseAccountMailboxes(): array {
+	public function getDatabaseAccountMailboxes(): array
+	{
 		return MailboxModel::repository()->findBy(['accountId' => $this->account->getId()]);
 	}
 
-	public function deleteIfMailBoxNotExists() {
+	public function deleteIfMailBoxNotExists()
+	{
 		// переписать на орм
 		try {
 			$this->account->removeUnusedMailboxes($this->getSyncedFolders());
-		} catch(MissingMappingDriverImplementation|ORMException $e) {
+		} catch (MissingMappingDriverImplementation|ORMException $e) {
 			dd($e);
 		}
 

@@ -6,11 +6,11 @@
                 class="accounts"
                 data-simplebar>
                 <AccountItem
-                    @click="setAccountActive(account)"
                     v-for="account in accounts"
                     :key="account.id"
                     :active="activeAccount.id === account.id"
-                    :account="account" />
+                    :account="account"
+                    @click="setAccountActive(account)" />
             </div>
         </div>
         <div class="mail-list">
@@ -47,7 +47,7 @@
             },
             activeMailbox() {
                 return this.$store.getters['getActiveMailbox']
-            },
+            }
 
         },
         created() {
@@ -63,33 +63,34 @@
 
 <style lang="scss" scoped>
 .mail-initialized {
-  margin: calc(var(--padding-box) * -1);
-  height: calc(100vh - var(--header-height));
-  display: flex;
-  flex-wrap: wrap;
+    margin: calc(var(--padding-box) * -1);
+    height: calc(100vh - var(--header-height));
+    display: flex;
+    flex-wrap: wrap;
 
-  .mail-menu {
-	height: inherit;
-	width: 350px;
-	background: var(--color-primary-opacity5);
-  }
+    .mail-menu {
+        height: inherit;
+        width: 350px;
+        background: var(--color-primary-opacity5);
+    }
 
-  .mail-list {
-	height: inherit;
-	width: 480px;
-  }
+    .mail-list {
+        height: inherit;
+        width: 480px;
+    }
 
-  .mail-list {
-	border-right: var(--border-width) solid var(--border-color);
-  }
+    .mail-list {
+        border-right: var(--border-width) solid var(--border-color);
+    }
 
-  .mail-content {
-	width: calc(100% - 830px);
-  }
+    .mail-content {
+        padding: var(--padding-box);
+        width: calc(100% - 830px);
+    }
 
-  .accounts {
-	height: calc(100vh - var(--header-height) - var(--new-message-height));
-  }
+    .accounts {
+        height: calc(100vh - var(--header-height) - var(--new-message-height));
+    }
 }
 
 </style>

@@ -3,50 +3,81 @@
 use Vorkfork\Apps\Mail\Controllers\MailController;
 use Vorkfork\Core\Router\MainRouter;
 
-if(!defined('INC_MODE')){
+if (!defined('INC_MODE')) {
 	exit;
 }
-return MainRouter::group('/apps/mail/', [
-	'accounts' => [
-		'action' => [MailController::class, 'loadAccounts'],
-		'methods' => ['GET'],
-		'defaults' => [
-			'auth' => true
-		]
-	],
-	'accounts/add' => [
-		'action' => [MailController::class, 'addAccount'],
-		'methods' => ['GET', 'POST'],
-		'defaults' => [
-			'auth' => true
-		]
-	],
-	'accounts/{id}' => [
-		'action' => [MailController::class, 'saveAccount'],
-		'methods' => ['PUT'],
-		'defaults' => [
-			'auth' => true
-		]
-	],
-	'accounts/{id}/mailboxes' => [
-		'action' => [MailController::class, 'syncMailboxes'],
-		'methods' => ['GET'],
-		'defaults' => [
-			'auth' => true
-		]
-	],
-	'mailboxes/{id}/sync' => [
-		'action' => [MailController::class, 'syncMailbox'],
-		'methods' => ['POST', 'GET'],
-		'defaults' => [
-			'auth' => true
-		]
-	],
-	'mailboxes/{id}/messages' => [
-		'action' => [MailController::class, 'getMessages'],
-		'methods' => ['POST'],
-		'defaults' => [
-			'auth' => true
-		]
-	]
-]);
+
+MainRouter::app('mail', function (MainRouter $router) {
+	MainRouter::prefix('accounts', function () {
+		MainRouter::get(
+			url: '',
+			action: [MailController::class, 'loadAccounts'],
+			defaults: [
+				'auth' => true
+			]
+		);
+		MainRouter::get(
+			url: 'add',
+			action: [MailController::class, 'loadAccounts'],
+			defaults: [
+				'auth' => true
+			]
+		);
+		MainRouter::post(
+			url: 'add',
+			action: [MailController::class, 'loadAccounts'],
+			defaults: [
+				'auth' => true
+			]
+		);
+		MainRouter::prefix('{id}', function () {
+			MainRouter::put(
+				url: '',
+				action: [MailController::class, 'saveAccount'],
+				defaults: [
+					'auth' => true
+				]
+			);
+			MainRouter::get(
+				url: 'mailboxes',
+				action: [MailController::class, 'syncMailboxes'],
+				defaults: [
+					'auth' => true
+				]
+			);
+		});
+	});
+	MainRouter::prefix('mailboxes', function () {
+
+		MainRouter::prefix('{id}', function () {
+			MainRouter::get(
+				url: 'sync',
+				action: [MailController::class, 'syncMailbox'],
+				defaults: [
+					'auth' => true
+				]
+			);
+			MainRouter::post(
+				url: 'sync',
+				action: [MailController::class, 'syncMailbox'],
+				defaults: [
+					'auth' => true
+				]
+			);
+			MainRouter::post(
+				url: 'messages',
+				action: [MailController::class, 'getMessages'],
+				defaults: [
+					'auth' => true
+				]
+			);
+			MainRouter::get(
+				url: 'messages',
+				action: [MailController::class, 'getMessages'],
+				defaults: [
+					'auth' => true
+				]
+			);
+		});
+	});
+});

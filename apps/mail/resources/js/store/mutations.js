@@ -49,7 +49,8 @@ export default {
         state.activeAccount = state.accounts.find(a => a.id === account.id)
     },
     setMessages(state, messages) {
-        state.messages = [ ...state.messages, ...messages ]
+        const newMessages = messages.filter(newMessage => !state.messages.find(message => message.id === newMessage.id))
+        state.messages = [ ...state.messages, ...newMessages ]
     },
     clearMessages(state) {
         state.messages = []

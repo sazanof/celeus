@@ -12,6 +12,7 @@
                     ref="cropperModal"
                     :file="file" />
                 <VfFileUpload
+                    class="w-100"
                     accept="image/jpeg,image/png"
                     ref="fileUpload"
                     @input-file-changed="inputFileChanged">
@@ -235,23 +236,24 @@
 
 
   img {
-	width: 260px;
-	height: 260px;
-	border-radius: 50%;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
   }
 
   .profile-main {
-	width: calc(100% - 260px);
-	height: calc(100vh - var(--header-height) - (var(--padding-box) * 2));
-	padding: 0 20px 0 32px;
+    width: calc(100% - 260px);
+    height: calc(100vh - var(--header-height) - (var(--padding-box) * 2));
+    padding: 0 20px 0 32px;
 
-	& > ::v-deep(.simplebar-vertical) {
-	  top: 20px
-	}
+    & > ::v-deep(.simplebar-vertical) {
+      top: 20px
+    }
   }
 
   .button-upload {
-	margin: 10px auto;
+    margin: 10px auto;
+    width: 100%;
   }
 }
 

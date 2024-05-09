@@ -61,7 +61,7 @@ class User extends Entity
 	private string $lastname;
 
 	#[ORM\Column(type: Types::STRING, nullable: true, columnDefinition: "VARCHAR(255) AFTER `firstname`")]
-	private string $photo;
+	private ?string $photo = null;
 
 	#[ORM\Column(type: Types::STRING, nullable: true, columnDefinition: "VARCHAR(255) AFTER `lastname`")]
 	private string $language;
@@ -195,9 +195,9 @@ class User extends Entity
 	}
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
-	public function getPhoto(): string
+	public function getPhoto(): ?string
 	{
 		return $this->photo;
 	}

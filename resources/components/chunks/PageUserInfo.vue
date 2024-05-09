@@ -71,26 +71,26 @@
 
 <style lang="scss" scoped>
 .user-info {
-  .user-avatar-header {
-	cursor: pointer;
-	border: 2px solid var(--color-white);
-	border-radius: 50%;
-	transition: var(--transition-duration);
-	width: 48px;
-	height: 48px;
+    .user-avatar-header {
+        cursor: pointer;
+        border: 2px solid var(--color-white-opacity50);
+        border-radius: var(--border-radius);
+        transition: var(--transition-duration);
+        width: 34px;
+        height: 34px;
 
-	&:hover {
-	  box-shadow: var(--box-shadow);
-	}
-  }
+        &:hover {
+            box-shadow: var(--box-shadow);
+        }
+    }
 }
 
 .fullname {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .small {
-  margin-top: 4px;
-  font-size: 12px;
+    margin-top: 4px;
+    font-size: 12px;
 }
 </style>

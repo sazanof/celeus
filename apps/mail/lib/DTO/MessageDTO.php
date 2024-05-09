@@ -7,7 +7,8 @@ use Vorkfork\Apps\Mail\Models\Recipient;
 use Vorkfork\DTO\BaseDto;
 use Vorkfork\Serializer\JsonSerializer;
 
-class MessageDTO extends BaseDto {
+class MessageDTO extends BaseDto
+{
 	public int $id;
 	public int $accountId;
 	public string $messageId;
@@ -31,27 +32,30 @@ class MessageDTO extends BaseDto {
 	public bool $seen;
 	public bool $spam;
 	public bool $notSpam;
+	public \DateTime $sentAt;
 
-	public function setSentAt($sentAt) {
+	public function setSentAt($sentAt)
+	{
 		$dt = new \DateTime();
 		$dt->setTimestamp($sentAt['timestamp']);
 		$this->sentAt = $dt;
 	}
 
-	public function setRecipients(array $recipients) {
+	public function setRecipients(array $recipients)
+	{
 		$recipients = JsonSerializer::deserializeArrayStatic($recipients, RecipientDTO::class);
 		$cc = [];
 		$bcc = [];
 		$to = [];
 		/** @var RecipientDTO $recipient */
-		foreach($recipients as $recipient) {
-			if($recipient->type === Recipient::TYPE_FROM){
+		foreach ($recipients as $recipient) {
+			if ($recipient->type === Recipient::TYPE_FROM) {
 				$this->from = $recipient;
-			} elseif($recipient->type === Recipient::TYPE_CC){
+			} elseif ($recipient->type === Recipient::TYPE_CC) {
 				$cc[] = $recipient;
-			} elseif($recipient->type === Recipient::TYPE_BCC){
+			} elseif ($recipient->type === Recipient::TYPE_BCC) {
 				$bcc[] = $recipient;
-			} elseif($recipient->type === Recipient::TYPE_TO){
+			} elseif ($recipient->type === Recipient::TYPE_TO) {
 				$to[] = $recipient;
 			}
 		}

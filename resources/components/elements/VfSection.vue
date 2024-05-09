@@ -20,7 +20,7 @@
     </div>
 </template>
 <script>
-// TODO make Actions in right of title
+  // TODO make Actions in right of title
     export default {
         name: 'VfSection',
         props: {
@@ -41,40 +41,40 @@
 .section {
 
   &:not(&:first-child) {
-	margin-top: 36px;
+    margin-top: 36px;
   }
 
   .section-wrapper {
-	display: flex;
-	align-items: center;
-	font-weight: bold;
-	margin-bottom: 20px;
-	font-size: 20px;
-	color: var(--color-primary);
-	background: var(--color-background-light);
-	padding: 8px;
-	border-radius: 50px;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 20px;
+    color: var(--color-primary);
+    background: var(--color-background-light);
+    padding: 8px;
+    border-radius: var(--border-radius);
 
-	.section-inner {
-	  padding-left: 10px;
-	}
+    .section-inner {
+      padding-left: 10px;
+    }
 
-	.section-icon {
-	  color: rgba(0, 0, 0, 0.1);
-	}
+    .section-icon {
+      color: rgba(0, 0, 0, 0.1);
+    }
   }
 
   .title {
 
-	.description {
-	  font-size: 14px;
-	  font-weight: normal;
-	  color: var(--color-text-light)
-	}
+    .description {
+      font-size: 14px;
+      font-weight: normal;
+      color: var(--color-text-light)
+    }
   }
 
   .content {
-	text-align: left;
+    text-align: left;
   }
 }
 </style>

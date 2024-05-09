@@ -1,16 +1,17 @@
 <?php
 
 use Vorkfork\Apps\Calendar\Controllers\CalendarController;
+use Vorkfork\Core\Router\MainRouter;
 
 if (!defined('INC_MODE')) {
 	exit;
 }
-return [
-	'/apps/calendar/test' => [
-		'action' => [CalendarController::class, 'index'],
-		'methods' => ['GET'],
-		'defaults' => [
+MainRouter::app('calendar', function () {
+	MainRouter::get(
+		url: 'test',
+		action: [CalendarController::class, 'index'],
+		defaults: [
 			'auth' => true
 		]
-	],
-];
+	);
+});

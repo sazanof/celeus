@@ -163,9 +163,10 @@ class ApplicationUtilities
 	public function registerRoutes(SplFileInfo $file): void
 	{
 		$path = Path::normalize($file->getRealPath() . DIRECTORY_SEPARATOR . 'inc/routes.php');
-		$routes = require_once $path;
+		require_once $path;
+		/*$routes = require_once $path;
 		$this->router->registerRoutes($routes);
-		$this->dispatcher->dispatch($this->router, $this->router::E_ROUTES_ADDED);
+		$this->dispatcher->dispatch($this->router, $this->router::E_ROUTES_ADDED);*/
 	}
 
 	public function registerChildApplication($app): void

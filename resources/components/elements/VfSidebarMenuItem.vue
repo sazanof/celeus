@@ -50,7 +50,7 @@
 
 <style lang="scss" scoped>
 .sidebar-menu-item {
-  border-radius: var(--border-radius-big);
+  border-radius: var(--border-radius);
   padding: 10px;
   transition: var(--transition-duration);
   display: flex;
@@ -59,15 +59,15 @@
   margin-bottom: 6px;
 
   &:last-child {
-	margin-bottom: 0;
+    margin-bottom: 0;
   }
 
   .smi-icon {
-	margin-right: 6px;
+    margin-right: 6px;
   }
 
   &:hover, &.router-link-active {
-	background: var(--color-lighter);
+    background: var(--color-lighter);
   }
 }
 

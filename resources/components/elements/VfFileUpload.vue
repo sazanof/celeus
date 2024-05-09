@@ -9,7 +9,8 @@
             :multiple="multiple">
         <slot
             name="trigger">
-            <button @click="triggerInput">
+            <button
+                @click="triggerInput">
                 Click me
             </button>
         </slot>

@@ -1,29 +1,29 @@
 <template>
     <div
+        ref="mailbox"
         class="mailbox"
-        :class="{active: activeMailbox?.id === id}"
-        ref="mailbox">
+        :class="{active: activeMailbox?.id === id}">
         <div
+            class="mailbox-label"
+            :style="`padding-left:${paddingLeft}px`"
             @mouseenter="showToggleArrows(true)"
             @mouseleave="showToggleArrows(false)"
-            @click="$router.push(`/mbox/${this.mailbox.id}`)"
-            class="mailbox-label"
-            :style="`padding-left:${paddingLeft}px`">
+            @click="$router.push(`/mbox/${mailbox.id}`)">
             <div
+                v-if="showArrows"
                 class="icon"
-                @click.stop="toggleChildren"
-                v-if="showArrows">
+                @click.stop="toggleChildren">
                 <MenuUpIcon
-                    :size="20"
-                    v-if="showChildren" />
+                    v-if="showChildren"
+                    :size="20" />
                 <MenuDownIcon
-                    :size="20"
-                    v-else />
+                    v-else
+                    :size="20" />
             </div>
             <div
-                @click="toggleChildren"
+                v-else
                 class="icon"
-                v-else>
+                @click="toggleChildren">
                 <FolderIcon
                     v-if="!isSpecialUse"
                     :size="20" />
@@ -46,8 +46,8 @@
             <div class="name">
                 {{ mailbox.name }}
                 <div
-                    class="unseen"
-                    v-if="unseen > 0">
+                    v-if="unseen > 0"
+                    class="unseen">
                     {{ unseen }}
                 </div>
             </div>
@@ -56,9 +56,9 @@
             v-if="Object.keys(mailbox.children).length > 0 && showChildren"
             class="children">
             <MailboxItem
-                :level="level + 1"
                 v-for="mbox in mailbox.children"
                 :key="mbox.id"
+                :level="level + 1"
                 :mailbox="mbox" />
         </div>
     </div>
@@ -100,7 +100,7 @@
         data() {
             return {
                 showChildren: false,
-                showArrows: false,
+                showArrows: false
             }
         },
         computed: {
@@ -138,7 +138,7 @@
                 return this.isSpecial(specialAttributes.sent)
             },
             openedMenuItems() {
-                return localStorage.getItem('openedMenuItems').split(',') ?? []
+                return localStorage.getItem('openedMenuItems')?.split(',') ?? []
             },
             isOpened() {
                 return this.openedMenuItems.find(id => id === this.id.toString())
@@ -147,7 +147,7 @@
                 return this.$store.getters['getActiveMailbox']
             },
             trimmedAttributes() {
-                return this.mailbox.attributes.map(attr => attr.replace('\\', ''))
+                return this.mailbox.attributes?.map(attr => attr.replace('\\', ''))
             }
         },
         created() {
@@ -185,7 +185,7 @@
                     return id !== this.id.toString()
                 })
                 localStorage.setItem('openedMenuItems', updated.join(','))
-            },
+            }
         }
     }
 </script>
@@ -193,55 +193,54 @@
 <style lang="scss" scoped>
 .mailbox {
 
-  .mailbox-label {
-	position: relative;
-	display: flex;
-	align-items: center;
-	padding: 8px var(--padding-box);
-	cursor: pointer;
-	transition: var(--transition-duration);
-	margin-right: -12px;
+    .mailbox-label {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 8px var(--padding-box);
+        cursor: pointer;
+        transition: var(--transition-duration);
+        margin-right: -12px;
 
-	&:hover {
-	  background-color: var(--color-primary-opacity10);
-	}
+        &:hover {
+            background-color: var(--color-primary-opacity10);
+        }
 
-	.unseen {
-	  font-size: var(--font-size-small);
-	  padding: 4px 6px;
-	  border-radius: var(--border-radius);
-	  position: absolute;
-	  top: 8px;
-	  right: 14px;
-	  font-weight: bold;
-	  color: var(--color-primary-dark-opacity70);
-	  background: var(--color-primary-opacity20);
-	}
+        .unseen {
+            font-size: var(--font-size-small);
+            padding: 4px 6px;
+            border-radius: var(--border-radius);
+            position: absolute;
+            top: 8px;
+            right: 14px;
+            font-weight: bold;
+            color: var(--color-primary-dark-opacity70);
+            background: var(--color-primary-opacity20);
+        }
 
-	.material-design-icon {
-	  position: relative;
-	  top: 2px;
-	  color: var(--color-primary-dark);
-	  opacity: 0.7;
-	}
+        .material-design-icon {
+            position: relative;
+            top: 2px;
+            color: var(--color-primary);
+        }
 
-	.name {
-	  margin-left: 6px;
-	  text-overflow: ellipsis;
-	  overflow: hidden;
-	  white-space: nowrap;
-	  padding-right: 20px;
-	}
-  }
+        .name {
+            margin-left: 6px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            padding-right: 20px;
+        }
+    }
 
-  &.active {
-	& > .mailbox-label {
-	  background-color: var(--color-primary-opacity10);
+    &.active {
+        & > .mailbox-label {
+            background-color: var(--color-primary-opacity10);
 
-	  &:hover {
-		background-color: var(--color-primary-opacity20);
-	  }
-	}
-  }
+            &:hover {
+                background-color: var(--color-primary-opacity20);
+            }
+        }
+    }
 }
 </style>

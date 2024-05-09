@@ -9,6 +9,9 @@ class ErrorResponse extends JsonResponse
 {
 	public function __construct(mixed $message, int $status = 500, array $headers = [], bool $json = false)
 	{
-		parent::__construct(['message' => $message], $status, $headers, $json);
+		parent::__construct([
+			'success' => false,
+			'message' => $message
+		], $status, $headers, $json);
 	}
 }
