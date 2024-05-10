@@ -1,7 +1,7 @@
 <template>
     <div
-        class="page-header"
-        v-if="visible">
+        v-if="visible"
+        class="page-header">
         <Logo />
         <PageCenterHelper />
         <div class="user-info">
@@ -17,7 +17,7 @@
     import Logo from './Logo.vue'
     import PageCenterHelper from './PageCenterHelper.vue'
     import PageUserInfo from './PageUserInfo.vue'
-
+ 
     export default {
         name: 'PageHeader',
         components: {
@@ -57,15 +57,15 @@
 
 <style lang="scss" scoped>
 .page-header {
-  height: var(--header-height);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
+    height: var(--header-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
 
-  .user-info {
-	display: flex;
-	align-items: center;
-  }
+    .user-info {
+        display: flex;
+        align-items: center;
+    }
 }
 </style>

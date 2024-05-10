@@ -11,6 +11,8 @@ class MailboxDTO
 {
 	public int $id;
 
+	public int $account;
+
 	public int $uidValidity;
 
 	public int $total;
@@ -32,4 +34,5 @@ class MailboxDTO
 	{
 		$this->children = JsonSerializer::deserializeArrayStatic($children, MailboxDTO::class);
 	}
+
 }
