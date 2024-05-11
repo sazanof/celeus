@@ -3,7 +3,7 @@
 namespace Vorkfork\Core\Events;
 
 use \Doctrine\ORM\Event\LoadClassMetadataEventArgs;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 class TableListener
 {
@@ -23,7 +23,6 @@ class TableListener
 		$classMetadata = $eventArgs->getClassMetadata();
 
 		$table = $classMetadata->table;
-		$options = isset($table['options']) ? array_merge($table['options'], $this->options) : $this->options;
 
 		if (!$classMetadata->isInheritanceTypeSingleTable() || $classMetadata->getName() === $classMetadata->rootEntityName) {
 			$classMetadata->setPrimaryTable([
@@ -34,7 +33,7 @@ class TableListener
 		}
 
 		foreach ($classMetadata->getAssociationMappings() as $fieldName => $mapping) {
-			if ($mapping['type'] == ClassMetadataInfo::MANY_TO_MANY && $mapping['isOwningSide']) {
+			if ($mapping['type'] == ClassMetadata::MANY_TO_MANY && $mapping['isOwningSide']) {
 				$mappedTableName = $mapping['joinTable']['name'];
 				$classMetadata->associationMappings[$fieldName]['joinTable']['name'] = $this->prefix . $mappedTableName;
 			}

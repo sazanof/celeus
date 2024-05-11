@@ -113,7 +113,7 @@ class InstallController extends Controller
 		try {
 			$this->database = new Database($config);
 
-			if ($this->database->connection->connect()) {
+			if ($this->database->connect()) {
 				$success = true;
 			}
 			return [
@@ -121,6 +121,8 @@ class InstallController extends Controller
 			];
 
 		} catch (\Exception $e) {
+			return ApplicationUtilities::errorResponse($e->getMessage());
+		} catch (Exception $e) {
 			return ApplicationUtilities::errorResponse($e->getMessage());
 		}
 

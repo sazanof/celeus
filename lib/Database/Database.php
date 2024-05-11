@@ -21,6 +21,7 @@ class Database implements IDatabase
 	public ?Connection $connection = null;
 	protected static ?Database $instance = null;
 	protected ?EntityManager $entityManager = null;
+	protected ?EventManager $eventManager = null;
 
 	/**
 	 * @throws \Doctrine\DBAL\Exception
@@ -59,16 +60,16 @@ class Database implements IDatabase
 		);
 		$this->configuration = $config;
 
-		$evm = new EventManager();
+		$this->eventManager = new EventManager();
 		$tableListener = new TableListener(
 			prefix: $this->config->getConfigValue('prefix'),
 			charset: $this->config->getConfigValue('charset'),
 			options: $this->config->getConfigValue('options')
 		);
-		$evm->addEventListener(Events::loadClassMetadata, $tableListener);
+		$this->eventManager->addEventListener(Events::loadClassMetadata, $tableListener);
 
 		try {
-			return DriverManager::getConnection($this->config->getConfig(), $config, $evm);
+			return DriverManager::getConnection($this->config->getConfig(), $config);
 		} catch (\Doctrine\DBAL\Exception $e) {
 			return null;
 		}
@@ -81,9 +82,9 @@ class Database implements IDatabase
 	public function getEntityManager(): CustomEntityManager|null
 	{
 		if (!is_null($this->connection) && is_null($this->entityManager)) {
-			$this->entityManager = new CustomEntityManager($this->connection, $this->configuration);
+			$this->entityManager = new CustomEntityManager($this->connection, $this->configuration, $this->eventManager);
 		} else if (!$this->entityManager->isOpen()) {
-			$this->entityManager = new CustomEntityManager($this->connection, $this->configuration);
+			$this->entityManager = new CustomEntityManager($this->connection, $this->configuration, $this->eventManager);
 		}
 
 		return $this->entityManager;

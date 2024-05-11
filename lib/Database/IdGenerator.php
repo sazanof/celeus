@@ -3,6 +3,7 @@
 namespace Vorkfork\Database;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Id\AbstractIdGenerator;
 
 /**
@@ -12,19 +13,19 @@ use Doctrine\ORM\Id\AbstractIdGenerator;
  */
 class IdGenerator extends AbstractIdGenerator
 {
-    /**
-     * {@inheritDoc}
-     * @throws \Doctrine\DBAL\Exception
-     */
-    public function generate(EntityManager $em, $entity)
-    {
-        $table = $em->getClassMetadata($entity::class)->getTableName();
-        $maxId = $em->getConnection()->createQueryBuilder()
-            ->select('MAX(id)')
-            ->from($table)
-            ->executeQuery()
-            ->fetchOne();
-        return is_null($maxId) ? 1 : $maxId + 1;
-    }
+	/**
+	 * {@inheritDoc}
+	 * @throws \Doctrine\DBAL\Exception
+	 */
 
+	public function generateId(EntityManagerInterface $em, ?object $entity): mixed
+	{
+		$table = $em->getClassMetadata($entity::class)->getTableName();
+		$maxId = $em->getConnection()->createQueryBuilder()
+			->select('MAX(id)')
+			->from($table)
+			->executeQuery()
+			->fetchOne();
+		return is_null($maxId) ? 1 : $maxId + 1;
+	}
 }
