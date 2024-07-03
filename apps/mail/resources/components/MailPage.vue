@@ -8,7 +8,7 @@
                 <AccountItem
                     v-for="account in accounts"
                     :key="account.id"
-                    :active="activeAccount.id === account.id"
+                    :active="true"
                     :account="account"
                     @click="setAccountActive(account)" />
             </div>

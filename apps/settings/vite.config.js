@@ -7,7 +7,6 @@ import path from 'node:path'
 export default defineConfig(({ command, mode }) => {
     const env = loadEnv(mode, process.cwd(), '')
     return {
-
         plugins: [
             vue({
                 template: {
@@ -26,7 +25,7 @@ export default defineConfig(({ command, mode }) => {
             liveReload([
                 // edit live reload paths according to your source code
                 // for example:
-                __dirname + '/(apps|config|core|inc)/**/*.php',
+                //__dirname + '/(apps|config|core|inc)/**/*.php',
                 // using this for our example:
                 __dirname + '/../public/*.php'
             ])
@@ -50,9 +49,7 @@ export default defineConfig(({ command, mode }) => {
             // our entry
             rollupOptions: {
                 input: {
-                    main: path.resolve(__dirname, 'resources/js/main.js'),
-                    login: path.resolve(__dirname, 'resources/js/login.js'),
-                    install: path.resolve(__dirname, 'resources/js/install.js')
+                    settings: path.resolve(__dirname, 'resources/js/settings.js')
                 },
                 output: {
                     manualChunks: {},
@@ -67,7 +64,7 @@ export default defineConfig(({ command, mode }) => {
             // change freely, but update on PHP to match the same port
             // tip: choose a different port per project to run them at the same time
             strictPort: true,
-            port: env.VITE_PORT
+            port: env.VITE_APP_PORT
         },
 
         // required for in-browser template compilation
@@ -80,4 +77,3 @@ export default defineConfig(({ command, mode }) => {
         }
     }
 })
-// https://vitejs.dev/config/

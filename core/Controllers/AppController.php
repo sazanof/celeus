@@ -8,7 +8,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Mime\MimeTypes;
 use Vorkfork\Application\ApplicationUtilities;
+use Vorkfork\Application\Session;
 use Vorkfork\Auth\Auth;
 use Vorkfork\Core\Events\AddApplicationScripts;
 use Vorkfork\Core\Exceptions\ErrorResponse;
@@ -26,6 +28,13 @@ class AppController extends Controller
 		if (!empty($apps)) {
 			return new RedirectResponse('/apps/' . $apps[0]['name']);
 		}
+	}
+
+	public function getApplicationEntry(string $entry, string $name)
+	{
+		$path = 'apps/' . $name . '/public/dist/' . $entry;
+		//dd($entry, $name, $path);
+		return $this->fileResponse($path);
 	}
 
 
@@ -71,7 +80,13 @@ class AppController extends Controller
 		if (file_exists(realpath('../' . $path))) {
 			$response = new Response();
 			$root = realpath('../' . $path);
-			$mime = mime_content_type($root);
+			$mime = (new MimeTypes())->guessMimeType($root);
+			$file = pathinfo($root);
+			if ($file['extension'] === 'js') {
+				$mime = 'text/javascript';
+			} elseif ($file['extension'] === 'css') {
+				$mime = 'text/css';
+			}
 			$basename = basename($root);
 			$disposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $basename);
 			$response->headers->set('Content-Disposition', $disposition);

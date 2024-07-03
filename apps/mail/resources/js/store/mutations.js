@@ -46,7 +46,7 @@ export default {
         localStorage.setItem('activeMailbox', JSON.stringify(mailbox))
     },
     setActiveAccount(state, account) {
-        state.activeAccount = state.accounts.find(a => a.id === account.id)
+        state.activeAccount = state.accounts?.find(a => a.id === account.id)
     },
     setMessages(state, messages) {
         const newMessages = messages.filter(newMessage => !state.messages.find(message => message.id === newMessage.id))

@@ -11,8 +11,11 @@
     <title>{{ title }}</title>
     {{ vite('resources/js/login.js') | raw }}
     {{ vite('resources/js/main.js') | raw }}
-    {{ vite('apps/mail/resources/js/mail.js') | raw }}
-    {{ vite('apps/settings/resources/js/settings.js') | raw }}
+    {% for script in scripts %}
+        {{ app(script) | raw }}
+    {% endfor %}
+    {# {{ vite('apps/mail/resources/js/mail.js') | raw }}
+    {{ vite('apps/settings/resources/js/settings.js') | raw }} #}
 </head>
 <body>
 {% block app %}

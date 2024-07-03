@@ -31,6 +31,17 @@ MainRouter::prefix('apps', function () {
 			],
 		);
 		MainRouter::get(
+			url: 'dist/{entry}',
+			action: [AppController::class, 'getApplicationEntry'],
+			name: 'getApplicationEntry',
+			defaults: [
+				'auth' => true
+			],
+			requirements: [
+				'entry' => '.+'
+			]
+		);
+		MainRouter::get(
 			url: 'img/{image}',
 			action: [AppController::class, 'getApplicationPicture'],
 			name: 'getApplicationPicture',

@@ -6,10 +6,3 @@
 		{% endif %}
 	</div>
 {% endblock %}
-{% block scripts %}
-	{% if env('APP_MODE', 'production') == 'production' %}
-		<script type="text/javascript" src="{{ scheme }}://{{ host }}/dist/login.js"></script>
-	{% else %}
-		<script type="text/javascript" src="{{ scheme }}://{{ host }}:8080/login.js"></script>
-	{% endif %}
-{% endblock %}

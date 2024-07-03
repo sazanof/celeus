@@ -11,7 +11,7 @@ class MailboxDTO
 {
 	public int $id;
 
-	public int $account;
+	public int|array $account;
 
 	public int $uidValidity;
 

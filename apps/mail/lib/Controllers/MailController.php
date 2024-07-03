@@ -19,9 +19,11 @@ use Symfony\Component\Mailer\Exception\TransportException;
 use Vorkfork\Apps\Mail\ACL\AccountAcl;
 use Vorkfork\Apps\Mail\Collections\AccountCollection;
 use Vorkfork\Apps\Mail\DTO\AccountDto;
+use Vorkfork\Apps\Mail\DTO\AccountSettingsDto;
 use Vorkfork\Apps\Mail\DTO\MailboxDTO;
 use Vorkfork\Apps\Mail\Encryption\MailPassword;
 use Vorkfork\Apps\Mail\Exceptions\AccountAlreadyExistsException;
+use Vorkfork\Apps\Mail\Exceptions\AccountException;
 use Vorkfork\Apps\Mail\Exceptions\MailboxAuthenticateException;
 use Vorkfork\Apps\Mail\IMAP\Exceptions\ImapErrorException;
 use Vorkfork\Apps\Mail\IMAP\Mailbox;
@@ -146,6 +148,20 @@ class MailController extends Controller
 			return $account->update($request->toArray())->toDto(AccountDto::class);
 		}
 		return null;
+	}
+
+
+	/**
+	 * @param int $id
+	 * @param Request $request
+	 * @return AccountSettingsDto
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 * @throws AccountException
+	 */
+	public function getAccountSettings(int $id, Request $request): AccountSettingsDto
+	{
+		return Account::repository()->getAccountsById($id)->toDto(AccountSettingsDto::class);
 	}
 
 	/**

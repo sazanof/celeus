@@ -13,8 +13,15 @@
                 {{ account.email }}
             </div>
             <div class="actions">
-                <div class="cog">
-                    <RefreshIcon :size="20" />
+                <div
+                    class="cog"
+                    @click="syncAccount">
+                    <VfLoader
+                        v-if="loading"
+                        :size="20" />
+                    <RefreshIcon
+                        v-else
+                        :size="20" />
                 </div>
                 <Dropdown>
                     <div class="more">
@@ -47,6 +54,7 @@
     import VfList from '../../../../../resources/components/elements/VfList.vue'
     import VfListItem from '../../../../../resources/components/elements/VfListItem.vue'
 
+    import VfLoader from '../../../../../resources/components/elements/VfLoader.vue'
     import AccountModalSettings from './AccountModalSettings.vue'
     import Mailboxes from './Mailboxes.vue'
     import CogIcon from 'vue-material-design-icons/Cog.vue'
@@ -63,7 +71,8 @@
             VfList,
             Dropdown,
             CogIcon,
-            AccountModalSettings
+            AccountModalSettings,
+            VfLoader
         },
         props: {
             account: {
@@ -75,6 +84,11 @@
                 default: false
             }
         },
+        data() {
+            return {
+                loading: false
+            }
+        },
         computed: {
             color() {
                 const rgb = [
@@ -83,12 +97,35 @@
                     Math.floor(Math.random() * 255)
                 ]
                 return `rgb(${rgb.join(', ')})`
+            },
+            activeMailbox() {
+                return this.$store.getters['getActiveMailbox']
             }
         },
         methods: {
             editAccount(account) {
                 hideAllPoppers()
                 this.$refs.accountModal.open()
+            },
+            async syncAccount() {
+                this.loading = true
+                try {
+                    //await this.$store.dispatch('getMailboxes', this.account.id)
+                    await this.$store.dispatch('syncMessages', {
+                        id: this.activeMailbox.id,
+                        page: this.$store.state.page,
+                        limit: this.$store.state.limit
+                    })
+                    await this.$store.dispatch('getMessages', {
+                        id: this.activeMailbox.id,
+                        page: this.$store.state.page,
+                        limit: this.$store.state.limit
+                    })
+                } finally {
+                    this.loading = false
+                }
+
+
             }
         }
     }

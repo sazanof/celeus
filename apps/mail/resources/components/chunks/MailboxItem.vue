@@ -1,5 +1,6 @@
 <template>
     <div
+        v-if="mailbox"
         ref="mailbox"
         class="mailbox"
         :class="{active: activeMailbox?.id === id}">

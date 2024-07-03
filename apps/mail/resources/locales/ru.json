@@ -1,4 +1,5 @@
 {
+  "Account name": "Имя аккаунта",
   "Account settings": "Настройки учетной записи",
   "Add your first email account": "Добавьте свой первый почтовый аккаунт",
   "Add account": "Добавить аккаунт",
@@ -8,6 +9,7 @@
   "Connection error": "Ошибка подключения",
   "Connection established": "Соединение установлено",
   "Continue": "Продолжить",
+  "Email": "Электронная почта",
   "Error saving account": "Ошибка сохранения аккаутнта",
   "IMAP settings": "Настройки IMAP",
   "Mail": "Почта",

@@ -31,6 +31,13 @@ MainRouter::app('mail', function (MainRouter $router) {
 			]
 		);
 		MainRouter::prefix('{id}', function () {
+			MainRouter::get(
+				url: '',
+				action: [MailController::class, 'getAccountSettings'],
+				defaults: [
+					'auth' => true
+				]
+			);
 			MainRouter::put(
 				url: '',
 				action: [MailController::class, 'saveAccount'],

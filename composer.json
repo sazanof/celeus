@@ -37,7 +37,8 @@
     "symfony/mime": "^6.2",
     "gregwar/image": "^2.1",
     "symfony/mailer": "^6.2",
-    "lasserafn/php-initial-avatar-generator": "^4.3"
+    "lasserafn/php-initial-avatar-generator": "^4.3",
+    "ext-fileinfo": "*"
   },
   "autoload": {
     "psr-4": {

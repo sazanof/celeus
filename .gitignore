@@ -37,6 +37,7 @@ nbproject/
 !/apps/calendar
 !/apps/dav
 !/apps/shares
+/apps/*/public
 /cache/*
 !/cache/.htaccess
 /public/dist

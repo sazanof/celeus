@@ -193,7 +193,7 @@ abstract class Entity implements IEntity
 		return JsonSerializer::serializeStatic($this);
 	}
 
-	public function toDto(string $dtoClass): BaseDto
+	public function toDto(string $dtoClass): mixed
 	{
 		return JsonSerializer::deserializeStatic($this->toJSON(), $dtoClass);
 	}

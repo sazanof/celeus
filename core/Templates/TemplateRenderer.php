@@ -2,6 +2,8 @@
 
 namespace Vorkfork\Core\Templates;
 
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Vorkfork\Core\Translator\Translate;
@@ -53,7 +55,17 @@ class TemplateRenderer implements ITemplateRenderer
 		}));
 
 		$this->template->addFunction(new TwigFunction('vite', function (string $entry) {
-			return vite($entry);
+			return \Vite::register($entry);
+		}));
+
+		$this->template->addFunction(new TwigFunction('app', function (string $entry) {
+			$app = pathinfo($entry);
+			$name = $app['filename'];
+			$path = 'resources/js/' . $entry;
+
+			$env = \Dotenv\Dotenv::createImmutable('../apps/' . $name);
+			$env->load();
+			return \Vite::register($path, $name, env('VITE_APP_PORT', 3322));
 		}));
 
 		$nameWithExtension = "{$name}.twig";
